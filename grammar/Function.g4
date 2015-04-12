@@ -13,6 +13,15 @@
 
  // parser rules start with lowercase letters, lexer rules with uppercase
  
- function : 'void' ('')' '{' statement '}' ;
-
- statement : 'print' BODY';' ;
+function: 'void' ID formalParameters methodDeclarationRest ;
+formalParameters: '()' ;
+methodDeclarationRest: methodBody ;
+methodBody: block ;
+block: '{' blockStatement* '}' ;
+blockStatement: statement ;
+statement: 'print' expression ;
+expression: ID ;
+ 
+//r  : 'hello' ID ;         // match keyword hello followed by an identifier
+ID : [a-z]+ ;             // match lower-case identifiers
+WS : [ \t\r\n]+ -> skip ; // skip spaces, tabs, newlines
