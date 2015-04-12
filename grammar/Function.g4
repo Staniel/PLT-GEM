@@ -9,10 +9,10 @@
 /** Grammars always start with a grammar header. This grammar is called
        *  ArrayInit and must match the filename: ArrayInit.g4
        */
- grammar Function ;
+grammar Function ;
 
- // parser rules start with lowercase letters, lexer rules with uppercase
- 
+// parser rules start with lowercase letters, lexer rules with uppercase
+
 function: 'void' ID formalParameters methodDeclarationRest ;
 formalParameters: '()' ;
 methodDeclarationRest: methodBody ;
