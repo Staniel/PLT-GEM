@@ -9,7 +9,7 @@ public class ParserMain {
 	 * @param args
 	 */
 	public static void main(String[] args) throws Exception{
-		//Create a charstream that reads from standard input
+		//Create a char stream that reads from standard input
 		ANTLRInputStream input = new ANTLRInputStream(System.in);
 		
 		//create a lexer that feeds off of input CharStream
