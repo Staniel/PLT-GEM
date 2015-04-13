@@ -1,7 +1,19 @@
 grammar GEM;
 
-SpecialType: 'Monster' | 'Hero' | 'Battle' | 'Item';
-EventType: 'Event';
+Identifier
+    :   GemLetter GemLetterOrDigit*
+    ;
+
+fragment
+GemLetter
+    :   [a-zA-Z$_]
+    ;
+
+fragment
+GemLetterOrDigit
+    :   [a-zA-Z0-9$_]
+    ;
+
 BooleanLiteral: 'true' | 'false';
 IntegerLiteral: DecimalNumeral;
 fragment Digit: '0' | NonZeroDigit;
@@ -21,6 +33,7 @@ fragment STRING_ESCAPE_SEQ
 
 compilationUnit: typeDeclaration * EOF;
 typeDeclaration: ;
+
 expression
     :   primary
     |   expression '[' expression ']'
@@ -45,14 +58,141 @@ expression
         expression
 ;
 
-constructor: SpecialType '(' parameterListOpt ')' specialBlock        //how to check?
-		   | EventType '(' eventParameterList ')' block;
+type
+    :	eventType ('[' ']')*
+    |   specialType ('[' ']')*
+    |   primitiveType ('[' ']')*
+    ;
+
+constructor: specialType arguments specialBlock        //how to check?
+		   | eventType eventArguments block;
+
+arguments
+    :   '(' expressionList? ')'
+    ;
+
+expressionList
+    :   expression (',' expression)*
+    ;
+
+eventArguments
+	:	'(' eventExpressionList ')'
+	;
+
+eventExpressionList
+	:	expression ',' expression (',' expressionList)?
+	;
+
+block
+    :   '{' blockStatement* '}'
+    ;
+
+blockStatement
+    :   localVariableDeclarationStatement
+    |   statement
+    |   typeDeclaration
+    ;
+
+specialBlock
+	:	statementExpression
+	;
+
+localVariableDeclarationStatement
+    :    localVariableDeclaration ';'
+    ;
+
+localVariableDeclaration
+    :   type variableDeclarators
+    ;
+
+variableDeclarators
+    :   variableDeclarator (',' variableDeclarator)*
+    ;
+
+variableDeclarator
+    :   variableDeclaratorId ('=' variableInitializer)?
+    ;
+
+variableDeclaratorId
+    :   Identifier ('[' ']')*
+    ;
+
+variableInitializer
+    :   arrayInitializer
+    |   expression
+    ;
+
+arrayInitializer
+    :   '{' (variableInitializer (',' variableInitializer)* (',')? )? '}'
+    ;
+
+statement
+    :   block
+    |   'if' parExpression statement ('else' statement)?
+    |   'for' '(' forControl ')' statement
+    |   'while' parExpression statement
+    |   'switch' parExpression '{' switchBlockStatementGroup* switchLabel* '}'
+    |   'return' expression? ';'
+    |	'next' expression ';'
+    |	'print' expression ';'
+    |   'break' ';'
+    |   'continue' ';'
+    |   ';'
+    |   statementExpression ';'
+    ;
+
+switchBlockStatementGroup
+    :   switchLabel+ blockStatement+
+    ;
+
+switchLabel
+    :   'case' expression ':'
+    |   'default' ':'
+    ;
+
+parExpression
+    :   '(' expression ')'
+    ;
+    
+forControl
+    :   forInit? ';' expression? ';' forUpdate?
+    ;
+
+forInit
+    :   localVariableDeclaration
+    |   expressionList
+    ;
+
+forUpdate
+    :   expressionList
+    ;
+
+statementExpression
+    :   expression
+    ;
+
+specialType: 'Monster' | 'Hero' | 'Battle' | 'Item';
+eventType: 'Event';
+primitiveType
+	:   'boolean'
+    |   'int'
+    |   'float'
+    |	'String'
+    ;
+
+parameterList
+	: parameter (',' parameter)*
+	;
+
+parameter
+	: type variableDeclaratorId
+	;
 
 primary
     :   '(' expression ')'
     |   literal
     |   Identifier
-    ;  
+    ;
 
 literal
     :   IntegerLiteral
@@ -60,9 +200,6 @@ literal
     |   StringLiteral
     |   BooleanLiteral
     |   'null'
-    ;
-
-expressionList: expression (',' expression)*
     ;
 
 
