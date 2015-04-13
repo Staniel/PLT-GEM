@@ -31,8 +31,22 @@ fragment STRING_ESCAPE_SEQ
  	: '\\' .
  	;
 
-compilationUnit: typeDeclaration * EOF;
-typeDeclaration: ;
+compilationUnit: (variableDeclaration | methodDeclaration)* methodDeclaration EOF;
+
+variableDeclaration
+	: type variableDeclarators ';'
+    ;
+
+methodDeclaration
+    :   (type|'void') Identifier parameterList ('[' ']')*
+        (   methodBody
+        |   ';'
+        )
+    ;
+
+methodBody
+    :   block
+    ;
 
 expression
     :   primary
@@ -90,11 +104,11 @@ block
 blockStatement
     :   localVariableDeclarationStatement
     |   statement
-    |   typeDeclaration
+    |   variableDeclaration
     ;
 
 specialBlock
-	:	statementExpression
+	:	statementExpression*
 	;
 
 localVariableDeclarationStatement
