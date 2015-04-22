@@ -31,6 +31,8 @@ fragment STRING_ESCAPE_SEQ
  	: '\\' .
  	;
 
+WS : [ \t\r\n]+ -> skip ; // skip spaces, tabs, newlines
+
 compilationUnit: (variableDeclaration | methodDeclaration)* methodDeclaration EOF;
 
 variableDeclaration
@@ -38,7 +40,7 @@ variableDeclaration
     ;
 
 methodDeclaration
-    :   (type|'void') Identifier parameterList ('[' ']')*
+    :   (type|'void') Identifier '(' parameterList? ')'
         (   methodBody
         |   ';'
         )
