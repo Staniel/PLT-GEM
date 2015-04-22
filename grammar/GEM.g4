@@ -33,13 +33,13 @@ fragment STRING_ESCAPE_SEQ
 
 WS : [ \t\r\n]+ -> skip ; // skip spaces, tabs, newlines
 
-//COMMENT
-//	: '/*' .*? '*/' -> skip
-//	;
-//
-//LINE_COMMENT
-//	: '//' ~[\r\n]* -> skip
-//	;
+COMMENT
+	: '/*' .*? '*/' -> skip
+	;
+
+LINE_COMMENT
+	: '//' ~[\r\n]* -> skip
+	;
 
 
 
