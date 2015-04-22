@@ -52,6 +52,30 @@ public class GEMBaseListener implements GEMListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
+	@Override public void enterBattleArguments(@NotNull GEMParser.BattleArgumentsContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitBattleArguments(@NotNull GEMParser.BattleArgumentsContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterMonsterConstructor(@NotNull GEMParser.MonsterConstructorContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitMonsterConstructor(@NotNull GEMParser.MonsterConstructorContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
 	@Override public void enterType(@NotNull GEMParser.TypeContext ctx) { }
 	/**
 	 * {@inheritDoc}
@@ -83,18 +107,6 @@ public class GEMBaseListener implements GEMListener {
 	 * <p>The default implementation does nothing.</p>
 	 */
 	@Override public void exitEventExpressionList(@NotNull GEMParser.EventExpressionListContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void enterSpecialBlock(@NotNull GEMParser.SpecialBlockContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitSpecialBlock(@NotNull GEMParser.SpecialBlockContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
@@ -172,6 +184,18 @@ public class GEMBaseListener implements GEMListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
+	@Override public void enterEventBlock(@NotNull GEMParser.EventBlockContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitEventBlock(@NotNull GEMParser.EventBlockContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
 	@Override public void enterPrimitiveType(@NotNull GEMParser.PrimitiveTypeContext ctx) { }
 	/**
 	 * {@inheritDoc}
@@ -191,6 +215,18 @@ public class GEMBaseListener implements GEMListener {
 	 * <p>The default implementation does nothing.</p>
 	 */
 	@Override public void exitParExpression(@NotNull GEMParser.ParExpressionContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterHeroConstructor(@NotNull GEMParser.HeroConstructorContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitHeroConstructor(@NotNull GEMParser.HeroConstructorContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
@@ -239,6 +275,18 @@ public class GEMBaseListener implements GEMListener {
 	 * <p>The default implementation does nothing.</p>
 	 */
 	@Override public void exitExpression(@NotNull GEMParser.ExpressionContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterHeroArguments(@NotNull GEMParser.HeroArgumentsContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitHeroArguments(@NotNull GEMParser.HeroArgumentsContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
@@ -304,6 +352,18 @@ public class GEMBaseListener implements GEMListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
+	@Override public void enterMonsterArguments(@NotNull GEMParser.MonsterArgumentsContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitMonsterArguments(@NotNull GEMParser.MonsterArgumentsContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
 	@Override public void enterForControl(@NotNull GEMParser.ForControlContext ctx) { }
 	/**
 	 * {@inheritDoc}
@@ -347,6 +407,18 @@ public class GEMBaseListener implements GEMListener {
 	 * <p>The default implementation does nothing.</p>
 	 */
 	@Override public void exitCompilationUnit(@NotNull GEMParser.CompilationUnitContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterBattleConstructor(@NotNull GEMParser.BattleConstructorContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitBattleConstructor(@NotNull GEMParser.BattleConstructorContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
@@ -419,6 +491,18 @@ public class GEMBaseListener implements GEMListener {
 	 * <p>The default implementation does nothing.</p>
 	 */
 	@Override public void exitEventArguments(@NotNull GEMParser.EventArgumentsContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterNextStatement(@NotNull GEMParser.NextStatementContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitNextStatement(@NotNull GEMParser.NextStatementContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *

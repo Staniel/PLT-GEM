@@ -33,6 +33,16 @@ fragment STRING_ESCAPE_SEQ
 
 WS : [ \t\r\n]+ -> skip ; // skip spaces, tabs, newlines
 
+//COMMENT
+//	: '/*' .*? '*/' -> skip
+//	;
+//
+//LINE_COMMENT
+//	: '//' ~[\r\n]* -> skip
+//	;
+
+
+
 compilationUnit: (variableDeclaration | methodDeclaration)* methodDeclaration EOF;
 
 variableDeclaration
@@ -74,14 +84,46 @@ expression
         expression
 ;
 
+
 type
     :	eventType ('[' ']')*
     |   specialType ('[' ']')*
     |   primitiveType ('[' ']')*
     ;
 
-constructor: specialType arguments specialBlock        //how to check?
-		   | eventType eventArguments block;
+
+constructor: monsterConstructor
+		   | battleConstructor
+		   | heroConstructor
+//		   | itemConstructor
+		   | eventType eventArguments eventBlock;
+
+eventBlock: '{' blockStatement*
+				nextStatement '}'
+				;
+
+monsterConstructor: 'Monster' monsterArguments
+				 ;
+
+monsterArguments: '(' expression ',' expression ',' expression ',' expression ')';
+
+heroConstructor: 'Hero' heroArguments
+				 ;
+
+heroArguments: '(' expression ',' expression ',' expression ',' expression ',' expression ')';
+
+
+battleConstructor: 'Battle' battleArguments
+				 ;
+
+battleArguments: '(' expression ',' expression ')';
+
+
+//itemConstructor: 'Item' itemArguments
+//				 ;
+//
+//itemArguments: '(' expression ',' expression ',' expression ',' expression ')';
+
 
 arguments
     :   '(' expressionList? ')'
@@ -108,10 +150,6 @@ blockStatement
     |   statement
     |   variableDeclaration
     ;
-
-specialBlock
-	:	statementExpression*
-	;
 
 localVariableDeclarationStatement
     :    localVariableDeclaration ';'
@@ -149,13 +187,15 @@ statement
     |   'while' parExpression statement
     |   'switch' parExpression '{' switchBlockStatementGroup* switchLabel* '}'
     |   'return' expression? ';'
-    |	'next' expression ';'
     |	'print' expression ';'
     |   'break' ';'
     |   'continue' ';'
     |   ';'
     |   statementExpression ';'
     ;
+
+nextStatement:
+		'next' expression ';';
 
 switchBlockStatementGroup
     :   switchLabel+ blockStatement+
@@ -187,8 +227,10 @@ statementExpression
     :   expression
     ;
 
-specialType: 'Monster' | 'Hero' | 'Battle' | 'Item';
 eventType: 'Event';
+
+specialType: 'Monster' | 'Hero' | 'Battle' | 'Item'; 
+
 primitiveType
 	:   'boolean'
     |   'int'

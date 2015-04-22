@@ -38,6 +38,26 @@ public interface GEMListener extends ParseTreeListener {
 	 */
 	void exitMethodBody(@NotNull GEMParser.MethodBodyContext ctx);
 	/**
+	 * Enter a parse tree produced by {@link GEMParser#battleArguments}.
+	 * @param ctx the parse tree
+	 */
+	void enterBattleArguments(@NotNull GEMParser.BattleArgumentsContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link GEMParser#battleArguments}.
+	 * @param ctx the parse tree
+	 */
+	void exitBattleArguments(@NotNull GEMParser.BattleArgumentsContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link GEMParser#monsterConstructor}.
+	 * @param ctx the parse tree
+	 */
+	void enterMonsterConstructor(@NotNull GEMParser.MonsterConstructorContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link GEMParser#monsterConstructor}.
+	 * @param ctx the parse tree
+	 */
+	void exitMonsterConstructor(@NotNull GEMParser.MonsterConstructorContext ctx);
+	/**
 	 * Enter a parse tree produced by {@link GEMParser#type}.
 	 * @param ctx the parse tree
 	 */
@@ -67,16 +87,6 @@ public interface GEMListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitEventExpressionList(@NotNull GEMParser.EventExpressionListContext ctx);
-	/**
-	 * Enter a parse tree produced by {@link GEMParser#specialBlock}.
-	 * @param ctx the parse tree
-	 */
-	void enterSpecialBlock(@NotNull GEMParser.SpecialBlockContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link GEMParser#specialBlock}.
-	 * @param ctx the parse tree
-	 */
-	void exitSpecialBlock(@NotNull GEMParser.SpecialBlockContext ctx);
 	/**
 	 * Enter a parse tree produced by {@link GEMParser#variableDeclarator}.
 	 * @param ctx the parse tree
@@ -138,6 +148,16 @@ public interface GEMListener extends ParseTreeListener {
 	 */
 	void exitArrayInitializer(@NotNull GEMParser.ArrayInitializerContext ctx);
 	/**
+	 * Enter a parse tree produced by {@link GEMParser#eventBlock}.
+	 * @param ctx the parse tree
+	 */
+	void enterEventBlock(@NotNull GEMParser.EventBlockContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link GEMParser#eventBlock}.
+	 * @param ctx the parse tree
+	 */
+	void exitEventBlock(@NotNull GEMParser.EventBlockContext ctx);
+	/**
 	 * Enter a parse tree produced by {@link GEMParser#primitiveType}.
 	 * @param ctx the parse tree
 	 */
@@ -157,6 +177,16 @@ public interface GEMListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitParExpression(@NotNull GEMParser.ParExpressionContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link GEMParser#heroConstructor}.
+	 * @param ctx the parse tree
+	 */
+	void enterHeroConstructor(@NotNull GEMParser.HeroConstructorContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link GEMParser#heroConstructor}.
+	 * @param ctx the parse tree
+	 */
+	void exitHeroConstructor(@NotNull GEMParser.HeroConstructorContext ctx);
 	/**
 	 * Enter a parse tree produced by {@link GEMParser#forUpdate}.
 	 * @param ctx the parse tree
@@ -197,6 +227,16 @@ public interface GEMListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitExpression(@NotNull GEMParser.ExpressionContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link GEMParser#heroArguments}.
+	 * @param ctx the parse tree
+	 */
+	void enterHeroArguments(@NotNull GEMParser.HeroArgumentsContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link GEMParser#heroArguments}.
+	 * @param ctx the parse tree
+	 */
+	void exitHeroArguments(@NotNull GEMParser.HeroArgumentsContext ctx);
 	/**
 	 * Enter a parse tree produced by {@link GEMParser#blockStatement}.
 	 * @param ctx the parse tree
@@ -248,6 +288,16 @@ public interface GEMListener extends ParseTreeListener {
 	 */
 	void exitVariableDeclaration(@NotNull GEMParser.VariableDeclarationContext ctx);
 	/**
+	 * Enter a parse tree produced by {@link GEMParser#monsterArguments}.
+	 * @param ctx the parse tree
+	 */
+	void enterMonsterArguments(@NotNull GEMParser.MonsterArgumentsContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link GEMParser#monsterArguments}.
+	 * @param ctx the parse tree
+	 */
+	void exitMonsterArguments(@NotNull GEMParser.MonsterArgumentsContext ctx);
+	/**
 	 * Enter a parse tree produced by {@link GEMParser#forControl}.
 	 * @param ctx the parse tree
 	 */
@@ -287,6 +337,16 @@ public interface GEMListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitCompilationUnit(@NotNull GEMParser.CompilationUnitContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link GEMParser#battleConstructor}.
+	 * @param ctx the parse tree
+	 */
+	void enterBattleConstructor(@NotNull GEMParser.BattleConstructorContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link GEMParser#battleConstructor}.
+	 * @param ctx the parse tree
+	 */
+	void exitBattleConstructor(@NotNull GEMParser.BattleConstructorContext ctx);
 	/**
 	 * Enter a parse tree produced by {@link GEMParser#variableDeclarators}.
 	 * @param ctx the parse tree
@@ -347,6 +407,16 @@ public interface GEMListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitEventArguments(@NotNull GEMParser.EventArgumentsContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link GEMParser#nextStatement}.
+	 * @param ctx the parse tree
+	 */
+	void enterNextStatement(@NotNull GEMParser.NextStatementContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link GEMParser#nextStatement}.
+	 * @param ctx the parse tree
+	 */
+	void exitNextStatement(@NotNull GEMParser.NextStatementContext ctx);
 	/**
 	 * Enter a parse tree produced by {@link GEMParser#variableDeclaratorId}.
 	 * @param ctx the parse tree
