@@ -508,6 +508,18 @@ public class GEMBaseListener implements GEMListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
+	@Override public void enterParameters(@NotNull GEMParser.ParametersContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitParameters(@NotNull GEMParser.ParametersContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
 	@Override public void enterVariableDeclaratorId(@NotNull GEMParser.VariableDeclaratorIdContext ctx) { }
 	/**
 	 * {@inheritDoc}

@@ -418,6 +418,16 @@ public interface GEMListener extends ParseTreeListener {
 	 */
 	void exitNextStatement(@NotNull GEMParser.NextStatementContext ctx);
 	/**
+	 * Enter a parse tree produced by {@link GEMParser#parameters}.
+	 * @param ctx the parse tree
+	 */
+	void enterParameters(@NotNull GEMParser.ParametersContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link GEMParser#parameters}.
+	 * @param ctx the parse tree
+	 */
+	void exitParameters(@NotNull GEMParser.ParametersContext ctx);
+	/**
 	 * Enter a parse tree produced by {@link GEMParser#variableDeclaratorId}.
 	 * @param ctx the parse tree
 	 */
