@@ -1,5 +1,8 @@
 // import ANTLR's runtime libraries
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 
 import org.antlr.v4.runtime.ANTLRInputStream;
 import org.antlr.v4.runtime.CommonTokenStream;
@@ -11,7 +14,8 @@ public class Translate {
 	public static void main(String[] args) throws IOException {
 		// TODO Auto-generated method stub
 		// create a CharStream that reads from standard input
-		ANTLRInputStream input = new ANTLRInputStream(System.in);
+		InputStream GEMInputStream = new FileInputStream(new File(args[0]));
+		ANTLRInputStream input = new ANTLRInputStream(GEMInputStream);
 		// create a lexer that feeds off of input CharStream 
 		GEMLexer lexer = new GEMLexer(input);
 		// create a buffer of tokens pulled from the lexer 
@@ -22,7 +26,7 @@ public class Translate {
 		// Create a generic parse tree walker that can trigger callbacks
 		ParseTreeWalker walker = new ParseTreeWalker();
 		// Walk the tree created during the parse, trigger callbacks 
-		walker.walk(new HelloWorldListener(), tree); 
+		walker.walk(new HelloWorldListener(), tree);
 		System.out.println(); // print a \n after translation
 	}
 
