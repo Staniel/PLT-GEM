@@ -50,7 +50,7 @@ variableDeclaration
     ;
 
 methodDeclaration
-    :   (type|'void') Identifier '(' parameterList? ')'
+    :   (type | 'void') Identifier parameters
         (   methodBody
         |   ';'
         )
@@ -238,12 +238,16 @@ primitiveType
     |	'String'
     ;
 
+parameters
+	:	'(' parameterList? ')'
+	;
+
 parameterList
-	: parameter (',' parameter)*
+	:	parameter (',' parameter)*
 	;
 
 parameter
-	: type variableDeclaratorId
+	:	type variableDeclaratorId
 	;
 
 primary
