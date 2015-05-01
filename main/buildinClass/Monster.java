@@ -1,3 +1,4 @@
+package buildinClass;
 
 public class Monster {
 	public String name;

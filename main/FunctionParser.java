@@ -18,7 +18,7 @@ public class FunctionParser extends Parser {
 	public static final int
 		T__4=1, T__3=2, T__2=3, T__1=4, T__0=5, ID=6, WS=7;
 	public static final String[] tokenNames = {
-		"<INVALID>", "'void'", "'{'", "'()'", "'print'", "'}'", "ID", "WS"
+		"<INVALID>", "'()'", "'print'", "'{'", "'void'", "'}'", "ID", "WS"
 	};
 	public static final int
 		RULE_function = 0, RULE_formalParameters = 1, RULE_methodDeclarationRest = 2, 
@@ -76,7 +76,7 @@ public class FunctionParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(16); match(T__4);
+			setState(16); match(T__1);
 			setState(17); match(ID);
 			setState(18); formalParameters();
 			setState(19); methodDeclarationRest();
@@ -114,7 +114,7 @@ public class FunctionParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(21); match(T__2);
+			setState(21); match(T__4);
 			}
 		}
 		catch (RecognitionException re) {
@@ -232,11 +232,11 @@ public class FunctionParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(27); match(T__3);
+			setState(27); match(T__2);
 			setState(31);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
-			while (_la==T__1) {
+			while (_la==T__3) {
 				{
 				{
 				setState(28); blockStatement();
@@ -322,7 +322,7 @@ public class FunctionParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(38); match(T__1);
+			setState(38); match(T__3);
 			setState(39); expression();
 			}
 		}
@@ -379,11 +379,11 @@ public class FunctionParser extends Parser {
 		"\3\3\3\3\3\4\3\4\3\5\3\5\3\6\3\6\7\6 \n\6\f\6\16\6#\13\6\3\6\3\6\3\7\3"+
 		"\7\3\b\3\b\3\b\3\t\3\t\3\t\2\2\n\2\4\6\b\n\f\16\20\2\2&\2\22\3\2\2\2\4"+
 		"\27\3\2\2\2\6\31\3\2\2\2\b\33\3\2\2\2\n\35\3\2\2\2\f&\3\2\2\2\16(\3\2"+
-		"\2\2\20+\3\2\2\2\22\23\7\3\2\2\23\24\7\b\2\2\24\25\5\4\3\2\25\26\5\6\4"+
-		"\2\26\3\3\2\2\2\27\30\7\5\2\2\30\5\3\2\2\2\31\32\5\b\5\2\32\7\3\2\2\2"+
-		"\33\34\5\n\6\2\34\t\3\2\2\2\35!\7\4\2\2\36 \5\f\7\2\37\36\3\2\2\2 #\3"+
+		"\2\2\20+\3\2\2\2\22\23\7\6\2\2\23\24\7\b\2\2\24\25\5\4\3\2\25\26\5\6\4"+
+		"\2\26\3\3\2\2\2\27\30\7\3\2\2\30\5\3\2\2\2\31\32\5\b\5\2\32\7\3\2\2\2"+
+		"\33\34\5\n\6\2\34\t\3\2\2\2\35!\7\5\2\2\36 \5\f\7\2\37\36\3\2\2\2 #\3"+
 		"\2\2\2!\37\3\2\2\2!\"\3\2\2\2\"$\3\2\2\2#!\3\2\2\2$%\7\7\2\2%\13\3\2\2"+
-		"\2&\'\5\16\b\2\'\r\3\2\2\2()\7\6\2\2)*\5\20\t\2*\17\3\2\2\2+,\7\b\2\2"+
+		"\2&\'\5\16\b\2\'\r\3\2\2\2()\7\4\2\2)*\5\20\t\2*\17\3\2\2\2+,\7\b\2\2"+
 		",\21\3\2\2\2\3!";
 	public static final ATN _ATN =
 		new ATNDeserializer().deserialize(_serializedATN.toCharArray());

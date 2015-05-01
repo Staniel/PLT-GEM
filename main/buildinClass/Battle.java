@@ -1,3 +1,4 @@
+package buildinClass;
 
 public class Battle {
 	public String display;

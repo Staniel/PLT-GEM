@@ -1,3 +1,4 @@
+package buildinClass;
 
 public class Hero {
 	public String name;
