@@ -1,4 +1,7 @@
+import java.util.List;
+
 import org.antlr.v4.runtime.misc.NotNull;
+import org.antlr.v4.runtime.tree.TerminalNode;
 
 
 public class GEMExtendedVisitor extends GEMBaseVisitor<String> {
@@ -100,8 +103,41 @@ public class GEMExtendedVisitor extends GEMBaseVisitor<String> {
 		return null;
 	}
 	
-	@Override public String visitExpression(@NotNull GEMParser.ExpressionContext ctx) {
-		return visit(ctx.primary());
+	@Override public String visitForStatement(@NotNull GEMParser.ForStatementContext ctx) { 
+		print("for ( ");
+		visit(ctx.forControl());
+		print(" )");
+		visit(ctx.statement());
+		return null;
+	}
+	@Override public String visitForControl(@NotNull GEMParser.ForControlContext ctx) {
+		if (ctx.forInit() != null)
+			visit(ctx.forInit());
+		print(";");
+		if (ctx.expression() != null)
+			visit(ctx.expression());
+		print(";");
+		if (ctx.forUpdate() != null)
+			visit(ctx.forUpdate());
+		print(";");
+		return null;
+	}
+	@Override public String visitForInit(@NotNull GEMParser.ForInitContext ctx) {
+		visit(ctx.expressionList());
+		return null;
+	}
+	@Override public String visitForUpdate(@NotNull GEMParser.ForUpdateContext ctx) {
+		visit(ctx.expressionList());
+		return null;
+	}
+	@Override public String visitExpressionList(@NotNull GEMParser.ExpressionListContext ctx) {
+		for (int i = 0; i < ctx.expression().size(); i++) {
+			visit(ctx.expression(i));
+			if (i < ctx.expression().size()-1) {
+				print(",");
+			}
+		}
+		return null;
 	}
 	
 	@Override public String visitPrimary(@NotNull GEMParser.PrimaryContext ctx) {
@@ -112,6 +148,13 @@ public class GEMExtendedVisitor extends GEMBaseVisitor<String> {
 		if (ctx != null) {
 			return ctx.getText();
 		}
+		return null;
+	}
+	@Override public String visitAssignExpr(@NotNull GEMParser.AssignExprContext ctx){
+		visit(ctx.expression(0));
+		for (TerminalNode n : ctx.getTokens(1))
+			print(n.getText());
+		visit(ctx.expression(1));
 		return null;
 	}
 	

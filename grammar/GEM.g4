@@ -60,21 +60,20 @@ methodBody
     :   block
     ;
 
-expression
-    :   primary
-    |   expression '[' expression ']'
-    |   expression '(' expressionList? ')'
-    |   'new' constructor
-    |	'input' expression
-    |   ('+'|'-') expression
-    |   ('~'|'!') expression
-    |   expression ('*'|'/'|'%') expression
-    |   expression ('+'|'-') expression
-    |   expression ('<=' | '>=' | '>' | '<') expression
-    |   expression ('==' | '!=') expression
-    |   expression '&&' expression
-    |   expression '||' expression
-    |   <assoc=right> expression
+expression :   primary #primaryExpr
+    |   expression '[' expression ']' #arrayExpr
+    |   expression '(' expressionList? ')' #funcExpr
+    |   'new' constructor #constructorExpr
+    |	'input' expression #inputExpr
+    |   ('+'|'-') expression #unaryExpr
+    |   ('~'|'!') expression #unaryRelExpr
+    |   expression ('*'|'/'|'%') expression #binTopExpr
+    |   expression ('+'|'-') expression #binLowExpr
+    |   expression ('<=' | '>=' | '>' | '<') expression #binRelExpr
+    |   expression ('==' | '!=') expression #binEqExpr
+    |   expression '&&' expression #binAndExpr
+    |   expression '||' expression #binOrExpr
+    |   <assoc=right> expression 
         (   '='
         |   '+='
         |   '-='
@@ -82,7 +81,7 @@ expression
         |   '/='
         |   '%='
         )
-        expression
+        expression #assignExpr
 ;
 
 
