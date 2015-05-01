@@ -1,8 +1,8 @@
-.DS_Sore
+.DS_Store
 bin/
 Compiler/GemC.jar
 Compiler/Main.*
-
+src/
 main/GEM.tokens
 main/GEMBaseListener.java
 main/GEMLexer.java
