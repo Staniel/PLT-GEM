@@ -65,6 +65,7 @@ expression
     |   expression '[' expression ']'
     |   expression '(' expressionList? ')'
     |   'new' constructor
+    |	'input' expression
     |   ('+'|'-') expression
     |   ('~'|'!') expression
     |   expression ('*'|'/'|'%') expression
@@ -186,7 +187,6 @@ statement
     |   'while' parExpression statement
     |   'switch' parExpression '{' switchBlockStatementGroup* switchLabel* '}'
     |   'return' expression? ';'
-    |	'input' expression ';'
     |	'print' expression ';'
     |   'break' ';'
     |   'continue' ';'

@@ -38,5 +38,4 @@ public class Skill {
 			String totalEffect = lifeEffect + attackEffect + defendEffect;
 			return totalEffect;
 		}
-		
 }
