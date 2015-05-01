@@ -1,4 +1,5 @@
 void main(String[] args) {
-	for (i=0;i<5;i=i+1)
-   		print "fuck";
+    for (i=9;;i=i+1)
+    	print "fuck";
+
 }
