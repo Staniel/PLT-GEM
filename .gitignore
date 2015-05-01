@@ -1,1 +1,13 @@
+.DS_Sore
 bin/
+Compiler/GemC.jar
+Compiler/Main.*
+
+main/GEM.tokens
+main/GEMBaseListener.java
+main/GEMLexer.java
+main/GEMLexer.tokens
+main/GEMListener.java
+main/GEMParser.java
+
+
