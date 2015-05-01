@@ -4,11 +4,11 @@ import java.util.Random;
 import java.util.Scanner;
 
 public class Battle {
-	Scanner sc;
-	Random rng;
-	public String display;
-	public Monster myBoss;
-	public String[] effects = {"badly effective", "poorly effective", "normally effective", "somewhat effective", "super effective"};
+	private Scanner sc;
+	private Random rng;
+	private String display;
+	private Monster myBoss;
+	private String[] effects = {"badly effective", "poorly effective", "normally effective", "somewhat effective", "super effective"};
 	private double effectRNG;
 	private double bossDamage;
 	private double heroDamage;
@@ -30,7 +30,7 @@ public class Battle {
 	
 	//Return true or false of victory or defeat.
 	public boolean trigger(Hero myHero){
-		System.out.printf("Encountered %s\n", myBoss.name);
+		System.out.printf("Encountered %s, ", myBoss.name);
 		System.out.println(this.display);
 		
 		sc = new Scanner(System.in);
@@ -39,17 +39,19 @@ public class Battle {
 		bossSkills = myBoss.skills;
 		
 		while (myBoss.life > 0 && myHero.life > 0){
-			Hero modHero = myHero;
+			System.out.println("Please choose your skill to use:");
+			System.out.println("0 - Attack: A \"normally\" effective attack.");
+			skillCheck(myHero, myBoss);
 			
-			//Manually use skill for hero, if any.
+			//Use skill for hero, if any.
 			if (heroSkills != null && heroSkills.length > 0) {
-				System.out.println("Please choose your skill to use:");
 				myHero.showSkills();
 				skillNum = sc.nextInt() - 1;
 				System.out.printf("%s Used skill : %s\n", myHero.name, heroSkills[skillNum].name);
-				modHero = myHero.skills[skillNum].cast(myHero);
-				System.out.println("");
-				myHero.life = modHero.life;
+				myHero = myHero.skills[skillNum].cast(myHero);
+				if (myHero.skill.lifeMod > 0) {
+					continue;
+				}
 			}
 			
 			//Automatically use skill for boss, if any.
@@ -61,7 +63,7 @@ public class Battle {
 			
 			//Hero round.
 			effectRNG =  generateRandom();
-			bossDamage = effectRNG * Math.max(0, modHero.attack - myBoss.defend);
+			bossDamage = effectRNG * Math.max(0, myHero.attack - myBoss.defend);
 			if (bossDamage >= myBoss.life) {
 				System.out.printf("%s was defeated!\n", myBoss.name);
 				return true;
@@ -73,8 +75,8 @@ public class Battle {
 			
 			//Boss round.
 			effectRNG =  generateRandom();
-			heroDamage = effectRNG * Math.max(0, myBoss.attack - modHero.defend);
-			if (bossDamage >= myHero.life) {
+			heroDamage = effectRNG * Math.max(0, myBoss.attack - myHero.defend);
+			if (heroDamage >= myHero.life) {
 				System.out.printf("%s was defeated!\n", myHero.name);
 				return false;
 			}
@@ -83,10 +85,17 @@ public class Battle {
 					myBoss.name, myHero.name, heroDamage, effects[(int) (effectRNG / 0.25 - 2)]);
 			System.out.printf("%s has %.2f life left\n",myHero.name, myHero.life);
 			
+			//Anything else to handle before next round?
 			System.out.println("");
 		}
 		
-		return true;
+		//Victory!
+		return false;
+	}
+	
+	//Check duration of skill and reset status if expired.
+	private void skillCheck(Hero h, Monster m) {
+		
 	}
 	
 	private double generateRandom() {
