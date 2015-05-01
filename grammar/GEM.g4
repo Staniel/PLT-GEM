@@ -11,7 +11,6 @@ GemLetterOrDigit
     ;
 
 BooleanLiteral: 'true' | 'false';
-
 IntegerLiteral: DecimalNumeral;
 fragment Digit: '0' | NonZeroDigit;
 fragment NonZeroDigit: [1-9];
