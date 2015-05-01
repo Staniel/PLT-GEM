@@ -1,73 +1,100 @@
 package buildinClass;
+
+import java.util.Random;
 import java.util.Scanner;
 
 public class Battle {
 	Scanner sc;
+	Random rng;
 	public String display;
-	public Monster boss;
-	public String[] effects = {"poorly effective", "effective", "super effective"};
-	public double[] effectivens = {0.5f, 0.75f, 1.25f, 1.5f};
-	private int effectLevel;
+	public Monster myBoss;
+	public String[] effects = {"badly effective", "poorly effective", "normally effective", "somewhat effective", "super effective"};
+	private double effectRNG;
 	private double bossDamage;
 	private double heroDamage;
 	private Skill[] heroSkills;
+	private Skill[] bossSkills;
 	private int skillNum;
 	
 	//Initiate a battle with battle message and monster.
 	public Battle(String s, Monster m){
 		display = s;
-		boss = m;
+		myBoss = m;
 	}
 	
 	//Copy constructor.
 	public Battle(Battle b){
 		display = b.display;
-		boss = new Monster(b.boss);
+		myBoss = new Monster(b.myBoss);
 	}
 	
 	//Return true or false of victory or defeat.
-	public boolean trigger(Hero h){
-		System.out.printf("Encountered %s\n", boss.name);
+	public boolean trigger(Hero myHero){
+		System.out.printf("Encountered %s\n", myBoss.name);
 		System.out.println(this.display);
 		
 		sc = new Scanner(System.in);
-		heroSkills = h.skills;
+		rng = new Random();
+		heroSkills = myHero.skills;
+		bossSkills = myBoss.skills;
 		
-		while (boss.life > 0 && h.life > 0){
-			Hero modHero = h;
+		while (myBoss.life > 0 && myHero.life > 0){
+			Hero modHero = myHero;
 			
-			//use skill, if any.
+			//Manually use skill for hero, if any.
 			if (heroSkills != null && heroSkills.length > 0) {
-				System.out.println("Please choose your skill to use:\n");
-				h.showSkills();
-				skillNum = sc.nextInt();
-				System.out.println("Used skill :" + h.skills[skillNum].name);
-				modHero = h.skills[skillNum].cast(h);
+				System.out.println("Please choose your skill to use:");
+				myHero.showSkills();
+				skillNum = sc.nextInt() - 1;
+				System.out.printf("%s Used skill : %s\n", myHero.name, heroSkills[skillNum].name);
+				modHero = myHero.skills[skillNum].cast(myHero);
+				System.out.println("");
+				myHero.life = modHero.life;
 			}
 			
-			//hero round.
-			effectLevel =  (int) (Math.random() * 4);
-			bossDamage = Math.max(0, modHero.attack - boss.defend);
-			if (bossDamage >= boss.life) {
-				System.out.printf("%s was defeated!\n", boss.name);
+			//Automatically use skill for boss, if any.
+			if (bossSkills != null && bossSkills.length > 0) {
+				skillNum = rng.nextInt(bossSkills.length);
+				System.out.printf("%s Used skill : %s\n", myBoss.name, bossSkills[skillNum].name);
+				System.out.println("");
+			}
+			
+			//Hero round.
+			effectRNG =  generateRandom();
+			bossDamage = effectRNG * Math.max(0, modHero.attack - myBoss.defend);
+			if (bossDamage >= myBoss.life) {
+				System.out.printf("%s was defeated!\n", myBoss.name);
 				return true;
 			}
-			boss.life -= bossDamage;
+			myBoss.life -= bossDamage;
 			System.out.printf("%s attacked %s for %.2f damage, %s \n", 
-					h.name, boss.name, bossDamage, effects[effectLevel]);
+					myHero.name, myBoss.name, bossDamage, effects[(int) (effectRNG / 0.25 - 2)]);
+			System.out.printf("%s has %.2f life left\n",myBoss.name, myBoss.life);
 			
-			//boss round.
-			effectLevel =  (int) (Math.random() * 4);
-			heroDamage = Math.max(0, boss.attack - modHero.defend);
-			if (bossDamage >= boss.life) {
-				System.out.printf("%s was defeated!\n", h.name);
+			//Boss round.
+			effectRNG =  generateRandom();
+			heroDamage = effectRNG * Math.max(0, myBoss.attack - modHero.defend);
+			if (bossDamage >= myHero.life) {
+				System.out.printf("%s was defeated!\n", myHero.name);
 				return false;
 			}
-			h.life -= heroDamage;
+			myHero.life -= heroDamage;
 			System.out.printf("%s attacked %s for %.2f damage, %s \n", 
-					boss.name, h.name, bossDamage, effects[effectLevel]);;
+					myBoss.name, myHero.name, heroDamage, effects[(int) (effectRNG / 0.25 - 2)]);
+			System.out.printf("%s has %.2f life left\n",myHero.name, myHero.life);
+			
+			System.out.println("");
 		}
 		
 		return true;
+	}
+	
+	private double generateRandom() {
+		double d = rng.nextGaussian() / 2 + 1;
+		if (d < 0.5)
+			d = 0.5;
+		if (d > 1.5)
+			d = 1.5;
+		return d;
 	}
 }
