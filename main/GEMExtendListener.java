@@ -5,6 +5,8 @@ import java.util.Scanner;
 
 import org.antlr.v4.runtime.misc.NotNull;
 
+import GEMParser.ExpressionContext;
+
 
 public class GEMExtendListener extends GEMBaseListener {
 	LinkedList<HashMap<String, VariableSymbol>> symbols = new LinkedList<HashMap<String, VariableSymbol>>();
@@ -20,6 +22,7 @@ public class GEMExtendListener extends GEMBaseListener {
 	private void printSp(String str) {
 		System.out.print(str + " ");
 	}
+	
 	
 	@Override public void enterCompilationUnit(@NotNull GEMParser.CompilationUnitContext ctx) {
 		System.out.println("public class Main {");
@@ -83,30 +86,42 @@ public class GEMExtendListener extends GEMBaseListener {
 		System.out.print(";");
 	}
 	
+	private boolean evaluateExpression(GEMParser.ExpressionContext ctx){
+		// to be continued
+		return true;
+		//to be continued
+		return false;
+	}
+	private boolean ifStatement(GEMParser.StatementContext ctx, boolean isEnter){
+		if(ctx.getText().startsWith("if")){
+			if(isEnter){
+				print("if(");
+				if(evaluateExpression(ctx.parExpression().expression())){
+					ce();
+				}
+				else{
+					print(ctx.parExpression().expression().getText());
+					print(")");
+				}
+				if(ctx.getChildCount()>3){
+					print("else");
+				}
+			}
+			return true;
+		}
+		return false;
+	}
 	private boolean printStatement(GEMParser.StatementContext ctx, boolean isEnter) {
 		if (ctx.getText().startsWith("print")) {
 			if (isEnter) {
-				System.out.print("System.out.println(");
-			} else {
-				System.out.print(")");
+				System.out.print("System.out.println(" + ctx.expression() + ");");
 			}
 			return true;
 		}
 		return false;
 	}
 	
-	private boolean inputStatement(GEMParser.StatementContext ctx, boolean isEnter) {
-		if (ctx.getText().startsWith("input")) {
-			if (isEnter) {
-				Scanner scanner = new Scanner(System.in);
-				System.out.print(ctx.expression().getText());
-			}
-			return true;
-		}
-		return false;
-	}
-	
-	private boolean isConstructorExpression(GEMParser.StatementContext expression) {
+	private boolean isConstructorExpression(GEMParser.ExpressionContext expression) {
 		if (expression.getText().startsWith("new")) {
 			return true;
 		}
@@ -148,6 +163,6 @@ public class GEMExtendListener extends GEMBaseListener {
 	}
 	
 	@Override public void enterLiteral(@NotNull GEMParser.LiteralContext ctx) {
-		System.out.print(ctx.getText());
+		//System.out.print(ctx.getText());
 	}
 }
