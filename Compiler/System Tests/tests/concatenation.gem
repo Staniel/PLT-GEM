@@ -1,0 +1,5 @@
+void main(String[] args) {
+	String a = "hello";
+	String b = "world" 
+	print a + b;
+}
