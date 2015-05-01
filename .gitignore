@@ -2,6 +2,7 @@
 bin/
 Compiler/GemC.jar
 Compiler/Main.*
+Compiler/hello.gem
 
 src/
 main/GEM.tokens

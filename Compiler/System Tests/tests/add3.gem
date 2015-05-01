@@ -1,0 +1,5 @@
+void main(String[] args) {
+	print -1+4+5;
+	print 3+6+7;
+	print 10+15-17;
+}
