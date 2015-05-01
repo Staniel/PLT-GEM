@@ -11,7 +11,7 @@ public class Event {
 		display = e.display;
 		int l = e.options.length;
 		options = new Event[l];
-		for (int i=0;i<l;i++)
+		for (int i = 0;i < l;i++)
 			options[i] = new Event(e.options[i]);
 	}
 	public void display(){

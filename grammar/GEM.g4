@@ -180,19 +180,18 @@ arrayInitializer
     :   '{' (variableInitializer (',' variableInitializer)* (',')? )? '}'
     ;
 
-statement
-    :   block
-    |   'if' parExpression statement ('else' statement)?
-    |   'for' '(' forControl ')' statement
-    |   'while' parExpression statement
-    |   'switch' parExpression '{' switchBlockStatementGroup* switchLabel* '}'
-    |   'return' expression? ';'
-    |	'print' expression ';'
-    |   'break' ';'
-    |   'continue' ';'
-    |   ';'
-    |   statementExpression ';'
-    ;
+statement	:   block	#bs
+			|   'if' parExpression statement ('else' statement)?	#ifStatement
+			|   'for' '(' forControl ')' statement	#forStatement
+			|   'while' parExpression statement	#whileStatement
+			|   'switch' parExpression '{' switchBlockStatementGroup* switchLabel* '}'	#switchStatement
+			|   'return' expression? ';'	#returnStatement
+			|	'print' expression ';'	#printStatement
+			|   'break' ';'	#breakStatement
+			|   'continue' ';'	#continueStatement
+			|   ';'	#emptyStatement
+			|   statementExpression ';'	#statementExpr
+			;
 
 nextStatement:
 		'next' expression ';';
@@ -233,7 +232,7 @@ specialType: 'Monster' | 'Hero' | 'Battle' | 'Item';
 primitiveType
 	:   'boolean'
     |   'int'
-    |   'float'
+    |   'double'
     |	'String'
     ;
 
