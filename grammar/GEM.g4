@@ -11,7 +11,6 @@ GemLetterOrDigit
     ;
 
 BooleanLiteral: 'true' | 'false';
-
 IntegerLiteral: DecimalNumeral;
 fragment Digit: '0' | NonZeroDigit;
 fragment NonZeroDigit: [1-9];
@@ -66,7 +65,7 @@ expression :   primary #primaryExpr
     |   expression '[' expression ']' #arrayExpr
     |   expression '(' expressionList? ')' #funcExpr
     |   'new' constructor #constructorExpr
-    |	'input' expression #inputExpr
+    |	'input' StringLiteral #inputExpr
     |   ('+'|'-') expression #unaryExpr
     |   ('~'|'!') expression #unaryRelExpr
     |   expression ('*'|'/'|'%') expression #binTopExpr
@@ -228,7 +227,7 @@ statementExpression
 
 eventType: 'Event';
 
-specialType: 'Monster' | 'Hero' | 'Battle' | 'Item'; 
+specialType: 'Character' | 'Battle'; 
 
 primitiveType
 	:   'boolean'
