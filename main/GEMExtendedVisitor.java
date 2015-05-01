@@ -1,0 +1,155 @@
+import org.antlr.v4.runtime.misc.NotNull;
+
+public class GEMExtendedVisitor extends GEMBaseVisitor<Void> {
+	private void ce() {
+		print("Compile Error.\n");
+	}
+	
+	private void print(String str) {
+		System.out.print(str);
+	}
+	
+	private void printSp(String str) {
+		System.out.print(str + " ");
+	}
+	
+	@Override public Void visitCompilationUnit(@NotNull GEMParser.CompilationUnitContext ctx) {
+		print("public class Main {\n");
+		for (GEMParser.VariableDeclarationContext vd: ctx.variableDeclaration()) {
+			visit(vd);
+		}
+		for (GEMParser.MethodDeclarationContext md : ctx.methodDeclaration()) {
+			visit(md);
+		}
+		print("}\n");
+		return null;
+	}
+	
+	@Override public Void visitMethodDeclaration(@NotNull GEMParser.MethodDeclarationContext ctx) {
+		if (ctx.Identifier().getText().equals("main")) {
+			printSp("public static");
+		} else {
+			printSp("public");
+		}
+		
+		if (ctx.type() != null) {
+			visit(ctx.type());
+			print(" " + ctx.Identifier().getText());
+		} else {
+			print("void " + ctx.Identifier().getText());
+		}
+		visit(ctx.parameters());
+		if (ctx.methodBody() == null) {
+			print(";\n");
+		} else {
+			visit(ctx.methodBody());
+		}
+		return null;
+	}
+	
+	@Override public Void visitParameters(@NotNull GEMParser.ParametersContext ctx) {
+		print("(");
+		visit(ctx.parameterList());
+		print(")");
+		return null;
+	}
+	
+	@Override public Void visitParameterList(@NotNull GEMParser.ParameterListContext ctx) {
+		for (int i = 0; i < ctx.parameter().size(); i++) {
+			GEMParser.ParameterContext para = ctx.parameter(i);
+			visit(para);
+			if (i < ctx.parameter().size()-1) {
+				printSp(",");
+			}
+		}
+		return null;
+	}
+	
+	@Override public Void visitParameter(@NotNull GEMParser.ParameterContext ctx) {
+		visit(ctx.type());
+		print(" " + ctx.variableDeclaratorId().Identifier().getText());
+		return null;
+	}
+	
+	@Override public Void visitMethodBody(@NotNull GEMParser.MethodBodyContext ctx) {
+		return visit(ctx.block());
+	}
+	
+	@Override public Void visitBlock(@NotNull GEMParser.BlockContext ctx) {
+		print("{");
+		for (GEMParser.BlockStatementContext bs : ctx.blockStatement()) {
+			visit(bs);
+		}
+		print("}");
+		return null;
+	}
+	
+	@Override public Void visitBlockStatement(@NotNull GEMParser.BlockStatementContext ctx) {
+		if (ctx.variableDeclaration() != null) {
+			return visit(ctx.variableDeclaration());
+		} else {
+			return visit(ctx.statement());
+		}
+	}
+	
+	@Override public Void visitVariableDeclaration(@NotNull GEMParser.VariableDeclarationContext ctx) {
+		visit(ctx.type());
+		print(" ");
+		visit(ctx.variableDeclarators());
+		print(";\n");
+		return null;
+	}
+	
+	@Override public Void visitVariableDeclarators(@NotNull GEMParser.VariableDeclaratorsContext ctx) {
+		for (int i = 0; i < ctx.variableDeclarator().size(); i++) {
+			GEMParser.VariableDeclaratorContext vd = ctx.variableDeclarator(i);
+			visit(vd);
+			if (i < ctx.variableDeclarator().size()-1) {
+				printSp(",");
+			}
+		}
+		return null;
+	}
+	
+	@Override public Void visitVariableDeclarator(@NotNull GEMParser.VariableDeclaratorContext ctx) {
+		visit(ctx.variableDeclaratorId());
+		if (ctx.variableInitializer() != null) {
+			print("=");
+			visit(ctx.variableInitializer());
+		}
+		return null;
+	}
+	
+	@Override public Void visitVariableDeclaratorId(@NotNull GEMParser.VariableDeclaratorIdContext ctx) {
+		print(ctx.Identifier().getText());
+		return null;
+	}
+	
+	@Override public Void visitVariableInitializer(@NotNull GEMParser.VariableInitializerContext ctx) {
+		print(ctx.getText());
+		return null;
+	}
+	
+	@Override public Void visitPrintStatement(@NotNull GEMParser.PrintStatementContext ctx) {
+		print("System.out.println(");
+		visit(ctx.expression());
+		print(");\n");
+		return null;
+	}
+	
+	@Override public Void visitExpression(@NotNull GEMParser.ExpressionContext ctx) {
+		return visit(ctx.primary());
+	}
+	
+	@Override public Void visitPrimary(@NotNull GEMParser.PrimaryContext ctx) {
+		print(ctx.literal().getText());
+		return null;
+	}
+	
+	@Override public Void visitType(@NotNull GEMParser.TypeContext ctx) {
+		print(ctx.getText());
+		return null;
+	}
+	
+	
+}

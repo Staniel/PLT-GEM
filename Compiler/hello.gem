@@ -1,4 +1,4 @@
 void main(String[] args) {
 	print "Hello world!";
-	int[][] a,b;
+	int a = 0, b = 3;
 }
