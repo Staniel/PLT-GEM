@@ -26,7 +26,7 @@ public class Translate {
 		// Create a generic parse tree walker that can trigger callbacks
 		ParseTreeWalker walker = new ParseTreeWalker();
 		// Walk the tree created during the parse, trigger callbacks 
-		walker.walk(new HelloWorldListener(), tree);
+		walker.walk(new GEMExtendListener(), tree);
 		System.out.println(); // print a \n after translation
 	}
 
