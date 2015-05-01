@@ -115,7 +115,7 @@ public class GEMExtendedVisitor extends GEMBaseVisitor<Void> {
 		visit(ctx.variableDeclaratorId());
 		if (ctx.variableInitializer() != null) {
 			print("=");
-			visit(ctx.variableDeclaratorId());
+			visit(ctx.variableInitializer());
 		}
 		return null;
 	}
