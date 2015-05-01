@@ -1,0 +1,14 @@
+#!/bin/bash
+for entry in test/*.gem
+do
+  	./gem $entry > $entry.out
+  	diff --brief <(sort $entry.out) <(sort $entry.test) >/dev/null
+	comp_value=$?
+
+	if [ $comp_value -eq 1 ]
+	then
+    	echo "error in $entry"
+	else
+    	echo "$entry passed the test"
+    fi
+done
