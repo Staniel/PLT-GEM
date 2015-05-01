@@ -1,9 +1,9 @@
 package buildinClass;
 
 public class Skill {
-		public float lifeMod;
-		public float attackMod;
-		public float defendMod;
+		public double lifeMod;
+		public double attackMod;
+		public double defendMod;
 		public String name;
 		
 		public Skill(float hMod, float aMod, float dMod, String name) {

@@ -2,12 +2,12 @@ package buildinClass;
 
 public class Monster {
 	public String name;
-	public float attack;
-	public float defend;
-	public float life;
+	public double attack;
+	public double defend;
+	public double life;
 	public Skill[] skills;
 	
-	public Monster(String n, float a, float d, float l, Skill[] sk){
+	public Monster(String n, double a, double d, double l, Skill[] sk){
 		name = n; 
 		attack = a; 
 		defend = d; 

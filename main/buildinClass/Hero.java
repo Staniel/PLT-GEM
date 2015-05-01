@@ -2,11 +2,11 @@ package buildinClass;
 
 public class Hero {
 	public String name;
-	public Float attack;
-	public Float defend;
-	public Float life;
+	public double attack;
+	public double defend;
+	public double life;
 	public Skill[] skills;
-	public Hero(String n, Float a, Float d, Float l, Skill[] sk){
+	public Hero(String n, double a, double d, double l, Skill[] sk){
 		name = n;
 		attack = a;
 		defend = d;
