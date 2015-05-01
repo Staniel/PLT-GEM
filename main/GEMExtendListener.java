@@ -86,23 +86,7 @@ public class GEMExtendListener extends GEMBaseListener {
 	private boolean printStatement(GEMParser.StatementContext ctx, boolean isEnter) {
 		if (ctx.getText().startsWith("print")) {
 			if (isEnter) {
-				System.out.print("System.out.println(");
-			} else {
-				System.out.print(")");
-			}
-			return true;
-		}
-		return false;
-	}
-	
-	private boolean inputStatement(GEMParser.StatementContext ctx, boolean isEnter) {
-		if (ctx.getText().startsWith("input")) {
-			if (isEnter) {
-				print("Scanner scanner = new Scanner(System.in)");
-				if (isConstructorExpression(ctx.expression())) {
-					ce();
-				}
-				print("System.out.println(" + ctx.expression().getText() + ")");
+				System.out.print("System.out.println(" + ctx.expression() + ");");
 			}
 			return true;
 		}
@@ -151,6 +135,6 @@ public class GEMExtendListener extends GEMBaseListener {
 	}
 	
 	@Override public void enterLiteral(@NotNull GEMParser.LiteralContext ctx) {
-		System.out.print(ctx.getText());
+		//System.out.print(ctx.getText());
 	}
 }
