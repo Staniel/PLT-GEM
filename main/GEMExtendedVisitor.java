@@ -1,6 +1,8 @@
 import java.util.List;
 
 import org.antlr.v4.runtime.misc.NotNull;
+import org.antlr.v4.runtime.tree.TerminalNode;
+import org.antlr.v4.runtime.misc.NotNull;
 
 public class GEMExtendedVisitor extends GEMBaseVisitor<Void> {
 	private void ce() {
@@ -78,11 +80,11 @@ public class GEMExtendedVisitor extends GEMBaseVisitor<Void> {
 	}
 	
 	@Override public Void visitBlock(@NotNull GEMParser.BlockContext ctx) {
-		print("{");
+		print("{\n");
 		for (GEMParser.BlockStatementContext bs : ctx.blockStatement()) {
 			visit(bs);
 		}
-		print("}");
+		print("}\n");
 		return null;
 	}
 	
@@ -113,11 +115,48 @@ public class GEMExtendedVisitor extends GEMBaseVisitor<Void> {
 		return null;
 	}
 	
+
+	@Override public Void visitForStatement(@NotNull GEMParser.ForStatementContext ctx) { 
+		print("for ( ");
+		visit(ctx.forControl());
+		print(" )");
+		visit(ctx.statement());
+		return null;
+	}
+	@Override public Void visitForControl(@NotNull GEMParser.ForControlContext ctx) {
+		if (ctx.forInit() != null)
+			visit(ctx.forInit());
+		print(";");
+		if (ctx.expression() != null)
+			visit(ctx.expression());
+		print(";");
+		if (ctx.forUpdate() != null)
+			visit(ctx.forUpdate());
+		return null;
+	}
+	@Override public Void visitForInit(@NotNull GEMParser.ForInitContext ctx) {
+		visit(ctx.expressionList());
+		return null;
+	}
+	@Override public Void visitForUpdate(@NotNull GEMParser.ForUpdateContext ctx) {
+		visit(ctx.expressionList());
+		return null;
+	}
+	@Override public Void visitExpressionList(@NotNull GEMParser.ExpressionListContext ctx) {
+		for (int i = 0; i < ctx.expression().size(); i++) {
+			visit(ctx.expression(i));
+			if (i < ctx.expression().size()-1) {
+				print(",");
+			}
+		}
+		return null;
+	}
 	@Override public Void visitVariableDeclarator(@NotNull GEMParser.VariableDeclaratorContext ctx) {
 		visit(ctx.variableDeclaratorId());
 		if (ctx.variableInitializer() != null) {
 			print("=");
 			visit(ctx.variableInitializer());
+
 		}
 		return null;
 	}
@@ -165,6 +204,56 @@ public class GEMExtendedVisitor extends GEMBaseVisitor<Void> {
 		}
 		return null;
 	}
+	@Override public Void visitAssignExpr(@NotNull GEMParser.AssignExprContext ctx){
+		
+		visit(ctx.expression(0));
+		print(" "+ctx.getChild(1).getText()+" ");
+		visit(ctx.expression(1));
+		return null;
+	}
+
+	@Override public Void visitBinTopExpr(@NotNull GEMParser.BinTopExprContext ctx)  {
+		visit(ctx.expression(0));
+		print(" "+ctx.getChild(1)+" ");
+		visit(ctx.expression(1));
+		return null;
+	}
+
+	@Override public Void visitBinRelExpr(@NotNull GEMParser.BinRelExprContext ctx) {
+		visit(ctx.expression(0));
+		print(" "+ctx.getChild(1)+" ");
+		visit(ctx.expression(1));
+		return null;
+	}
+	@Override public Void visitBinLowExpr(@NotNull GEMParser.BinLowExprContext ctx){
+		visit(ctx.expression(0));
+		print(" "+ctx.getChild(1)+" ");
+		visit(ctx.expression(1));
+		return null;
+	}
+	
+	@Override public Void visitBinEqExpr(@NotNull GEMParser.BinEqExprContext ctx){
+		visit(ctx.expression(0));
+		print(" "+ctx.getChild(1)+" ");
+		visit(ctx.expression(1));
+		return null;
+	}
+	
+	@Override public Void visitBinAndExpr(@NotNull GEMParser.BinAndExprContext ctx){
+		visit(ctx.expression(0));
+		print(" "+ctx.getChild(1)+" ");
+		visit(ctx.expression(1));
+		return null;
+	}
+
+	@Override public Void visitBinOrExpr(@NotNull GEMParser.BinOrExprContext ctx){
+		visit(ctx.expression(0));
+		print(" "+ctx.getChild(1)+" ");
+		visit(ctx.expression(1));
+		return null;
+	}
+	
+		
 	
 	@Override public Void visitSwitchLabel(@NotNull GEMParser.SwitchLabelContext ctx) {
 		String text = ctx.getText();
@@ -219,10 +308,6 @@ public class GEMExtendedVisitor extends GEMBaseVisitor<Void> {
 	}
 	
 
-	@Override public Void visitExpression(@NotNull GEMParser.ExpressionContext ctx) {
-		return visit(ctx.primary());
-	}
-	
 	@Override public Void visitPrimary(@NotNull GEMParser.PrimaryContext ctx) {
 		if (ctx.expression() != null) {
 			print("(");
@@ -245,6 +330,10 @@ public class GEMExtendedVisitor extends GEMBaseVisitor<Void> {
 		print(ctx.getText());
 		return null;
 	}
-	
+	@Override public Void visitStatementExpr(@NotNull GEMParser.StatementExprContext ctx) {
+		visit(ctx.statementExpression());
+		print(";");
+		return null;	
+	}
 	
 }
