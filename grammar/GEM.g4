@@ -146,18 +146,17 @@ block
     ;
 
 blockStatement
-    :   localVariableDeclarationStatement
-    |   statement
+    :   statement
     |   variableDeclaration
     ;
 
-localVariableDeclarationStatement
-    :    localVariableDeclaration ';'
-    ;
-
-localVariableDeclaration
-    :   type variableDeclarators
-    ;
+//localVariableDeclarationStatement
+//    :    localVariableDeclaration ';'
+//    ;
+//
+//localVariableDeclaration
+//    :   type variableDeclarators
+//    ;
 
 variableDeclarators
     :   variableDeclarator (',' variableDeclarator)*
@@ -187,6 +186,7 @@ statement
     |   'while' parExpression statement
     |   'switch' parExpression '{' switchBlockStatementGroup* switchLabel* '}'
     |   'return' expression? ';'
+    |	'input' expression ';'
     |	'print' expression ';'
     |   'break' ';'
     |   'continue' ';'
@@ -215,8 +215,7 @@ forControl
     ;
 
 forInit
-    :   localVariableDeclaration
-    |   expressionList
+    :   expressionList
     ;
 
 forUpdate

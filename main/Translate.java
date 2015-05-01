@@ -23,6 +23,7 @@ public class Translate {
 		// create a parser that feeds off the tokens buffer 
 		GEMParser parser = new GEMParser(tokens);
 		ParseTree tree = parser.compilationUnit(); // begin parsing at rule
+		//ParseTree tree = parser.variableDeclaration();
 		// Create a generic parse tree walker that can trigger callbacks
 		ParseTreeWalker walker = new ParseTreeWalker();
 		// Walk the tree created during the parse, trigger callbacks 
