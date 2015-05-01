@@ -2,13 +2,19 @@ package buildinClass;
 
 public class Monster {
 	public String name;
-	public Integer attack;
-	public Integer defend;
-	public Integer life;
+	public float attack;
+	public float defend;
+	public float life;
 	public Skill[] skills;
-	public Monster(String n, Integer a, Integer d, Integer l, Skill[] sk){
-		name = n; attack = a; defend = d; life = l; skills = sk;
+	
+	public Monster(String n, float a, float d, float l, Skill[] sk){
+		name = n; 
+		attack = a; 
+		defend = d; 
+		life = l; 
+		skills = sk;
 	}
+	
 	public Monster(Monster m){
 		name = m.name;
 		attack = m.attack;

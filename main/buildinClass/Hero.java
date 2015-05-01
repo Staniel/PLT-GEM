@@ -2,11 +2,11 @@ package buildinClass;
 
 public class Hero {
 	public String name;
-	public Integer attack;
-	public Integer defend;
-	public Integer life;
+	public Float attack;
+	public Float defend;
+	public Float life;
 	public Skill[] skills;
-	public Hero(String n, Integer a, Integer d, Integer l, Skill[] sk){
+	public Hero(String n, Float a, Float d, Float l, Skill[] sk){
 		name = n;
 		attack = a;
 		defend = d;
@@ -19,5 +19,11 @@ public class Hero {
 		defend = h.defend;
 		life = h.life;
 		skills = h.skills.clone();
+	}
+	
+	public void showSkills() {
+		for (int i = 0; i < skills.length; i++) {
+			System.out.println((i + 1) + " - " + skills[i].name + ":" + skills[i].effect());
+		}
 	}
 }
