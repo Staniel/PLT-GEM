@@ -7,7 +7,6 @@ import java.io.InputStream;
 import org.antlr.v4.runtime.ANTLRInputStream;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.tree.ParseTree;
-import org.antlr.v4.runtime.tree.ParseTreeWalker;
 
 public class Translate {
 
@@ -25,9 +24,12 @@ public class Translate {
 		ParseTree tree = parser.compilationUnit(); // begin parsing at rule
 		//ParseTree tree = parser.variableDeclaration();
 		// Create a generic parse tree walker that can trigger callbacks
-		ParseTreeWalker walker = new ParseTreeWalker();
+		//ParseTreeWalker walker = new ParseTreeWalker();
 		// Walk the tree created during the parse, trigger callbacks 
-		walker.walk(new GEMExtendListener(), tree);
+		//walker.walk(new GEMExtendListener(), tree);
+		
+		GEMExtendedVisitor translator = new GEMExtendedVisitor();
+		translator.visit(tree);
 		System.out.println(); // print a \n after translation
 	}
 
