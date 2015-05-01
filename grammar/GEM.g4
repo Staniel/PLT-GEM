@@ -262,5 +262,3 @@ literal
     |   'null'
     ;
 
-
-

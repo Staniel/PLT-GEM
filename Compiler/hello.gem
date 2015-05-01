@@ -1,4 +1,4 @@
 void main(String[] args) {
 	print "Hello world!";
-	int a = 0, b = 3;
+	int a = 1;
 }
