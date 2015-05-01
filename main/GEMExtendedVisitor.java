@@ -1,3 +1,5 @@
+import java.util.List;
+
 import org.antlr.v4.runtime.misc.NotNull;
 
 public class GEMExtendedVisitor extends GEMBaseVisitor<Void> {
@@ -137,6 +139,69 @@ public class GEMExtendedVisitor extends GEMBaseVisitor<Void> {
 		return null;
 	}
 	
+
+	@Override public Void visitParExpression(@NotNull GEMParser.ParExpressionContext ctx) { 
+		print("(");
+		visit(ctx.expression());
+		print(")");
+		return null;
+	}
+	
+	@Override public Void visitIfStatement(@NotNull GEMParser.IfStatementContext ctx) {
+		print("if");
+		visit(ctx.parExpression());
+		List<GEMParser.StatementContext> stmtList = ctx.statement();
+		visit(stmtList.get(0));
+		if(stmtList.size() > 1){
+			print("else");
+			visit(stmtList.get(1));
+		}
+		return null;
+	}
+	
+	@Override public Void visitSwitchLabel(@NotNull GEMParser.SwitchLabelContext ctx) {
+		String text = ctx.getText();
+		if(text.startsWith("case")){
+			printSp("case");
+			visit(ctx.expression());
+			print(":");
+		}
+		else if(text.startsWith("default")){
+			print("default");
+			print(":");
+		}
+		return null;
+	}
+	
+	@Override public Void visitSwitchBlockStatementGroup(@NotNull GEMParser.SwitchBlockStatementGroupContext ctx) {
+		List<GEMParser.SwitchLabelContext> switchLabelList = ctx.switchLabel();
+		for(GEMParser.SwitchLabelContext tmp : switchLabelList){
+			visit(tmp);
+		}
+		List<GEMParser.BlockStatementContext> blockStmtList = ctx.blockStatement();
+		for(GEMParser.BlockStatementContext tmp : blockStmtList){
+			visit(tmp);
+		}
+		return null;
+	}
+	
+	@Override public Void visitSwitchStatement(@NotNull GEMParser.SwitchStatementContext ctx) { 
+		print("switch");
+		visit(ctx.parExpression());
+		print("{");
+		List<GEMParser.SwitchBlockStatementGroupContext> switchBlockStmtGroupList = ctx.switchBlockStatementGroup();
+		for(GEMParser.SwitchBlockStatementGroupContext tmp : switchBlockStmtGroupList){
+			visit(tmp);
+		}
+		List<GEMParser.SwitchLabelContext> switchLabelList = ctx.switchLabel();
+		for(GEMParser.SwitchLabelContext tmp : switchLabelList){
+			visit(tmp);
+		}
+		return null;
+		
+	}
+	
+
 	@Override public Void visitExpression(@NotNull GEMParser.ExpressionContext ctx) {
 		return visit(ctx.primary());
 	}

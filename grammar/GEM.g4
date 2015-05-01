@@ -1,9 +1,5 @@
 grammar GEM;
 
-Identifier
-    :   GemLetter GemLetterOrDigit*
-    ;
-
 fragment
 GemLetter
     :   [a-zA-Z$_]
@@ -13,9 +9,11 @@ fragment
 GemLetterOrDigit
     :   [a-zA-Z0-9$_]
     ;
-
+fragment
 BooleanLiteral: 'true' | 'false';
+fragment
 IntegerLiteral: DecimalNumeral;
+
 fragment Digit: '0' | NonZeroDigit;
 fragment NonZeroDigit: [1-9];
 fragment Digits: Digit+;
@@ -26,6 +24,10 @@ StringLiteral
  	: '\'' ( STRING_ESCAPE_SEQ | ~[\\\r\n'] )* '\''
  	| '"' ( STRING_ESCAPE_SEQ | ~[\\\r\n"] )* '"'
  	;
+ 	
+Identifier
+    :   GemLetter GemLetterOrDigit*
+    ;
  	
 fragment STRING_ESCAPE_SEQ
  	: '\\' .
@@ -250,8 +252,8 @@ parameter
 
 primary
     :   '(' expression ')'
-    |   literal
     |   Identifier
+    |   literal
     ;
 
 literal
