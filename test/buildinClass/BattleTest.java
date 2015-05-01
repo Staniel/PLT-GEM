@@ -14,8 +14,8 @@ public class BattleTest {
 		Skill s2 = new Skill("Heal", 5.0, 0, 0);
 		Skill[] ss = {s1, s2};
 		Monster m = new Monster("boss", 5, 2, 20, ss);
-		Hero h = new Hero("hero", 5, 2, 10, ss);
-		Battle b = new Battle("hey", m);
+		Hero h = new Hero("hero", 5, 5, 2, 10, ss);
+		Battle b = new Battle("Battle to death!", m);
 		Assert.assertEquals(b.trigger(h), true);
 		
 		// test the display of the game

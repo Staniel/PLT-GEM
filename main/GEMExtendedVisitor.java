@@ -207,7 +207,20 @@ public class GEMExtendedVisitor extends GEMBaseVisitor<Void> {
 	}
 	
 	@Override public Void visitPrimary(@NotNull GEMParser.PrimaryContext ctx) {
-		print(ctx.literal().getText());
+		if (ctx.expression() != null) {
+			print("(");
+			visit(ctx.expression());
+			print(")");
+		} else if (ctx.literal() != null) {
+			visit(ctx.literal());
+		} else if (ctx.Identifier() != null) {
+			print(ctx.Identifier().getText());
+		}
+		return null;
+	}
+	
+	@Override public Void visitLiteral(@NotNull GEMParser.LiteralContext ctx) {
+		print(ctx.getText());
 		return null;
 	}
 	
