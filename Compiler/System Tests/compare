@@ -1,0 +1,14 @@
+#! /bin/bash
+
+#/.gem print.gem > print.out
+
+
+diff --brief <(sort file1.txt) <(sort file2.txt) >/dev/null
+comp_value=$?
+
+if [ $comp_value -eq 1 ]
+then
+    echo "do something because they're different"
+else
+    echo "do something because they're identical"
+fi
