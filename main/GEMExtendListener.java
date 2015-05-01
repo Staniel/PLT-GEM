@@ -98,8 +98,16 @@ public class GEMExtendListener extends GEMBaseListener {
 	private boolean inputStatement(GEMParser.StatementContext ctx, boolean isEnter) {
 		if (ctx.getText().startsWith("input")) {
 			if (isEnter) {
-				Scanner input = new Scanner(System.in);
+				Scanner scanner = new Scanner(System.in);
+				System.out.print(ctx.expression().getText());
 			}
+			return true;
+		}
+		return false;
+	}
+	
+	private boolean isConstructorExpression(GEMParser.StatementContext expression) {
+		if (expression.getText().startsWith("new")) {
 			return true;
 		}
 		return false;
