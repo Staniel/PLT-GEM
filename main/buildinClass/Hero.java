@@ -11,13 +11,13 @@ public class Hero {
 		attack = a;
 		defend = d;
 		life = l;
-		Skill = sk;
+		skills = sk;
 	}
 	public Hero(Hero h){
 		name = h.name;
 		attack = h.attack;
 		defend = h.defend;
 		life = h.life;
-		items = h.items.clone();
+		skills = h.skills.clone();
 	}
 }
