@@ -99,8 +99,7 @@ public class GEMExtendListener extends GEMBaseListener {
 		if (ctx.getText().startsWith("input")) {
 			if (isEnter) {
 				Scanner scanner = new Scanner(System.in);
-				System.out.print(ctx.expression());
-				String  = user_input.next( );
+				System.out.print(ctx.expression().getText());
 			}
 			return true;
 		}
