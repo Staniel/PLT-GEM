@@ -9,15 +9,15 @@ fragment
 GemLetterOrDigit
     :   [a-zA-Z0-9$_]
     ;
-fragment
-BooleanLiteral: 'true' | 'false';
-fragment
-IntegerLiteral: DecimalNumeral;
 
+BooleanLiteral: 'true' | 'false';
+
+IntegerLiteral: DecimalNumeral;
 fragment Digit: '0' | NonZeroDigit;
 fragment NonZeroDigit: [1-9];
 fragment Digits: Digit+;
 fragment DecimalNumeral: '0' | NonZeroDigit Digits?;
+
 FloatingPointLiteral: Digits '.' Digits+;
 
 StringLiteral
