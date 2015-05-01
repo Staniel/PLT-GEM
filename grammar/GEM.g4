@@ -67,7 +67,7 @@ expression
     |   expression '[' expression ']'
     |   expression '(' expressionList? ')'
     |   'new' constructor
-    |	'input' expression
+    |	'input' StringLiteral
     |   ('+'|'-') expression
     |   ('~'|'!') expression
     |   expression ('*'|'/'|'%') expression
@@ -229,7 +229,7 @@ statementExpression
 
 eventType: 'Event';
 
-specialType: 'Monster' | 'Hero' | 'Battle' | 'Item'; 
+specialType: 'Character' | 'Battle'; 
 
 primitiveType
 	:   'boolean'
