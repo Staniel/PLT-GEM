@@ -1,6 +1,7 @@
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Scanner;
 
 import org.antlr.v4.runtime.misc.NotNull;
 
@@ -74,39 +75,68 @@ public class GEMExtendListener extends GEMBaseListener {
 	}
 	
 	@Override public void enterStatement(@NotNull GEMParser.StatementContext ctx) {
+		printStatement(ctx, true);
+	}
+	
+	@Override public void exitStatement(@NotNull GEMParser.StatementContext ctx) {
+		printStatement(ctx, false);
+		System.out.print(";");
+	}
+	
+	private boolean printStatement(GEMParser.StatementContext ctx, boolean isEnter) {
 		if (ctx.getText().startsWith("print")) {
-			System.out.print("System.out.println(");
+			if (isEnter) {
+				System.out.print("System.out.println(");
+			} else {
+				System.out.print(")");
+			}
+			return true;
 		}
+		return false;
+	}
+	
+	private boolean inputStatement(GEMParser.StatementContext ctx, boolean isEnter) {
+		if (ctx.getText().startsWith("input")) {
+			if (isEnter) {
+				Scanner input = new Scanner(System.in);
+			}
+			return true;
+		}
+		return false;
 	}
 	
 	@Override public void enterVariableDeclaration(@NotNull GEMParser.VariableDeclarationContext ctx) {
-		
+		int arrayDimension = (ctx.type().getChildCount()-1)/2;
+		String type = null;
 		if (ctx.type().primitiveType() != null) {
-			
+			type = ctx.type().primitiveType().getText();
+		} else if (ctx.type().eventType() != null) {
+			type = ctx.type().eventType().getText();
+		} else if (ctx.type().specialType() != null){
+			type = ctx.type().specialType().getText();
 		}
-		String type = ctx.type().getText();
+		printSp(type);
 		List<GEMParser.VariableDeclaratorContext> varList = ctx.variableDeclarators().variableDeclarator();
-		for (GEMParser.VariableDeclaratorContext vdCtx : varList) {
+		for (int i = 0; i < varList.size(); i++) {
+			GEMParser.VariableDeclaratorContext vdCtx = varList.get(i);
 			String id = vdCtx.variableDeclaratorId().Identifier().getText();
 			Object value = null;
 			if (vdCtx.variableInitializer() != null) {
 				// Initialization to be continued
 			}
-			VariableSymbol var = new VariableSymbol(type, value);
+			VariableSymbol var = new VariableSymbol(type, value, arrayDimension);
 			if (symbols.peek().containsKey(id)) {
 				ce();
 			}
 			symbols.peek().put(id, var);
+			print(id);
+			if (i < varList.size()-1) {
+				print(",");
+			}
 		}
-		printSp(type);
 	}
-	@Override public void exitVariableDeclaration(@NotNull GEMParser.VariableDeclarationContext ctx) { }
-	
-	@Override public void exitStatement(@NotNull GEMParser.StatementContext ctx) {
-		if (ctx.getText().startsWith("print")) {
-			System.out.print(")");
-		}
-		System.out.print(";");
+	@Override public void exitVariableDeclaration(@NotNull GEMParser.VariableDeclarationContext ctx) {
+		print(";");
 	}
 	
 	@Override public void enterLiteral(@NotNull GEMParser.LiteralContext ctx) {
