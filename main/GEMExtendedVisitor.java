@@ -209,8 +209,9 @@ public class GEMExtendedVisitor extends GEMBaseVisitor<Void> {
 	}
 	
 	@Override public Void visitReturnStatement(@NotNull GEMParser.ReturnStatementContext ctx) {
-		print("return ");
+		print("return");
 		if (ctx.expression() != null) {
+			print(" ");
 			visit(ctx.expression());
 		}
 		print(";");
