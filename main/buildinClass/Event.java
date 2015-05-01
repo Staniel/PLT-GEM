@@ -14,4 +14,10 @@ public class Event {
 		for (int i=0;i<l;i++)
 			options[i] = new Event(e.options[i]);
 	}
+	public void run(){
+		System.out.println(display);
+	}
+	public void next(Integer n){
+		options[n].run();
+	}
 }

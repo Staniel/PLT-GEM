@@ -4,17 +4,20 @@ public class Hero {
 	public String name;
 	public Integer attack;
 	public Integer defend;
-	public Item[] items;
-	public Hero(String n, Integer a, Integer d, Item[] i){
+	public Integer life;
+	public Skill[] skills;
+	public Hero(String n, Integer a, Integer d, Integer l, Skill[] sk){
 		name = n;
 		attack = a;
 		defend = d;
-		items = i;
+		life = l;
+		skills = sk;
 	}
 	public Hero(Hero h){
 		name = h.name;
 		attack = h.attack;
 		defend = h.defend;
-		items = h.items.clone();
+		life = h.life;
+		skills = h.skills.clone();
 	}
 }

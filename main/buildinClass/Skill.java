@@ -1,5 +1,5 @@
 package buildinClass;
 
-public class Item {
+public class Skill {
 	
 }
