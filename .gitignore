@@ -11,3 +11,4 @@ main/GEMLexer.tokens
 main/GEMListener.java
 main/GEMParser.java
 main/GEMBaseVisitor.java
+main/GEMVisitor.java
