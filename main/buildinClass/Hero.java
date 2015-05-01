@@ -5,8 +5,12 @@ public class Hero {
 	public double attack;
 	public double defend;
 	public double life;
+	public int chi;
 	public Skill[] skills;
-	public Hero(String n, double a, double d, double l, Skill[] sk){
+	public Skill skill;
+	public int duration;
+	
+	public Hero(String n, double a, int chi, double d, double l, Skill[] sk){
 		name = n;
 		attack = a;
 		defend = d;
@@ -18,6 +22,7 @@ public class Hero {
 		attack = h.attack;
 		defend = h.defend;
 		life = h.life;
+		chi = h.chi;
 		skills = h.skills.clone();
 	}
 	
