@@ -2,6 +2,7 @@
 bin/
 Compiler/GemC.jar
 Compiler/Main.*
+Compiler/hello.gem
 
 src/
 main/GEM.tokens
@@ -11,3 +12,4 @@ main/GEMLexer.tokens
 main/GEMListener.java
 main/GEMParser.java
 main/GEMBaseVisitor.java
+main/GEMVisitor.java

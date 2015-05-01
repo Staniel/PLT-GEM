@@ -80,11 +80,11 @@ public class GEMExtendedVisitor extends GEMBaseVisitor<Void> {
 	}
 	
 	@Override public Void visitBlock(@NotNull GEMParser.BlockContext ctx) {
-		print("{");
+		print("{\n");
 		for (GEMParser.BlockStatementContext bs : ctx.blockStatement()) {
 			visit(bs);
 		}
-		print("}");
+		print("}\n");
 		return null;
 	}
 	
@@ -204,6 +204,20 @@ public class GEMExtendedVisitor extends GEMBaseVisitor<Void> {
 		visit(ctx.expression(1));
 		return null;
 	}
+
+	@Override public Void visitBinTopExpr(@NotNull GEMParser.BinTopExprContext ctx)  {
+		visit(ctx.expression(0));
+		print(" "+ctx.getChild(1)+" ");
+		visit(ctx.expression(1));
+		return null;
+	}
+
+	@Override public Void visitBinRelExpr(@NotNull GEMParser.BinRelExprContext ctx) {
+		visit(ctx.expression(0));
+		print(" "+ctx.getChild(1)+" ");
+		visit(ctx.expression(1));
+		return null;
+	}
 	@Override public Void visitBinLowExpr(@NotNull GEMParser.BinLowExprContext ctx){
 		visit(ctx.expression(0));
 		print(" "+ctx.getChild(1)+" ");
@@ -211,6 +225,28 @@ public class GEMExtendedVisitor extends GEMBaseVisitor<Void> {
 		return null;
 	}
 	
+	@Override public Void visitBinEqExpr(@NotNull GEMParser.BinEqExprContext ctx){
+		visit(ctx.expression(0));
+		print(" "+ctx.getChild(1)+" ");
+		visit(ctx.expression(1));
+		return null;
+	}
+	
+	@Override public Void visitBinAndExpr(@NotNull GEMParser.BinAndExprContext ctx){
+		visit(ctx.expression(0));
+		print(" "+ctx.getChild(1)+" ");
+		visit(ctx.expression(1));
+		return null;
+	}
+
+	@Override public Void visitBinOrExpr(@NotNull GEMParser.BinOrExprContext ctx){
+		visit(ctx.expression(0));
+		print(" "+ctx.getChild(1)+" ");
+		visit(ctx.expression(1));
+		return null;
+	}
+	
+		
 	
 	@Override public Void visitSwitchLabel(@NotNull GEMParser.SwitchLabelContext ctx) {
 		String text = ctx.getText();

@@ -1,3 +1,8 @@
 void main(String[] args) {
+<<<<<<< HEAD
 	print "hello world";
+=======
+	print "Hello world!";
+	int a = 1;
+>>>>>>> 46090b6f61ab5def15dff9b3a0dda787cfb31314
 }
