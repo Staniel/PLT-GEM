@@ -4,6 +4,7 @@ import java.util.Random;
 import java.util.Scanner;
 
 public class Battle {
+	
 	private Scanner sc;
 	private Random rng;
 	private String display;
@@ -53,17 +54,20 @@ public class Battle {
 						System.out.println("You don't have enough chi for this skill");
 						continue;
 					}
+					break;
 				}
-					
 				System.out.printf("%s Used skill : %s\n", myHero.name, heroSkills[skillNum].name);
 				myHero.skills[skillNum].cast(myHero);
 			}
 			
 			//Automatically use skill for boss, if any.
 			if (myBoss.chi > 0 && bossSkills != null && bossSkills.length > 0) {
-				skillNum = rng.nextInt(bossSkills.length);
-				if (myBoss.chi < bossSkills[skillNum].cost) {
-					continue;
+				while (true) {
+					skillNum = rng.nextInt(bossSkills.length);
+					if (myBoss.chi < bossSkills[skillNum].cost) {
+						continue;
+					}
+					break;
 				}
 				System.out.printf("%s Used skill : %s\n", myBoss.name, bossSkills[skillNum].name);
 				myBoss.skills[skillNum].cast(myBoss);
@@ -71,29 +75,36 @@ public class Battle {
 			}
 			
 			//Hero round.
-			effectRNG =  generateRandom();
-			bossDamage = effectRNG * Math.max(0, myHero.attack - myBoss.defend);
-			if (bossDamage >= myBoss.life) {
-				System.out.printf("%s defeated %s!\n", myHero.name, myBoss.name);
-				reward();
-				return true;
+			//Only attack if no life/chi skill is used.
+			if (myHero.skill.lifeMod <= 0 && myHero.skill.chiMod <= 0) {
+				effectRNG =  generateRandom();
+				bossDamage = effectRNG * Math.max(0, myHero.attack - myBoss.defend);
+				if (bossDamage >= myBoss.life) {
+					System.out.printf("%s defeated %s!\n", myHero.name, myBoss.name);
+					reward();
+					return true;
+				}
+				myBoss.life -= bossDamage;
+				System.out.printf("%s attacked %s for %.2f damage, %s \n", 
+						myHero.name, myBoss.name, bossDamage, effects[(int) (effectRNG / 0.25 - 2)]);
+				
+				System.out.printf("%s has %.2f life left\n",myBoss.name, myBoss.life);
 			}
-			myBoss.life -= bossDamage;
-			System.out.printf("%s attacked %s for %.2f damage, %s \n", 
-					myHero.name, myBoss.name, bossDamage, effects[(int) (effectRNG / 0.25 - 2)]);
-			System.out.printf("%s has %.2f life left\n",myBoss.name, myBoss.life);
 			
 			//Boss round.
-			effectRNG =  generateRandom();
-			heroDamage = effectRNG * Math.max(0, myBoss.attack - myHero.defend);
-			if (heroDamage >= myHero.life) {
-				System.out.printf("%s was defeated!\n", myHero.name);
-				return false;
+			//Only attack if no life/chi skill is used.
+			if (myBoss.skill.lifeMod <= 0 && myBoss.skill.chiMod <= 0) {
+				effectRNG =  generateRandom();
+				heroDamage = effectRNG * Math.max(0, myBoss.attack - myHero.defend);
+				if (heroDamage >= myHero.life) {
+					System.out.printf("%s was defeated!\n", myHero.name);
+					return false;
+				}
+				myHero.life -= heroDamage;
+				System.out.printf("%s attacked %s for %.2f damage, %s \n", 
+						myBoss.name, myHero.name, heroDamage, effects[(int) (effectRNG / 0.25 - 2)]);
+				System.out.printf("%s has %.2f life left\n",myHero.name, myHero.life);
 			}
-			myHero.life -= heroDamage;
-			System.out.printf("%s attacked %s for %.2f damage, %s \n", 
-					myBoss.name, myHero.name, heroDamage, effects[(int) (effectRNG / 0.25 - 2)]);
-			System.out.printf("%s has %.2f life left\n",myHero.name, myHero.life);
 			
 			//Prepare for next round.
 			roundCheck();
@@ -109,14 +120,16 @@ public class Battle {
 		myHero.duration--;
 		myBoss.duration--;
 		
-		if (myHero.duration <= 0)
+		if (myHero.duration <= 0) {
 			myHero.skill.cancel(myHero);
-		if (myBoss.duration <= 0)
+		}
+		if (myBoss.duration <= 0) {
 			myBoss.skill.cancel(myBoss);
+		}
 		
 	}
 	
-	//You win the battle, you get stuff.
+	//You win the battle, you get good stuff.
 	private void reward() {
 		this.myHero.attack *= 1.05;
 		this.myHero.defend *= 1.05;

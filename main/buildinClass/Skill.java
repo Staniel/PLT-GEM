@@ -17,6 +17,11 @@ public class Skill {
 			this.cost = cost;
 		}
 		
+		public void upgrade() {
+			this.lifeMod *= 1.2;
+		}
+		
+		//Use this skill.
 		public void cast(Unit character) {	
 			if (lifeMod > 0) {
 				System.out.printf("%s restored %.2f health for %s.\n", this.name, this.lifeMod, character.name);
@@ -42,6 +47,7 @@ public class Skill {
 			return;
 		}
 		
+		//Cancel skill effect.
 		public void cancel(Unit character) {
 			if (lifeMod > 0) {
 				System.out.printf("%s restored %.2f health for %s.\n", this.name, this.lifeMod, character.name);
@@ -67,6 +73,7 @@ public class Skill {
 			return;
 		}
 		
+		//Description of the skill.
 		public String effect() {
 			String lifeEffect = (this.lifeMod > 0) ? "Restore " + lifeMod + " life for caster. " :"";
 			String chiEffect = (this.chiMod > 0) ? "Restore " + chiMod + " chi for caster. " :"";
