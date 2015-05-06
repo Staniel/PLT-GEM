@@ -4,8 +4,14 @@ Compiler/GemC.jar
 Compiler/Main.*
 Compiler/hello.gem
 Compiler/SystemTests/GemC.jar
-Compiler/SystemTests/Main.java
-Compiler/SystemTests/Main.class
+Compiler/SystemTests/*.java
+Compiler/SystemTests/*.class
+Compiler/SystemTests/tests/*.out
+Compiler/SystemTests/tests/*.class
+Compiler/SystemTests/tests/*.java
+Compiler/SystemTests/test1/*.out
+Compiler/SystemTests/test1/*.java
+Compiler/SystemTests/test1/*.class
 src/
 main/GEM.tokens
 main/GEMBaseListener.java

@@ -174,7 +174,8 @@ variableInitializer
     ;
 
 arrayInitializer
-    :   '{' (variableInitializer (',' variableInitializer)* (',')? )? '}'
+    :   '{' (variableInitializer (',' variableInitializer)* (',')? )? '}' #arrayInitializer1
+    |    'array' type '[' expression ']' #arrayInitializer2 
     ;
 
 statement	:   block	#bs
