@@ -81,7 +81,7 @@ expression :   primary #primaryExpr
         |   '-='
         |   '*='
         |   '/='
-        |   '%='
+        |   '%=' 
         )
         expression #assignExpr
 ;
@@ -96,14 +96,25 @@ type
 
 constructor: unitConstructor
 		   | battleConstructor
-		   | eventType eventArguments eventBlock;
+		   | eventConstructor
+		   ;
+
+eventConstructor:	'Event' eventArguments eventBlock
+				;
+				
+eventArguments	:	'(' eventExpressionList ')'
+				;
+
+eventExpressionList
+	:	expression ',' expression (',' expressionList)?
+	;
 
 eventBlock: '{' blockStatement*
 				nextStatement '}'
 				;
 
-unitConstructor: 'Unit' unitArguments
-				 ;
+unitConstructor	: 'Unit' unitArguments
+				;
 
 unitArguments: '(' expression ',' expression ',' expression ',' expression ')';
 
@@ -127,14 +138,6 @@ arguments
 expressionList
     :   expression (',' expression)*
     ;
-
-eventArguments
-	:	'(' eventExpressionList ')'
-	;
-
-eventExpressionList
-	:	expression ',' expression (',' expressionList)?
-	;
 
 block
     :   '{' blockStatement* '}'
