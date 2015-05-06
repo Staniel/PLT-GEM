@@ -17,59 +17,45 @@ public class Skill {
 			this.cost = cost;
 		}
 		
-		public void upgrade() {
-			this.lifeMod *= 1.2;
-		}
-		
 		//Use this skill.
-		public void cast(Unit character) {	
+		public void cast(Unit character) {
+			System.out.printf("%s Used skill %s : ", character.name, this.name);
 			if (lifeMod > 0) {
-				System.out.printf("%s restored %.2f health for %s.\n", this.name, this.lifeMod, character.name);
-				character.life += lifeMod;
+				double lifePlus = Math.min(lifeMod, character.lifeMax - character.life);
+				System.out.printf("%s restored %.2f health for %s.", this.name, lifePlus, character.name);
+				character.life += lifePlus;
 			}
 			
 			if (chiMod > 0) {
-				System.out.printf("%s restored %d chi for %s.\n", this.name, this.chiMod, character.name);
-				character.chi += chiMod;
+				int chiPlus = Math.min(chiMod, character.chiMax - character.chi);
+				System.out.printf("%s restored %d chi for %s. ", this.name, chiPlus, character.name);
+				character.chi += chiPlus;
 			}
 			
 			if (attackMod > 0 && this != character.skill) {
-				System.out.println("Attack increased temporarily by " + attackMod * 100 + "% for " + character.name + ".");
+				System.out.print("Attack increased temporarily by " + attackMod * 100 + "% for " + character.name + ". ");
 				character.attack *= (1 + attackMod);
 			}
 			
 			if (defendMod > 0 && this != character.skill) {
-				System.out.println("Defense increased temporarily by " + defendMod * 100 + "% for " + character.name + ".");
+				System.out.print("Defense increased temporarily by " + defendMod * 100 + "% for " + character.name + ".");
 				character.defend *= (1 + defendMod);
 			}
 			character.skill = this;
-		
+			System.out.println("");
 			return;
 		}
 		
 		//Cancel skill effect.
 		public void cancel(Unit character) {
-			if (lifeMod > 0) {
-				System.out.printf("%s restored %.2f health for %s.\n", this.name, this.lifeMod, character.name);
-				character.life += lifeMod;
+			if (attackMod > 0) {
+				character.attack /= (1 + attackMod);
 			}
 			
-			if (chiMod > 0) {
-				System.out.printf("%s restored %d chi for %s.\n", this.name, this.chiMod, character.name);
-				character.chi += chiMod;
+			if (defendMod > 0) {
+				character.defend /= (1 + defendMod);
 			}
 			
-			if (attackMod > 0 && this != character.skill) {
-				System.out.println("Attack increased temporarily by " + attackMod * 100 + "% for " + character.name + ".");
-				character.attack *= (1 + attackMod);
-			}
-			
-			if (defendMod > 0 && this != character.skill) {
-				System.out.println("Defense increased temporarily by " + defendMod * 100 + "% for " + character.name + ".");
-				character.defend *= (1 + defendMod);
-			}
-			character.skill = this;
-		
 			return;
 		}
 		
@@ -81,7 +67,9 @@ public class Skill {
 					+ "% for this round. " :"";
 			String defendEffect = (this.defendMod > 0) ? "Increase defend by " + defendMod * 100
 					+ "% for this round. " :"";
-			String totalEffect = lifeEffect + chiEffect + attackEffect + defendEffect;
+			String costEffect = (this.cost > 0) ? "Costs " + cost + " chi. " :"";
+			String totalEffect = lifeEffect + chiEffect + attackEffect + defendEffect + costEffect;
+			
 			return totalEffect;
 		}
 }
