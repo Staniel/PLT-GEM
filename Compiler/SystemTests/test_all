@@ -16,7 +16,7 @@ if [ -n "$yn" ]; then
     fi
 
 else
-    for entry in tests/*.gem
+    for entry in test1/*.gem
 	do
 		java -jar GemC.jar $1 > $entry.java $entry
   		./gem $entry > $entry.out
