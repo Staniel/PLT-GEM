@@ -1,0 +1,8 @@
+void main(String[] args) {
+//    int[] a = arr int[3];
+    char[] b = {'a', 'b'};
+//    int i;
+//    for (i=0;i<3;i++)
+//    	a[i]
+	print b[1];
+}
