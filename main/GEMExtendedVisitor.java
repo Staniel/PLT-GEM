@@ -385,7 +385,7 @@ public class GEMExtendedVisitor extends GEMBaseVisitor<Void> {
 	}
 	
 	@Override public Void visitEventConstructor(@NotNull GEMParser.EventConstructorContext ctx) {
-		print("Event ");
+		print("Event");
 		visit(ctx.eventArguments());
 		visit(ctx.eventBlock());
 		return null;
