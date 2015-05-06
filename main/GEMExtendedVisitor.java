@@ -240,22 +240,32 @@ public class GEMExtendedVisitor extends GEMBaseVisitor<Void> {
 	}
 	
 	@Override public Void visitBinAndExpr(@NotNull GEMParser.BinAndExprContext ctx){
+		print("( ");
 		visit(ctx.expression(0));
+		print(" )");
 		print(" "+ctx.getChild(1).getText()+" ");
+		print("( ");
 		visit(ctx.expression(1));
+		print(" )");
 		return null;
 	}
 
 	@Override public Void visitBinOrExpr(@NotNull GEMParser.BinOrExprContext ctx){
+		print("( ");
 		visit(ctx.expression(0));
+		print(" )");
 		print(" "+ctx.getChild(1).getText()+" ");
+		print("( ");
 		visit(ctx.expression(1));
+		print(" )");
 		return null;
 	}
 	
 	@Override public Void visitUnaryExpr(@NotNull GEMParser.UnaryExprContext ctx){
 		print(ctx.getChild(0).getText());
+		print("( ");
 		visit(ctx.expression());
+		print(" )");
 		return null;
 	}
 	@Override public Void visitUnaryRelExpr(@NotNull GEMParser.UnaryRelExprContext ctx){
