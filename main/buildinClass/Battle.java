@@ -47,7 +47,7 @@ public class Battle {
 			System.out.println("0 - Attack: A \"normally\" effective attack.");
 
 			//Use skill for hero, if any.
-			if (myHero.chi > 0 && heroSkills != null && heroSkills.length > 0) {
+			if (heroSkills != null && heroSkills.length > 0) {
 				while (true) {
 					myHero.showSkills();
 					String command = sc.next();
@@ -58,6 +58,8 @@ public class Battle {
 					}
 					try {
 						skillNum = Integer.parseInt(command) - 1;
+						if (skillNum == -1)
+							break;
 						if (skillNum < -1 || skillNum >= heroSkills.length) {
 							System.out.println("No such skill.");
 							continue;
@@ -70,27 +72,29 @@ public class Battle {
 						System.out.println("No such command.");
 						continue;
 					}
+					myHero.skills[skillNum].cast(myHero);
 					break;
 				}
-				myHero.skills[skillNum].cast(myHero);
 			}
 			
 			//Automatically use skill for boss, if any.
-			if (myBoss.chi > 0 && bossSkills != null && bossSkills.length > 0) {
+			if (bossSkills != null && bossSkills.length > 0) {
 				while (true) {
-					skillNum = rng.nextInt(bossSkills.length);
+					skillNum = rng.nextInt(bossSkills.length + 1);
+					if (skillNum == bossSkills.length)
+						break;
 					if (myBoss.chi < bossSkills[skillNum].cost) {
 						continue;
 					}
+					myBoss.skills[skillNum].cast(myBoss);
 					break;
 				}
-				myBoss.skills[skillNum].cast(myBoss);
 				System.out.println("");
 			}
 			
 			//Hero round.
 			//Only attack if no life/chi skill is used.
-			if (myHero.skill.lifeMod <= 0 && myHero.skill.chiMod <= 0) {
+			if (skillNum == -1 || (myHero.skill.lifeMod <= 0 && myHero.skill.chiMod <= 0)) {
 				effectRNG =  generateRandom();
 				bossDamage = effectRNG * Math.max(0, myHero.attack - myBoss.defend);
 				if (bossDamage >= myBoss.life) {
@@ -137,7 +141,7 @@ public class Battle {
 	
 	//You win the battle, you get good stuff.
 	private void reward() {
-		System.out.println("You feels stronger after the glorious battle.");
+		System.out.printf("%s feels stronger after the glorious battle.", this.myHero.name);
 		this.myHero.grow(this.myBoss);
 	}
 	

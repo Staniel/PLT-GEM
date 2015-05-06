@@ -32,17 +32,24 @@ public class Unit {
 		skills = h.skills.clone();
 	}
 	
+	//Print out status of this unit.
 	public void status() {
 		System.out.printf("%s: %.2f / %.2f life, %d / %d chi, %.2f attack / %.2f defense\n", 
 				this.name, this.life, this.lifeMax, this.chi, this.chiMax, this.attack, this.defend);
 	}
 	
+	//Strengthen this unit based on opponent's level.
 	public void grow(Unit opponent) {
 		this.attack *= 1.05;
 		this.defend *= 1.05;
 		this.lifeMax *= 1.05;
 		this.life = this.lifeMax;
 		this.status();
+	}
+	
+	//AI of boss, choosing the relatively good strategy to use.
+	public void choose(Unit boss) {
+		
 	}
 	
 	public void showSkills() {
