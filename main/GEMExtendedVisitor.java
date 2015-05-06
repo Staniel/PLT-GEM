@@ -367,10 +367,55 @@ public class GEMExtendedVisitor extends GEMBaseVisitor<Void> {
 		print(ctx.getText());
 		return null;
 	}
+	
 	@Override public Void visitStatementExpr(@NotNull GEMParser.StatementExprContext ctx) {
 		visit(ctx.statementExpression());
 		print(";");
-		return null;	
+		return null;
 	}
 	
+	@Override public Void visitConstructor(@NotNull GEMParser.ConstructorContext ctx) {
+		visit(ctx.getChild(0));
+		return null;
+	}
+	
+	@Override public Void visitEventConstructor(@NotNull GEMParser.EventConstructorContext ctx) {
+		print("Event ");
+		visit(ctx.eventArguments());
+		visit(ctx.eventBlock());
+		return null;
+	}
+	
+	@Override public Void visitEventArguments(@NotNull GEMParser.EventArgumentsContext ctx) {
+		print("(");
+		visit(ctx.eventExpressionList());
+		print(")");
+		return null;
+	}
+	
+	@Override public Void visitEventExpressionList(@NotNull GEMParser.EventExpressionListContext ctx) {
+		visit(ctx.expression(0));
+		print(", ");
+		visit(ctx.expression(1));
+		if (ctx.expressionList() != null) {
+			print(", ");
+			visit(ctx.expressionList());
+		}
+		return null;
+	}
+	
+	@Override public Void visitBattleConstructor(@NotNull GEMParser.BattleConstructorContext ctx) {
+		print("Battle ");
+		visit(ctx.battleArguments());
+		return null;
+	}
+	
+	@Override public Void visitBattleArguments(@NotNull GEMParser.BattleArgumentsContext ctx) {
+		print("(");
+		visit(ctx.expression(0));
+		print(", ");
+		visit(ctx.expression(1));
+		print(")");
+		return null;
+	}
 }
