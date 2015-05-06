@@ -3,7 +3,6 @@ read -p "Do you want to test individual file? filename or press enter directly. 
 if [ -n "$yn" ]; then
 	subdir="test1/"
 	dir1=$subdir$yn
-	echo $dir1
 	java -jar GemC.jar $1 > $dir1.java $dir1
     ./gem $dir1 > $dir1.out
     diff --brief <(sort $dir1.out) <(sort $dir1.test) >/dev/null
