@@ -3,6 +3,8 @@ import java.util.List;
 import org.antlr.v4.runtime.misc.NotNull;
 import org.antlr.v4.runtime.tree.TerminalNode;
 
+//import GEMParser.VariableInitializerContext;
+
 public class GEMExtendedVisitor extends GEMBaseVisitor<Void> {
 	private void ce() {
 		print("Compile Error.\n");
@@ -367,6 +369,27 @@ public class GEMExtendedVisitor extends GEMBaseVisitor<Void> {
 		print("(");
 		visit(ctx.expressionList());
 		print(")");
+		return null;
+	}
+	@Override public Void visitArrayInitializer1(@NotNull GEMParser.ArrayInitializer1Context ctx)  {
+		print("{ ");
+		int size = ctx.variableInitializer().size();
+		for (int i=0;i<size-1;i++){
+			visit(ctx.variableInitializer(i));
+			print(", ");
+		}
+		visit(ctx.variableInitializer(size-1));
+		print(" }");
+//		'{' (variableInitializer (',' variableInitializer)* (',')? )? '}'
+	return null;
+}
+	@Override public Void visitArrayInitializer2(@NotNull GEMParser.ArrayInitializer2Context ctx)  {
+			print("new ");
+			visit(ctx.type());
+			print("[ ");
+			visit(ctx.expression());
+			print(" ]");
+//			'{' (variableInitializer (',' variableInitializer)* (',')? )? '}'
 		return null;
 	}
 }
