@@ -10,10 +10,11 @@ public class BattleTest {
 	@Test
 	public void doTest(){
 		// test the game when the hero is lost
-		Skill s1 = new Skill("LOL", 5, 0, 0.255, 0.255, 1);
+		Skill s1 = new Skill("LOL", 5, 0, 1, 1, 1);
 		Skill s2 = new Skill("Heal", 5, 0, 0, 0, 1);
 		Skill s3 = new Skill("Think", 0, 1, 0, 0, 0);
-		Skill[] ss = {s1, s2, s3};
+		Skill s4 = new Skill("Let's do this", 0, 0, 3, 0, 1);
+		Skill[] ss = {s1, s2, s3, s4};
 		Unit m = new Unit("boss", 5, 2, 20, 5, ss);
 		Unit h = new Unit("hero", 5, 2, 10, 5, ss);
 		Battle b = new Battle("Battle to death!", m);

@@ -2,7 +2,8 @@ import java.util.List;
 
 import org.antlr.v4.runtime.misc.NotNull;
 import org.antlr.v4.runtime.tree.TerminalNode;
-import org.antlr.v4.runtime.misc.NotNull;
+
+//import GEMParser.VariableInitializerContext;
 
 public class GEMExtendedVisitor extends GEMBaseVisitor<Void> {
 	private void ce() {
@@ -18,7 +19,8 @@ public class GEMExtendedVisitor extends GEMBaseVisitor<Void> {
 	}
 	
 	@Override public Void visitCompilationUnit(@NotNull GEMParser.CompilationUnitContext ctx) {
-		print("import java.util.*;");
+		print("import java.util.*;\n");
+		print("import buildinClass.*;\n");
 		print("public class Main {\n");
 		print("public static Scanner scanner = new Scanner(System.in);");
 		for (GEMParser.VariableDeclarationContext vd: ctx.variableDeclaration()) {
@@ -32,12 +34,7 @@ public class GEMExtendedVisitor extends GEMBaseVisitor<Void> {
 	}
 	
 	@Override public Void visitMethodDeclaration(@NotNull GEMParser.MethodDeclarationContext ctx) {
-		if (ctx.Identifier().getText().equals("main")) {
-			printSp("public static");
-		} else {
-			printSp("public");
-		}
-		
+		printSp("public static");
 		if (ctx.type() != null) {
 			visit(ctx.type());
 			print(" " + ctx.Identifier().getText());
@@ -156,9 +153,8 @@ public class GEMExtendedVisitor extends GEMBaseVisitor<Void> {
 	@Override public Void visitVariableDeclarator(@NotNull GEMParser.VariableDeclaratorContext ctx) {
 		visit(ctx.variableDeclaratorId());
 		if (ctx.variableInitializer() != null) {
-			print("=");
+			print(" = ");
 			visit(ctx.variableInitializer());
-
 		}
 		return null;
 	}
@@ -169,7 +165,7 @@ public class GEMExtendedVisitor extends GEMBaseVisitor<Void> {
 	}
 	
 	@Override public Void visitVariableInitializer(@NotNull GEMParser.VariableInitializerContext ctx) {
-		print(ctx.getText());
+		visit(ctx.getChild(0));
 		return null;
 	}
 	
@@ -180,6 +176,11 @@ public class GEMExtendedVisitor extends GEMBaseVisitor<Void> {
 		return null;
 	}
 	
+	@Override public Void visitConstructorExpr(@NotNull GEMParser.ConstructorExprContext ctx) {
+		print("new ");
+		visit(ctx.constructor());
+		return null;
+	}
 
 	@Override public Void visitParExpression(@NotNull GEMParser.ParExpressionContext ctx) { 
 		print("(");
@@ -242,32 +243,24 @@ public class GEMExtendedVisitor extends GEMBaseVisitor<Void> {
 	}
 	
 	@Override public Void visitBinAndExpr(@NotNull GEMParser.BinAndExprContext ctx){
-		print("( ");
 		visit(ctx.expression(0));
-		print(" )");
 		print(" "+ctx.getChild(1).getText()+" ");
-		print("( ");
 		visit(ctx.expression(1));
-		print(" )");
 		return null;
 	}
 
 	@Override public Void visitBinOrExpr(@NotNull GEMParser.BinOrExprContext ctx){
-		print("( ");
 		visit(ctx.expression(0));
-		print(" )");
 		print(" "+ctx.getChild(1).getText()+" ");
-		print("( ");
 		visit(ctx.expression(1));
-		print(" )");
 		return null;
 	}
 	
 	@Override public Void visitUnaryExpr(@NotNull GEMParser.UnaryExprContext ctx){
 		print(ctx.getChild(0).getText());
-		print("( ");
+		print("(");
 		visit(ctx.expression());
-		print(" )");
+		print(")");
 		return null;
 	}
 	
@@ -282,9 +275,9 @@ public class GEMExtendedVisitor extends GEMBaseVisitor<Void> {
 	}
 	@Override public Void visitUnaryRelExpr(@NotNull GEMParser.UnaryRelExprContext ctx){
 		print(ctx.getChild(0).getText());
-		print("( ");
+		print("(");
 		visit(ctx.expression());
-		print(" )");
+		print(")");
 		return null;
 	}
 	
@@ -364,10 +357,89 @@ public class GEMExtendedVisitor extends GEMBaseVisitor<Void> {
 		print(ctx.getText());
 		return null;
 	}
+	
 	@Override public Void visitStatementExpr(@NotNull GEMParser.StatementExprContext ctx) {
 		visit(ctx.statementExpression());
 		print(";");
-		return null;	
+		return null;
 	}
 	
+	@Override public Void visitConstructor(@NotNull GEMParser.ConstructorContext ctx) {
+		visit(ctx.getChild(0));
+		return null;
+	}
+	
+	@Override public Void visitEventConstructor(@NotNull GEMParser.EventConstructorContext ctx) {
+		print("Event ");
+		visit(ctx.eventArguments());
+		visit(ctx.eventBlock());
+		return null;
+	}
+	
+	@Override public Void visitEventArguments(@NotNull GEMParser.EventArgumentsContext ctx) {
+		print("(");
+		visit(ctx.eventExpressionList());
+		print(")");
+		return null;
+	}
+	
+	@Override public Void visitEventExpressionList(@NotNull GEMParser.EventExpressionListContext ctx) {
+		visit(ctx.expression(0));
+		print(", ");
+		visit(ctx.expression(1));
+		if (ctx.expressionList() != null) {
+			print(", ");
+			visit(ctx.expressionList());
+		}
+		return null;
+	}
+	
+	@Override public Void visitBattleConstructor(@NotNull GEMParser.BattleConstructorContext ctx) {
+		print("Battle");
+		visit(ctx.battleArguments());
+		return null;
+	}
+	@Override public Void visitArrayExpr(@NotNull GEMParser.ArrayExprContext ctx) {
+		visit(ctx.expression(0));
+		print("[");
+		visit(ctx.expression(1));
+		print("]");
+		return null;
+	}
+	@Override public Void visitFuncExpr(@NotNull GEMParser.FuncExprContext ctx){
+		visit(ctx.expression());
+		print("(");
+		visit(ctx.expressionList());
+		print(")");
+		return null;
+	}
+	@Override public Void visitArrayInitializer1(@NotNull GEMParser.ArrayInitializer1Context ctx)  {
+		print("{ ");
+		int size = ctx.variableInitializer().size();
+		for (int i=0;i<size-1;i++){
+			visit(ctx.variableInitializer(i));
+			print(", ");
+		}
+		visit(ctx.variableInitializer(size-1));
+		print(" }");
+//		'{' (variableInitializer (',' variableInitializer)* (',')? )? '}'
+	return null;
+}
+	@Override public Void visitArrayInitializer2(@NotNull GEMParser.ArrayInitializer2Context ctx)  {
+			print("new ");
+			visit(ctx.type());
+			print("[ ");
+			visit(ctx.expression());
+			print(" ]");
+//			'{' (variableInitializer (',' variableInitializer)* (',')? )? '}'
+		return null;
+	}
+	@Override public Void visitBattleArguments(@NotNull GEMParser.BattleArgumentsContext ctx) {
+		print("(");
+		visit(ctx.expression(0));
+		print(", ");
+		visit(ctx.expression(1));
+		print(")");
+		return null;
+	}
 }

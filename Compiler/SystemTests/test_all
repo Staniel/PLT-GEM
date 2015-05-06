@@ -1,14 +1,33 @@
 #!/bin/bash
-for entry in test1/*.gem
-do
-  	./gem $entry > $entry.out
-  	diff --brief <(sort $entry.out) <(sort $entry.test) >/dev/null
+read -p "Do you want to test individual file? filename or press enter directly. " yn
+if [ -n "$yn" ]; then
+	subdir="test1/"
+	dir1=$subdir$yn
+	java -jar GemC.jar $1 > $dir1.java $dir1
+    ./gem $dir1 > $dir1.out
+    diff --brief <(sort $dir1.out) <(sort $dir1.test) >/dev/null
 	comp_value=$?
 
 	if [ $comp_value -eq 1 ]
 	then
-    	echo "error in $entry"
+    	echo "error in $yn"
 	else
-    	echo "$entry passed the test"
+    	echo "$yn passed the test"
     fi
-done
+
+else
+    for entry in test1/*.gem
+	do
+		java -jar GemC.jar $1 > $entry.java $entry
+  		./gem $entry > $entry.out
+  		diff --brief <(sort $entry.out) <(sort $entry.test) >/dev/null
+		comp_value=$?
+
+		if [ $comp_value -eq 1 ]
+		then
+    		echo "error in $entry"
+		else
+    		echo "$entry passed the test"
+    	fi
+	done
+fi
