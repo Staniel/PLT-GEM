@@ -1,5 +1,5 @@
 #!/bin/bash
-for entry in test/*.gem
+for entry in test1/*.gem
 do
   	./gem $entry > $entry.out
   	diff --brief <(sort $entry.out) <(sort $entry.test) >/dev/null

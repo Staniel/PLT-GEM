@@ -1,0 +1,4 @@
+void main(String[] args) {
+	// print "should not print";
+	print "should print this";
+}

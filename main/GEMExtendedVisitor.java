@@ -304,6 +304,7 @@ public class GEMExtendedVisitor extends GEMBaseVisitor<Void> {
 		for(GEMParser.SwitchLabelContext tmp : switchLabelList){
 			visit(tmp);
 		}
+		print("}");
 		return null;
 		
 	}
