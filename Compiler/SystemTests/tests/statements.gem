@@ -1,0 +1,8 @@
+void main (String[] agrs) {
+	int a = 1;
+	int b = a + 6;
+	int c = b + a;
+	print a;
+	print b;
+	print c;
+}
