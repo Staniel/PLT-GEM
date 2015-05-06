@@ -44,8 +44,12 @@ LINE_COMMENT
 
 
 
-compilationUnit: (variableDeclaration | methodDeclaration)* methodDeclaration EOF;
+compilationUnit: (outervariableDeclaration | methodDeclaration)* methodDeclaration EOF;
 
+outervariableDeclaration 
+	: type variableDeclarators ';'
+	;
+	
 variableDeclaration
 	: type variableDeclarators ';'
     ;

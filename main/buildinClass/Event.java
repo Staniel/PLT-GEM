@@ -4,6 +4,8 @@ package buildinClass;
 public class Event {
 	public String display;
 	public Event[] options;
+	public String id;
+	
 	public Event(String d, Event[] o){
 		display = d;
 		options = o;
