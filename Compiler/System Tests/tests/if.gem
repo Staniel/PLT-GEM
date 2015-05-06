@@ -1,0 +1,6 @@
+void main(String[] args) {
+	boolean a = true;
+	if (true) {
+		print a;
+	}
+}
