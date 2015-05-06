@@ -11,6 +11,4 @@ void main(String[] args) {
     i = i+-1;
     print i;
     print (i);
-    
-
 }

@@ -235,39 +235,43 @@ public class GEMExtendedVisitor extends GEMBaseVisitor<Void> {
 	}
 	
 	@Override public Void visitBinEqExpr(@NotNull GEMParser.BinEqExprContext ctx){
+		print("(");
 		visit(ctx.expression(0));
+		print(")");
 		print(" "+ctx.getChild(1).getText()+" ");
+		print("(");
 		visit(ctx.expression(1));
+		print(")");
 		return null;
 	}
 	
 	@Override public Void visitBinAndExpr(@NotNull GEMParser.BinAndExprContext ctx){
-		print("( ");
+		print("(");
 		visit(ctx.expression(0));
-		print(" )");
+		print(")");
 		print(" "+ctx.getChild(1).getText()+" ");
-		print("( ");
+		print("(");
 		visit(ctx.expression(1));
-		print(" )");
+		print(")");
 		return null;
 	}
 
 	@Override public Void visitBinOrExpr(@NotNull GEMParser.BinOrExprContext ctx){
-		print("( ");
+		print("(");
 		visit(ctx.expression(0));
-		print(" )");
+		print(")");
 		print(" "+ctx.getChild(1).getText()+" ");
-		print("( ");
+		print("(");
 		visit(ctx.expression(1));
-		print(" )");
+		print(")");
 		return null;
 	}
 	
 	@Override public Void visitUnaryExpr(@NotNull GEMParser.UnaryExprContext ctx){
 		print(ctx.getChild(0).getText());
-		print("( ");
+		print("(");
 		visit(ctx.expression());
-		print(" )");
+		print(")");
 		return null;
 	}
 	
@@ -282,9 +286,9 @@ public class GEMExtendedVisitor extends GEMBaseVisitor<Void> {
 	}
 	@Override public Void visitUnaryRelExpr(@NotNull GEMParser.UnaryRelExprContext ctx){
 		print(ctx.getChild(0).getText());
-		print("( ");
+		print("(");
 		visit(ctx.expression());
-		print(" )");
+		print(")");
 		return null;
 	}
 	
