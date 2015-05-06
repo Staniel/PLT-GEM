@@ -93,25 +93,18 @@ type
     ;
 
 
-constructor: monsterConstructor
+constructor: unitConstructor
 		   | battleConstructor
-		   | heroConstructor
-//		   | itemConstructor
 		   | eventType eventArguments eventBlock;
 
 eventBlock: '{' blockStatement*
 				nextStatement '}'
 				;
 
-monsterConstructor: 'Monster' monsterArguments
+unitConstructor: 'Unit' unitArguments
 				 ;
 
-monsterArguments: '(' expression ',' expression ',' expression ',' expression ')';
-
-heroConstructor: 'Hero' heroArguments
-				 ;
-
-heroArguments: '(' expression ',' expression ',' expression ',' expression ',' expression ')';
+unitArguments: '(' expression ',' expression ',' expression ',' expression ')';
 
 
 battleConstructor: 'Battle' battleArguments
@@ -227,7 +220,7 @@ statementExpression
 
 eventType: 'Event';
 
-specialType: 'Character' | 'Battle'; 
+specialType: 'Unit' | 'Battle'; 
 
 primitiveType
 	:   'boolean'

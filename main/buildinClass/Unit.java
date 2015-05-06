@@ -1,23 +1,26 @@
 package buildinClass;
 
-public class Hero {
+public class Unit {
 	public String name;
 	public double attack;
 	public double defend;
 	public double life;
+	public double lifeMax;
 	public int chi;
+	public int chiMax;
 	public Skill[] skills;
 	public Skill skill;
 	public int duration;
 	
-	public Hero(String n, double a, int chi, double d, double l, Skill[] sk){
+	public Unit(String n, double a, double d, double l, int c, Skill[] sk){
 		name = n;
 		attack = a;
 		defend = d;
 		life = l;
+		chi = c;
 		skills = sk;
 	}
-	public Hero(Hero h){
+	public Unit(Unit h){
 		name = h.name;
 		attack = h.attack;
 		defend = h.defend;
