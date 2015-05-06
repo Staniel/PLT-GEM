@@ -1,5 +1,6 @@
 package buildinClass;
 
+
 import java.util.Random;
 import java.util.Scanner;
 
@@ -46,7 +47,7 @@ public class Battle {
 			System.out.println("status - Check current status.");
 			System.out.println("0 - Attack: A \"normally\" effective attack.");
 
-			//Use skill for hero, if any.
+			//Choose skill from user input.
 			if (heroSkills != null && heroSkills.length > 0) {
 				while (true) {
 					myHero.showSkills();
@@ -96,37 +97,36 @@ public class Battle {
 			//Only attack if no life/chi skill is used.
 			if (skillNum == -1 || (myHero.skill.lifeMod <= 0 && myHero.skill.chiMod <= 0)) {
 				effectRNG =  generateRandom();
-				bossDamage = effectRNG * Math.max(0, myHero.attack - myBoss.defend);
-				if (bossDamage >= myBoss.life) {
+				bossDamage = effectRNG * Math.max(0, myHero.attack - myBoss.defense);
+				myBoss.life -= bossDamage;
+				System.out.printf("%s attacked %s for %.2f damage, %s \n", 
+						myHero.name, myBoss.name, bossDamage, effects[(int) (effectRNG / 0.25 - 2)]);
+				System.out.printf("%s has %.2f life left\n",myBoss.name, Math.max(0, myBoss.life));
+				if (myBoss.life <= 0) {
 					System.out.printf("%s defeated %s!\n", myHero.name, myBoss.name);
 					reward();
 					return true;
 				}
-				myBoss.life -= bossDamage;
-				System.out.printf("%s attacked %s for %.2f damage, %s \n", 
-						myHero.name, myBoss.name, bossDamage, effects[(int) (effectRNG / 0.25 - 2)]);
-				
-				System.out.printf("%s has %.2f life left\n",myBoss.name, myBoss.life);
 			}
 			
 			//Boss round.
 			//Only attack if no life/chi skill is used.
 			if (myBoss.skill.lifeMod <= 0 && myBoss.skill.chiMod <= 0) {
 				effectRNG =  generateRandom();
-				heroDamage = effectRNG * Math.max(0, myBoss.attack - myHero.defend);
-				if (heroDamage >= myHero.life) {
-					System.out.printf("%s was defeated!\n", myHero.name);
-					return false;
-				}
+				heroDamage = effectRNG * Math.max(0, myBoss.attack - myHero.defense);
 				myHero.life -= heroDamage;
 				System.out.printf("%s attacked %s for %.2f damage, %s \n", 
 						myBoss.name, myHero.name, heroDamage, effects[(int) (effectRNG / 0.25 - 2)]);
-				System.out.printf("%s has %.2f life left\n",myHero.name, myHero.life);
+				System.out.printf("%s has %.2f life left\n",myHero.name, Math.max(0, myHero.life));
+				if (myHero.life <= 0) {
+					System.out.printf("%s was defeated!\n", myHero.name);
+					return false;
+				}
 			}
 			
 			//Prepare for next round.
 			roundOver();
-			System.out.println("");
+			System.out.printf("round over\n");
 		}
 		
 		//How could you get here!?
@@ -141,7 +141,7 @@ public class Battle {
 	
 	//You win the battle, you get good stuff.
 	private void reward() {
-		System.out.printf("%s feels stronger after the glorious battle.", this.myHero.name);
+		System.out.printf("%s feels stronger after the glorious battle.\n", this.myHero.name);
 		this.myHero.grow(this.myBoss);
 	}
 	
