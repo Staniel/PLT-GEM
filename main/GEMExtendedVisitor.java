@@ -168,7 +168,7 @@ public class GEMExtendedVisitor extends GEMBaseVisitor<Void> {
 	}
 	
 	@Override public Void visitVariableInitializer(@NotNull GEMParser.VariableInitializerContext ctx) {
-		visit(ctx.expression());
+		visit(ctx.getChild(0));
 		return null;
 	}
 	
