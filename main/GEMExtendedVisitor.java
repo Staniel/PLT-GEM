@@ -22,7 +22,7 @@ public class GEMExtendedVisitor extends GEMBaseVisitor<Void> {
 		print("import java.util.*;\n");
 		print("import buildinClass.*;\n");
 		print("public class Main {\n");
-		print("public static Scanner scanner = new Scanner(System.in);");
+		print("public static Scanner scanner = new Scanner(System.in);\n");
 		for (GEMParser.VariableDeclarationContext vd: ctx.variableDeclaration()) {
 			visit(vd);
 		}
