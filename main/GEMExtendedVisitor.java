@@ -18,7 +18,9 @@ public class GEMExtendedVisitor extends GEMBaseVisitor<Void> {
 	}
 	
 	@Override public Void visitCompilationUnit(@NotNull GEMParser.CompilationUnitContext ctx) {
+		print("import java.util.*;");
 		print("public class Main {\n");
+		print("public static Scanner scanner = new Scanner(System.in);");
 		for (GEMParser.VariableDeclarationContext vd: ctx.variableDeclaration()) {
 			visit(vd);
 		}
@@ -258,7 +260,16 @@ public class GEMExtendedVisitor extends GEMBaseVisitor<Void> {
 		visit(ctx.expression());
 		return null;
 	}
-		
+	
+	@Override public Void visitInputNumberExpr(@NotNull GEMParser.InputNumberExprContext ctx) { 
+		print("scanner.nextInt()");
+		return null;
+	}
+	
+	@Override public Void visitInputStrExpr(@NotNull GEMParser.InputStrExprContext ctx) { 
+		print("scanner.next()");	
+		return null;
+	}
 	
 	@Override public Void visitSwitchLabel(@NotNull GEMParser.SwitchLabelContext ctx) {
 		String text = ctx.getText();

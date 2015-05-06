@@ -65,7 +65,8 @@ expression :   primary #primaryExpr
     |   expression '[' expression ']' #arrayExpr
     |   expression '(' expressionList? ')' #funcExpr
     |   'new' constructor #constructorExpr
-    |	'input' StringLiteral #inputExpr
+    |	'inputNumber' #inputNumberExpr
+    |   'inputStr' #inputStrExpr
     |   ('+'|'-') expression #unaryExpr
     |   ('~'|'!') expression #unaryRelExpr
     |   expression ('*'|'/'|'%') expression #binTopExpr
