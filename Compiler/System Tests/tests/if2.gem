@@ -1,0 +1,9 @@
+void main(String[] args) {
+	int a = 4;
+	if (a < 5) {
+		print "correct";
+	} 
+	else {
+		print "wrong";
+	}
+}
