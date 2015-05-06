@@ -10,14 +10,15 @@ public class Unit {
 	public int chiMax;
 	public Skill[] skills;
 	public Skill skill;
-	public int duration;
 	
 	public Unit(String n, double a, double d, double l, int c, Skill[] sk){
 		name = n;
 		attack = a;
 		defend = d;
 		life = l;
+		lifeMax = life;
 		chi = c;
+		chiMax = chi;
 		skills = sk;
 	}
 	public Unit(Unit h){
@@ -25,8 +26,23 @@ public class Unit {
 		attack = h.attack;
 		defend = h.defend;
 		life = h.life;
+		lifeMax = h.lifeMax;
 		chi = h.chi;
+		chiMax = h.chiMax;
 		skills = h.skills.clone();
+	}
+	
+	public void status() {
+		System.out.printf("%s: %.2f / %.2f life, %d / %d chi, %.2f attack / %.2f defense\n", 
+				this.name, this.life, this.lifeMax, this.chi, this.chiMax, this.attack, this.defend);
+	}
+	
+	public void grow(Unit opponent) {
+		this.attack *= 1.05;
+		this.defend *= 1.05;
+		this.lifeMax *= 1.05;
+		this.life = this.lifeMax;
+		this.status();
 	}
 	
 	public void showSkills() {

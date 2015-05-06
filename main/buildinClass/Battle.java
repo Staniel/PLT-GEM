@@ -43,20 +43,35 @@ public class Battle {
 		
 		while (myBoss.life > 0 && myHero.life > 0){
 			System.out.println("Please choose your skill to use:");
+			System.out.println("status - Check current status.");
 			System.out.println("0 - Attack: A \"normally\" effective attack.");
 
 			//Use skill for hero, if any.
 			if (myHero.chi > 0 && heroSkills != null && heroSkills.length > 0) {
 				while (true) {
 					myHero.showSkills();
-					skillNum = sc.nextInt() - 1;
-					if (myHero.chi < heroSkills[skillNum].cost) {
-						System.out.println("You don't have enough chi for this skill");
+					String command = sc.next();
+					if (command.equals("status")) {
+						myHero.status();
+						myBoss.status();
+						continue;
+					}
+					try {
+						skillNum = Integer.parseInt(command) - 1;
+						if (skillNum < -1 || skillNum >= heroSkills.length) {
+							System.out.println("No such skill.");
+							continue;
+						}
+						if (myHero.chi < heroSkills[skillNum].cost) {
+							System.out.println("You don't have enough chi for this skill.");
+							continue;
+						}
+					} catch (NumberFormatException nfe) {
+						System.out.println("No such command.");
 						continue;
 					}
 					break;
 				}
-				System.out.printf("%s Used skill : %s\n", myHero.name, heroSkills[skillNum].name);
 				myHero.skills[skillNum].cast(myHero);
 			}
 			
@@ -69,7 +84,6 @@ public class Battle {
 					}
 					break;
 				}
-				System.out.printf("%s Used skill : %s\n", myBoss.name, bossSkills[skillNum].name);
 				myBoss.skills[skillNum].cast(myBoss);
 				System.out.println("");
 			}
@@ -107,7 +121,7 @@ public class Battle {
 			}
 			
 			//Prepare for next round.
-			roundCheck();
+			roundOver();
 			System.out.println("");
 		}
 		
@@ -116,27 +130,18 @@ public class Battle {
 	}
 	
 	//Check duration of skill and reset status if expired.
-	private void roundCheck() {
-		myHero.duration--;
-		myBoss.duration--;
-		
-		if (myHero.duration <= 0) {
-			myHero.skill.cancel(myHero);
-		}
-		if (myBoss.duration <= 0) {
-			myBoss.skill.cancel(myBoss);
-		}
-		
+	private void roundOver() {
+		myHero.skill.cancel(myHero);
+		myBoss.skill.cancel(myBoss);
 	}
 	
 	//You win the battle, you get good stuff.
 	private void reward() {
-		this.myHero.attack *= 1.05;
-		this.myHero.defend *= 1.05;
-		this.myHero.lifeMax *= 1.05;
-		this.myHero.life = this.myHero.lifeMax;
+		System.out.println("You feels stronger after the glorious battle.");
+		this.myHero.grow(this.myBoss);
 	}
 	
+	//Normally distributed attack effect.
 	private double generateRandom() {
 		double d = rng.nextGaussian() / 2 + 1;
 		if (d < 0.5)

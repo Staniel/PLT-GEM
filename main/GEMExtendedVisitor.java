@@ -2,7 +2,6 @@ import java.util.List;
 
 import org.antlr.v4.runtime.misc.NotNull;
 import org.antlr.v4.runtime.tree.TerminalNode;
-import org.antlr.v4.runtime.misc.NotNull;
 
 public class GEMExtendedVisitor extends GEMBaseVisitor<Void> {
 	private void ce() {
