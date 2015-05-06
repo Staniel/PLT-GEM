@@ -1,2 +1,2 @@
-Battle bt;
-void main(){}
+//Battle bt;
+void main(String[] args){}

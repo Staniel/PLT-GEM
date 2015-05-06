@@ -23,7 +23,7 @@ public class GEMExtendedVisitor extends GEMBaseVisitor<Void> {
 		print("import buildinClass.*;\n");
 		print("public class Main {\n");
 		print("public static Scanner scanner = new Scanner(System.in);\n");
-		for (GEMParser.VariableDeclarationContext vd: ctx.variableDeclaration()) {
+		for (GEMParser.OutervariableDeclarationContext vd: ctx.outervariableDeclaration()) {
 			visit(vd);
 		}
 		for (GEMParser.MethodDeclarationContext md : ctx.methodDeclaration()) {
@@ -96,6 +96,15 @@ public class GEMExtendedVisitor extends GEMBaseVisitor<Void> {
 	}
 	
 	@Override public Void visitVariableDeclaration(@NotNull GEMParser.VariableDeclarationContext ctx) {
+		visit(ctx.type());
+		print(" ");
+		visit(ctx.variableDeclarators());
+		print(";\n");
+		return null;
+	}
+	
+	@Override public Void visitOutervariableDeclaration(@NotNull GEMParser.OutervariableDeclarationContext ctx){
+		print("public static ");
 		visit(ctx.type());
 		print(" ");
 		visit(ctx.variableDeclarators());
@@ -440,6 +449,13 @@ public class GEMExtendedVisitor extends GEMBaseVisitor<Void> {
 		print(", ");
 		visit(ctx.expression(1));
 		print(")");
+		return null;
+	}
+	@Override public Void visitWhileStatement(@NotNull GEMParser.WhileStatementContext ctx){
+		print("while ( ");
+		visit(ctx.parExpression());
+		print(" )");
+		visit(ctx.statement());
 		return null;
 	}
 }

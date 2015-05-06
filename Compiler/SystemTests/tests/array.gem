@@ -1,5 +1,5 @@
 void main(String[] args) {
-	int[] a = new int[2];
+	int[] a = array int[2];
 	a[1] = 5;
 	print a[1];
 }
