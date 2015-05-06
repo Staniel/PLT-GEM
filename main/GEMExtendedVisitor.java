@@ -258,7 +258,13 @@ public class GEMExtendedVisitor extends GEMBaseVisitor<Void> {
 		visit(ctx.expression());
 		return null;
 	}
-		
+	@Override public Void visitUnaryRelExpr(@NotNull GEMParser.UnaryRelExprContext ctx){
+		print(ctx.getChild(0).getText());
+		print("( ");
+		visit(ctx.expression());
+		print(" )")
+		return null;
+	}
 	
 	@Override public Void visitSwitchLabel(@NotNull GEMParser.SwitchLabelContext ctx) {
 		String text = ctx.getText();
