@@ -262,7 +262,7 @@ public class GEMExtendedVisitor extends GEMBaseVisitor<Void> {
 		print(ctx.getChild(0).getText());
 		print("( ");
 		visit(ctx.expression());
-		print(" )")
+		print(" )");
 		return null;
 	}
 	
