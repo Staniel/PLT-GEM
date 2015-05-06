@@ -4,6 +4,13 @@ void main(String[] args){
 	switch (a) {
 		case 1:
 			b=1;
+			break;
+		case 2:
+			b=2;
+			break;
+		default:
+			b=0;
+			break;
 	}
-	print "aa";
+	print b;
 }
