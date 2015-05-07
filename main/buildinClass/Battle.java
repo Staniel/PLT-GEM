@@ -18,6 +18,7 @@ public class Battle {
 	private Skill[] heroSkills;
 	private Skill[] bossSkills;
 	private int skillNum;
+	private int skillNumBoss;
 	
 	//Initiate a battle with battle message and monster.
 	public Battle(String s, Unit m){
@@ -43,8 +44,10 @@ public class Battle {
 		bossSkills = myBoss.skills;
 		
 		while (myBoss.life > 0 && myHero.life > 0){
+			myHero.status();
+			myBoss.status();
 			System.out.println("Please choose your skill to use:");
-			System.out.println("status - Check current status.");
+//			System.out.println("status - Check current status.");
 			System.out.println("0 - Attack: A \"normally\" effective attack.");
 
 			//Choose skill from user input.
@@ -52,11 +55,11 @@ public class Battle {
 				while (true) {
 					myHero.showSkills();
 					String command = sc.next();
-					if (command.equals("status")) {
-						myHero.status();
-						myBoss.status();
-						continue;
-					}
+//					if (command.equals("status")) {
+//						myHero.status();
+//						myBoss.status();
+//						continue;
+//					}
 					try {
 						skillNum = Integer.parseInt(command) - 1;
 						if (skillNum == -1)
@@ -81,13 +84,13 @@ public class Battle {
 			//Automatically use skill for boss, if any.
 			if (bossSkills != null && bossSkills.length > 0) {
 				while (true) {
-					skillNum = rng.nextInt(bossSkills.length + 1);
-					if (skillNum == bossSkills.length)
+					skillNumBoss = rng.nextInt(bossSkills.length + 1);
+					if (skillNumBoss == bossSkills.length)
 						break;
-					if (myBoss.chi < bossSkills[skillNum].cost) {
+					if (myBoss.chi < bossSkills[skillNumBoss].cost) {
 						continue;
 					}
-					myBoss.skills[skillNum].cast(myBoss);
+					myBoss.skills[skillNumBoss].cast(myBoss);
 					break;
 				}
 				System.out.println("");
@@ -101,7 +104,7 @@ public class Battle {
 				myBoss.life -= bossDamage;
 				System.out.printf("%s attacked %s for %.2f damage, %s \n", 
 						myHero.name, myBoss.name, bossDamage, effects[(int) (effectRNG / 0.25 - 2)]);
-				System.out.printf("%s has %.2f life left\n",myBoss.name, Math.max(0, myBoss.life));
+				System.out.printf("%s has %.2f life left\n\n",myBoss.name, Math.max(0, myBoss.life));
 				if (myBoss.life <= 0) {
 					System.out.printf("%s defeated %s!\n", myHero.name, myBoss.name);
 					reward();
@@ -111,13 +114,13 @@ public class Battle {
 			
 			//Boss round.
 			//Only attack if no life/chi skill is used.
-			if (myBoss.skill.lifeMod <= 0 && myBoss.skill.chiMod <= 0) {
+			if (skillNumBoss == -1 || myBoss.skill.lifeMod <= 0 && myBoss.skill.chiMod <= 0) {
 				effectRNG =  generateRandom();
 				heroDamage = effectRNG * Math.max(0, myBoss.attack - myHero.defense);
 				myHero.life -= heroDamage;
 				System.out.printf("%s attacked %s for %.2f damage, %s \n", 
 						myBoss.name, myHero.name, heroDamage, effects[(int) (effectRNG / 0.25 - 2)]);
-				System.out.printf("%s has %.2f life left\n",myHero.name, Math.max(0, myHero.life));
+				System.out.printf("%s has %.2f life left\n\n",myHero.name, Math.max(0, myHero.life));
 				if (myHero.life <= 0) {
 					System.out.printf("%s was defeated!\n", myHero.name);
 					return false;
@@ -135,8 +138,10 @@ public class Battle {
 	
 	//Check duration of skill and reset status if expired.
 	private void roundOver() {
-		myHero.skill.cancel(myHero);
-		myBoss.skill.cancel(myBoss);
+		if (myHero.skill != null)
+			myHero.skill.cancel(myHero);
+		if (myBoss.skill != null)
+			myBoss.skill.cancel(myBoss);
 	}
 	
 	//You win the battle, you get good stuff.

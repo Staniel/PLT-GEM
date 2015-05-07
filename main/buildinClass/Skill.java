@@ -26,7 +26,7 @@ public class Skill {
 				System.err.printf("Invalid defense modifer.");
 				valid = false;
 			}
-			if (cost <= 0) {
+			if (cost < 0) {
 				System.err.printf("Invalid cost.");
 				valid = false;
 			}
@@ -37,7 +37,7 @@ public class Skill {
 		
 		//Use this skill.
 		public void cast(Unit character) {
-			System.out.printf("%s Used skill %s : ", character.name, this.name);
+			System.out.printf("ACTION:\t%s Used skill %s : ", character.name, this.name);
 			if (lifeMod > 0) {
 				double lifePlus = Math.min(lifeMod, character.lifeMax - character.life);
 				System.out.printf("%s restored %.2f health for %s.", this.name, lifePlus, character.name);
@@ -67,7 +67,7 @@ public class Skill {
 			}
 			character.skill = this;
 			character.chi -= this.cost;
-			System.out.println("");
+			System.out.println("\n");
 			return;
 		}
 		
