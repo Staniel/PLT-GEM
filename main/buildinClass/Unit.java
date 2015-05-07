@@ -36,7 +36,7 @@ public class Unit {
 	
 	//Print out status of this unit.
 	public void status() {
-		System.out.printf("%s: %.2f / %.2f life, %d / %d chi, %.2f attack / %.2f defense\n", 
+		System.out.printf("STATUS\t%s:\n %.2f / %.2f life,\t%d / %d chi,\t%.2f attack ,\t%.2f defense\n\n", 
 				this.name, this.life, this.lifeMax, this.chi, this.chiMax, this.attack, this.defense);
 	}
 	
