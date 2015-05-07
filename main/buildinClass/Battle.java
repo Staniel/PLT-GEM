@@ -114,7 +114,7 @@ public class Battle {
 			
 			//Boss round.
 			//Only attack if no life/chi skill is used.
-			if (skillNumBoss == -1 || myBoss.skill.lifeMod <= 0 && myBoss.skill.chiMod <= 0) {
+			if (skillNumBoss == bossSkills.length || myBoss.skill.lifeMod <= 0 && myBoss.skill.chiMod <= 0) {
 				effectRNG =  generateRandom();
 				heroDamage = effectRNG * Math.max(0, myBoss.attack - myHero.defense);
 				myHero.life -= heroDamage;
