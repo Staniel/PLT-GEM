@@ -1,9 +1,9 @@
 #!/bin/bash
 read -p "Do you want to test individual file? filename or press enter directly. " yn
 if [ -n "$yn" ]; then
-	subdir="tests/"
+	subdir="SystemTests/tests/"
 	dir1=$subdir$yn
-	java -jar GemC.jar $1 > $dir1.java $dir1
+	java -jar ./GemC.jar $1 > $dir1.java $dir1
     ./gem $dir1 > $dir1.out
     diff --brief <(sort $dir1.out) <(sort $dir1.test) >/dev/null
 	comp_value=$?
@@ -16,9 +16,9 @@ if [ -n "$yn" ]; then
     fi
 
 else
-    for entry in tests/*.gem
+    for entry in SystemTests/tests/*.gem
 	do
-		java -jar GemC.jar $1 > $entry.java $entry
+		java -jar ./GemC.jar $1 > $entry.java $entry
   		./gem $entry > $entry.out
   		diff --brief <(sort $entry.out) <(sort $entry.test) >/dev/null
 		comp_value=$?

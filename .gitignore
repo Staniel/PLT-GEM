@@ -2,7 +2,9 @@
 bin/
 Compiler/GemC.jar
 Compiler/Main.*
-Compiler/hello.gem
+Compiler/*.gem
+Compiler/*.java
+Compiler/*.class
 Compiler/SystemTests/GemC.jar
 Compiler/SystemTests/*.java
 Compiler/SystemTests/*.class

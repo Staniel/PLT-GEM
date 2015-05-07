@@ -26,7 +26,7 @@ public class Skill {
 				System.err.printf("Invalid defense modifer.");
 				valid = false;
 			}
-			if (cost <= 0) {
+			if (cost < 0) {
 				System.err.printf("Invalid cost.");
 				valid = false;
 			}

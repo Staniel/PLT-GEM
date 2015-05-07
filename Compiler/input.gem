@@ -1,8 +1,0 @@
-void main(String[] args){
-    int a =1;
-    int b;
-    String c;
-    print "please input a string";
-	c = inputStr;
-	print c;
-}
