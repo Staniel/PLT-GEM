@@ -110,7 +110,7 @@ eventArguments	:	'(' eventExpressionList ')'
 				;
 
 eventExpressionList
-	:	expression ',' expression (',' expressionList)?
+	:	expression ',' expression ',' expression (',' expressionList)?
 	;
 
 eventBlock: '{' blockStatement*
@@ -191,6 +191,7 @@ statement	:   block	#bs
 			|	'print' expression ';'	#printStatement
 			|   'break' ';'	#breakStatement
 			|   'continue' ';'	#continueStatement
+			|	'run' expression ';'	#runStatement
 			|   ';'	#emptyStatement
 			|   statementExpression ';'	#statementExpr
 			;

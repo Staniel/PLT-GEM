@@ -21,8 +21,11 @@ public class GEMExtendedVisitor extends GEMBaseVisitor<Void> {
 	@Override public Void visitCompilationUnit(@NotNull GEMParser.CompilationUnitContext ctx) {
 		print("import java.util.*;\n");
 		print("import buildinClass.*;\n");
+		print("interface Plot {\n\t"
+				+ "void run();\n}\n");
 		print("public class Main {\n");
 		print("public static Scanner scanner = new Scanner(System.in);\n");
+		print("public static Map<String, Plot> plotMap = new HashMap<String, Plot>();\n");
 		for (GEMParser.OutervariableDeclarationContext vd: ctx.outervariableDeclaration()) {
 			visit(vd);
 		}
@@ -373,6 +376,13 @@ public class GEMExtendedVisitor extends GEMBaseVisitor<Void> {
 		return null;
 	}
 	
+	@Override public Void visitRunStatement(@NotNull GEMParser.RunStatementContext ctx) {
+		print("plotMap.get(");
+		visit(ctx.expression());
+		print(".id).run();\n");
+		return null;
+	}
+	
 	@Override public Void visitConstructor(@NotNull GEMParser.ConstructorContext ctx) {
 		visit(ctx.getChild(0));
 		return null;
@@ -381,7 +391,35 @@ public class GEMExtendedVisitor extends GEMBaseVisitor<Void> {
 	@Override public Void visitEventConstructor(@NotNull GEMParser.EventConstructorContext ctx) {
 		print("Event");
 		visit(ctx.eventArguments());
+		print(";");
+		print("plotMap.put(" + ctx.eventArguments().eventExpressionList().expression(0).getText()
+				+ ", new Plot() { public void run() ");
+		print("{");
+		print("System.out.println(");
+		visit(ctx.eventArguments().eventExpressionList().expression(1));
+		print(");\n");
 		visit(ctx.eventBlock());
+		print ("if (");
+		visit(ctx.eventArguments().eventExpressionList().expression(2));
+		print("[");
+		visit(ctx.eventBlock().nextStatement().expression());
+		print("] != null)\n");
+		print("\tplotMap.get(");
+		visit(ctx.eventArguments().eventExpressionList().expression(2));
+		print("[");
+		visit(ctx.eventBlock().nextStatement().expression());
+		print("].id).run();\n");
+		print("};\n");
+		print("})");
+		return null;
+	}
+	
+	@Override public Void visitEventBlock(@NotNull GEMParser.EventBlockContext ctx) {
+		// Add display function
+		for (GEMParser.BlockStatementContext bs : ctx.blockStatement()) {
+			visit(bs);
+		}
+		//visit(ctx.nextStatement());
 		return null;
 	}
 	
@@ -396,6 +434,8 @@ public class GEMExtendedVisitor extends GEMBaseVisitor<Void> {
 		visit(ctx.expression(0));
 		print(", ");
 		visit(ctx.expression(1));
+		print(", ");
+		visit(ctx.expression(2));
 		if (ctx.expressionList() != null) {
 			print(", ");
 			visit(ctx.expressionList());
