@@ -1,0 +1,34 @@
+Event e1;
+Event e2;
+Battle b1;
+
+void main(String[] args) {
+	String display1 = "Event 1";
+	String display2 = "Event 2";
+	String display3 = "Battle 1";
+
+	Skill s1 = new Skill("Heal", 5, 0, 0, 0, 1);
+	Skill s2 = new Skill("Think", 0, 1, 0, 0, 1);
+	Skill s3 = new Skill("Show muscle", 0, 0, 1, 1, 1);
+	Skill s4 = new Skill("Let's do this", 0, 0, 3, -0.5, 5);
+	Skill[] ss = {s1, s2, s3, s4};
+	Unit aho = new Unit("Alfred Aho", 5, 2, 20, 5, ss);
+	Unit GEMTeam = new Unit("GEM Team", 5, 2, 10, 5, ss);
+
+	b1 = new Battle(display3, aho);
+
+	Event[] options2 = {null};
+	e2 = new Event("2", display2, options2) {
+		GEMTeam trigger b1;
+		next 0;
+	};
+
+	Event[] options1 = {e2}; 
+	e1 = new Event("1", display1, options1) {
+		print "Choose your battle";
+		int a = inputNumber;
+		next a;
+	};
+
+	run e1;
+}

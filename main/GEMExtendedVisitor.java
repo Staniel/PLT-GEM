@@ -383,8 +383,50 @@ public class GEMExtendedVisitor extends GEMBaseVisitor<Void> {
 		return null;
 	}
 	
+	@Override public Void visitTriggerStatement(@NotNull GEMParser.TriggerStatementContext ctx) {
+		visit(ctx.expression(1));
+		print(".trigger(");
+		visit(ctx.expression(0));
+		print(");\n");
+		return null;
+	}
+	
 	@Override public Void visitConstructor(@NotNull GEMParser.ConstructorContext ctx) {
 		visit(ctx.getChild(0));
+		return null;
+	}
+	
+	@Override public Void visitUnitConstructor(@NotNull GEMParser.UnitConstructorContext ctx) {
+		print("Unit");
+		visit(ctx.unitArguments());
+		return null;
+	}
+	
+	@Override public Void visitUnitArguments(@NotNull GEMParser.UnitArgumentsContext ctx) {
+		print("(");
+		for (int i = 0; i < 6; i++) {
+			visit(ctx.expression(i));
+			if (i < 6-1)
+				print(", ");
+		}
+		print(")");
+		return null;
+	}
+	
+	@Override public Void visitSkillConstructor(@NotNull GEMParser.SkillConstructorContext ctx) {
+		print("Skill");
+		visit(ctx.skillArguments());
+		return null;
+	}
+	
+	@Override public Void visitSkillArguments(@NotNull GEMParser.SkillArgumentsContext ctx) {
+		print("(");
+		for (int i = 0; i < 6; i++) {
+			visit(ctx.expression(i));
+			if (i < 6-1)
+				print(", ");
+		}
+		print(")");
 		return null;
 	}
 	
@@ -448,6 +490,16 @@ public class GEMExtendedVisitor extends GEMBaseVisitor<Void> {
 		visit(ctx.battleArguments());
 		return null;
 	}
+	
+	@Override public Void visitBattleArguments(@NotNull GEMParser.BattleArgumentsContext ctx) {
+		print("(");
+		visit(ctx.expression(0));
+		print(", ");
+		visit(ctx.expression(1));
+		print(")");
+		return null;
+	}
+	
 	@Override public Void visitArrayExpr(@NotNull GEMParser.ArrayExprContext ctx) {
 		visit(ctx.expression(0));
 		print("[");
@@ -483,14 +535,7 @@ public class GEMExtendedVisitor extends GEMBaseVisitor<Void> {
 //			'{' (variableInitializer (',' variableInitializer)* (',')? )? '}'
 		return null;
 	}
-	@Override public Void visitBattleArguments(@NotNull GEMParser.BattleArgumentsContext ctx) {
-		print("(");
-		visit(ctx.expression(0));
-		print(", ");
-		visit(ctx.expression(1));
-		print(")");
-		return null;
-	}
+
 	@Override public Void visitWhileStatement(@NotNull GEMParser.WhileStatementContext ctx){
 		print("while ( ");
 		visit(ctx.parExpression());

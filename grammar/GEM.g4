@@ -101,6 +101,7 @@ type
 constructor: unitConstructor
 		   | battleConstructor
 		   | eventConstructor
+		   | skillConstructor
 		   ;
 
 eventConstructor:	'Event' eventArguments eventBlock
@@ -120,13 +121,19 @@ eventBlock: '{' blockStatement*
 unitConstructor	: 'Unit' unitArguments
 				;
 
-unitArguments: '(' expression ',' expression ',' expression ',' expression ')';
-
+unitArguments: '(' expression ',' expression ',' expression ',' expression ',' expression ',' expression ')';
 
 battleConstructor: 'Battle' battleArguments
 				 ;
 
-battleArguments: '(' expression ',' expression ')';
+battleArguments	: '(' expression ',' expression ')'
+				;
+
+skillConstructor: 'Skill' skillArguments
+				;
+
+skillArguments	: '(' expression ',' expression ',' expression ',' expression ',' expression ',' expression ')'
+				;
 
 
 //itemConstructor: 'Item' itemArguments
@@ -191,6 +198,7 @@ statement	:   block	#bs
 			|	'print' expression ';'	#printStatement
 			|   'break' ';'	#breakStatement
 			|   'continue' ';'	#continueStatement
+			|	expression 'trigger' expression ';'	#triggerStatement
 			|	'run' expression ';'	#runStatement
 			|   ';'	#emptyStatement
 			|   statementExpression ';'	#statementExpr
@@ -230,7 +238,7 @@ statementExpression
 
 eventType: 'Event';
 
-specialType: 'Unit' | 'Battle'; 
+specialType: 'Unit' | 'Battle' | 'Skill'; 
 
 primitiveType
 	:   'boolean'
