@@ -21,7 +21,5 @@ public class Event {
 	public void display(){
 		System.out.println(display);
 	}
-	public void next(Integer n){
-		options[n].display();
-	}
+
 }
