@@ -1,0 +1,20 @@
+Event e1;
+Event e2;
+
+void main(String[] args) {
+	String display1 = "Event 1";
+	String display2 = "Event 2";
+
+	Event[] options2 = {null};
+	e2 = new Event("2", display2, options2) {
+		next 0;
+	};
+
+	Event[] options1 = {e2}; 
+	e1 = new Event("1", display1, options1) {
+		int res = 0;
+		next res;
+	};
+
+	run e1;
+}
