@@ -6,9 +6,10 @@ public class Event {
 	public Event[] options;
 	public String id;
 	
-	public Event(String d, Event[] o){
-		display = d;
-		options = o;
+	public Event(String eid, String d, Event[] o){
+		this.id = eid;
+		this.display = d;
+		this.options = o;
 	}
 	public Event(Event e){
 		display = e.display;
@@ -20,7 +21,5 @@ public class Event {
 	public void display(){
 		System.out.println(display);
 	}
-	public void next(Integer n){
-		options[n].display();
-	}
+
 }
