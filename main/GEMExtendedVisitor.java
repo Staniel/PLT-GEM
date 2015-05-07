@@ -1,7 +1,6 @@
 import java.util.List;
 
 import org.antlr.v4.runtime.misc.NotNull;
-import org.antlr.v4.runtime.tree.TerminalNode;
 
 //import GEMParser.VariableInitializerContext;
 
@@ -436,7 +435,7 @@ public class GEMExtendedVisitor extends GEMBaseVisitor<Void> {
 		print(";");
 		print("plotMap.put(" + ctx.eventArguments().eventExpressionList().expression(0).getText()
 				+ ", new Plot() { public void run() ");
-		print("{");
+		print("{\n");
 		print("System.out.println(");
 		visit(ctx.eventArguments().eventExpressionList().expression(1));
 		print(");\n");
