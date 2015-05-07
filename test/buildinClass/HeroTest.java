@@ -5,7 +5,6 @@ import org.junit.Assert;
 import org.junit.Test;
 
 public class HeroTest {
-	@SuppressWarnings("deprecation")
 	@Test
 	public void testHero() {
 		Skill s1 = new Skill("strength", 5, 0, 1, 1, 1);
