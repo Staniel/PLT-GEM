@@ -1,6 +1,5 @@
 package buildinClass;
 
-
 public class Skill {
 		public double lifeMod;
 		public int chiMod;
@@ -67,20 +66,20 @@ public class Skill {
 			}
 			character.skill = this;
 			character.chi -= this.cost;
-			System.out.println("\n");
+			System.out.print("\n");
 			return;
 		}
 		
 		//Cancel skill effect.
 		public void cancel(Unit character) {
-			if (attackMod > 0) {
+			if (attackMod != 0) {
 				character.attack /= (1 + attackMod);
 			}
 			
-			if (defenseMod > 0) {
+			if (defenseMod != 0) {
 				character.defense /= (1 + defenseMod);
 			}
-			
+			character.skill = null;
 			return;
 		}
 		
@@ -102,4 +101,5 @@ public class Skill {
 			
 			return totalEffect;
 		}
+
 }
