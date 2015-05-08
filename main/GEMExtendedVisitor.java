@@ -2,9 +2,8 @@ import java.util.List;
 
 import org.antlr.v4.runtime.misc.NotNull;
 
-//import GEMParser.VariableInitializerContext;
-
 public class GEMExtendedVisitor extends GEMBaseVisitor<Void> {
+	
 	private void ce() {
 		print("Compile Error.\n");
 	}
