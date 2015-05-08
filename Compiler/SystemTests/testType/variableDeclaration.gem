@@ -1,0 +1,4 @@
+int a = "Haha";
+
+void main(String[] args) {
+}
