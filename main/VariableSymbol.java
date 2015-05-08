@@ -8,6 +8,10 @@ public class VariableSymbol {
 	boolean isFunction;
 	ArrayList<VariableSymbol> paras;
 	
+	public String toString() {
+		return this.type + " " + this.arrayDimension + " " + this.isFunction;
+	}
+	
 	public VariableSymbol(String type) {
 		this.type = type;
 		this.arrayDimension = 0;
@@ -27,6 +31,13 @@ public class VariableSymbol {
 		this.arrayDimension = 0;
 		this.isFunction = isFunction;
 		this.paras = paras;
+	}
+	
+	public VariableSymbol(VariableSymbol a) {
+		this.type = a.type;
+		this.arrayDimension = a.arrayDimension;
+		this.isFunction = a.isFunction;
+		this.paras = a.paras;
 	}
 
 }
