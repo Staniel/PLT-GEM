@@ -4,7 +4,7 @@ package buildinClass;
 import org.junit.Assert;
 import org.junit.Test;
 
-public class HeroTest {
+public class UnitTest {
 	@Test
 	public void testHero() {
 		Skill s1 = new Skill("strength", 5, 0, 1, 1, 1);
@@ -69,9 +69,13 @@ public class HeroTest {
 		Assert.assertEquals(hero.attack, 10, 0);
 		Assert.assertEquals(hero.defense, 10, 0);
 		Assert.assertEquals(hero.lifeMax, 10, 0);
-		Assert.assertEquals(hero.life, 10, 0);
-		
+		Assert.assertEquals(hero.life, 10, 0);	
 	}
+	
+	
+	
+	
+	
 	
 	
 }

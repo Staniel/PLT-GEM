@@ -27,6 +27,8 @@ public class Translate {
 		//ParseTreeWalker walker = new ParseTreeWalker();
 		// Walk the tree created during the parse, trigger callbacks 
 		//walker.walk(new GEMExtendListener(), tree);
+		GEMTypeCheckVisitor typeChecker = new GEMTypeCheckVisitor();
+		typeChecker.visit(tree);
 		
 		GEMExtendedVisitor translator = new GEMExtendedVisitor();
 		translator.visit(tree);
