@@ -2,11 +2,31 @@
 
 ##To-Do
 
-in grammar
+###lixin: variable not defined
 
-1: user input
+	identifier inside expression 
 
-2: detail class method, event trigger, run
+###yuxuan: variable already defined
 
-3: dot get attribute
+	variableDeclaratorId
+	
+	methodDeclaration
 
+###xinyue: invalid operation
+
+	operator inside expression
+
+###yuxuan: function return type mismatch
+	
+	methodBody
+
+###xinyue: function parameter mismatch
+	
+	functionExpression
+
+###lixin: illegal name
+	
+	identifier globally
+
+
+uninitialized?
