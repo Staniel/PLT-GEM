@@ -69,9 +69,13 @@ public class UnitTest {
 		Assert.assertEquals(hero.attack, 10, 0);
 		Assert.assertEquals(hero.defense, 10, 0);
 		Assert.assertEquals(hero.lifeMax, 10, 0);
-		Assert.assertEquals(hero.life, 10, 0);
-		
+		Assert.assertEquals(hero.life, 10, 0);	
 	}
+	
+	
+	
+	
+	
 	
 	
 }
