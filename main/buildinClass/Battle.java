@@ -7,7 +7,8 @@ public class Battle {
 	private Scanner sc;
 	private String display;
 	private Unit myBoss;
-	private Unit myHero;
+	
+	public Unit myHero;
 	private int skillNum;
 	private int round;
 	
@@ -98,7 +99,7 @@ public class Battle {
 	}
 	
 	//Check duration of skill and reset status if expired.
-	private void roundOver() {
+	public void roundOver() {
 		if (this.myHero.skill != null)
 			this.myHero.skill.cancel(this.myHero);
 		if (this.myBoss.skill != null)
@@ -107,10 +108,8 @@ public class Battle {
 	}
 	
 	//You win the battle, you get good stuff.
-	private void reward() {
+	public void reward() {
 		System.out.printf("%s feels stronger after the glorious battle.\n", this.myHero.name);
 		this.myHero.grow(this.myBoss);
 	}
-	
-
 }
