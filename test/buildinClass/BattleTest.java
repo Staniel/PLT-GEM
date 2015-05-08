@@ -18,22 +18,28 @@ public class BattleTest {
 		Unit m = new Unit("boss", 5, 3, 50, 5, ss);
 		Unit h = new Unit("hero", 5, 3, 20, 5, ss);
 		Battle b = new Battle("Battle to death!", m);
-		Assert.assertEquals(b.trigger(h), true);
-		
-		
-		
+		Assert.assertEquals(b.trigger(h), true);	
 	}
 	
 	@Test
-	public void testLost() {
-		// test lost
-		//Skill s3 = new Skill("futile", 0, 0, 0);
-		//Skill[] ss2 = {s3};
-		//Character h1 = new Character("PLT", 5, 2, 0, ss2);
-		//Monster m1 = new Monster("Aho", 5, 2, 20, ss2);
-		//Battle b2 = new Battle("futile", m1);
-		//Assert.assertEquals(b2.trigger(h1), false);
+	public void testReward() {
+		Skill s1 = new Skill("strength", 5, 0, 1, 1, 1);
+		Skill s2 = new Skill("cure", 5, 0, 0, 0, 1);
+		Skill s3 = new Skill("recovery", 0, 3, 0, 0, 1);
+		Skill s4 = new Skill("fight", 0, 0, 3, 0, 1);
+		Skill[] ss = {s1, s2, s3, s4};
+		Unit hero = new Unit("hero", 10, 10, 10, 1, ss);
+		Unit m = new Unit("boss", 10, 10, 10, 1, ss);
+		Battle b = new Battle("Battle to death!", m);
+		b.myHero = hero;
+		b.reward();
+		Assert.assertEquals(hero.attack, 10.5, 0);
+		Assert.assertEquals(hero.defense, 10.5, 0);
+		Assert.assertEquals(hero.lifeMax, 10.5, 0);
+		Assert.assertEquals(hero.life, 10.5, 0);
 	}
+	
+	
 	
 	
 }
