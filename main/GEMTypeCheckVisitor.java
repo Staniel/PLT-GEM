@@ -24,13 +24,11 @@ public class GEMTypeCheckVisitor extends GEMBaseVisitor <Object> {
 	private void ce(int row, int col, int errno, VariableSymbol vs1) {
 		System.err.print("GEM Error on line " + row + " at position " + col + ": ");
 		System.err.printf(errorMessage.get(errno), vs1.type);
-		System.exit(1);
 	}
 	
 	private void ce(int row, int col, int errno, VariableSymbol vs1, VariableSymbol vs2) {
 		System.err.print("GEM Error on line " + row + " at position " + col + ": ");
 		System.err.printf(errorMessage.get(errno), vs1.type, vs2.type);
-		System.exit(1);
 	}
 	
 	private boolean checkType(VariableSymbol vs1, VariableSymbol vs2) {
