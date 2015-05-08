@@ -1,7 +1,5 @@
 package buildinClass;
 
-
-import java.util.Random;
 import java.util.Scanner;
 
 public class Battle {
@@ -10,12 +8,8 @@ public class Battle {
 	private String display;
 	private Unit myBoss;
 	private Unit myHero;
-	private Skill[] heroSkills;
-	private Skill[] bossSkills;
 	private int skillNum;
-	private int skillNumBoss;
 	private int round;
-	private static Random rng = new Random();
 	
 	//Initiate a battle with battle message and monster.
 	public Battle(String s, Unit m){
@@ -37,56 +31,45 @@ public class Battle {
 		this.sc = new Scanner(System.in);
 		this.round = 0;
 		this.myHero = h;
-		this.heroSkills = myHero.skills;
-		this.bossSkills = myBoss.skills;
 		
 		while (myBoss.life > 0 && myHero.life > 0){
 			myHero.status();
 			myBoss.status();
 
 			//Choose skill from user input.
-			if (heroSkills != null && heroSkills.length > 0) {
+			if (myHero.skills != null && myHero.skills.length > 0) {
 				while (true) {
-					System.out.println("Please choose your skill to use:");
+					System.out.println("Choose skill, or press enter to auto-act:");
 					System.out.println("0 - Attack: A \"normally\" effective attack.");
 					myHero.showSkills();
-					String command = sc.next();
+					String command = sc.nextLine();
+					if (command.isEmpty()) {
+						myHero.auto(myBoss);
+						break;
+					}
 					try {
 						skillNum = Integer.parseInt(command) - 1;
 						if (skillNum == -1)
 							break;
-						if (skillNum < -1 || skillNum >= heroSkills.length) {
+						if (skillNum < -1 || skillNum >= myHero.skills.length) {
 							System.out.println("No such skill.");
 							continue;
 						}
-						if (myHero.chi < heroSkills[skillNum].cost) {
+						if (myHero.chi < myHero.skills[skillNum].cost) {
 							System.out.println("You don't have enough chi for this skill.");
 							continue;
 						}
+						myHero.skills[skillNum].cast(myHero);
+						break;
 					} catch (NumberFormatException nfe) {
 						System.out.println("No such command.");
 						continue;
 					}
-					myHero.skills[skillNum].cast(myHero);
-					break;
 				}
 			}
 			
-			//Automatically use skill for boss, if any.
-			if (bossSkills != null && bossSkills.length > 0) {
-				while (true) {
-					skillNumBoss = rng.nextInt(bossSkills.length + 1);
-					
-					//Basic attack if skillNum is invalid.
-					if (skillNumBoss == bossSkills.length)
-						break;
-					if (myBoss.chi < bossSkills[skillNumBoss].cost) {
-						continue;
-					}
-					myBoss.skills[skillNumBoss].cast(myBoss);
-					break;
-				}
-			}
+			//Automatically choose skill for boss, if any.
+			myBoss.auto(myHero);
 			
 			//Hero round.
 			//Only attack if no life/chi skill is used.
@@ -116,10 +99,10 @@ public class Battle {
 	
 	//Check duration of skill and reset status if expired.
 	private void roundOver() {
-		if (myHero.skill != null)
-			myHero.skill.cancel(myHero);
-		if (myBoss.skill != null)
-			myBoss.skill.cancel(myBoss);
+		if (this.myHero.skill != null)
+			this.myHero.skill.cancel(this.myHero);
+		if (this.myBoss.skill != null)
+			this.myBoss.skill.cancel(this.myBoss);
 		this.round = round + 1;
 	}
 	

@@ -1,10 +1,10 @@
 package buildinClass;
 
 public class Skill {
-		public double lifeMod;
-		public int chiMod;
-		public double attackMod;
-		public double defenseMod;
+		private double lifeMod;
+		private int chiMod;
+		private double attackMod;
+		private double defenseMod;
 		public String name;
 		public int cost;
 		

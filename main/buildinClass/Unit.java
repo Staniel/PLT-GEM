@@ -5,6 +5,8 @@ import java.util.Random;
 
 
 public class Unit {
+	
+	//Status of this unit.
 	public String name;
 	public double attack;
 	public double defense;
@@ -14,6 +16,8 @@ public class Unit {
 	public int chiMax;
 	public Skill[] skills;
 	public Skill skill;
+	
+	//Helper variable.
 	private String[] effects = {"badly effective", "poorly effective", "somewhat effective", "very effective", "super effective"};
 	private double effectRNG;
 	private LinkedList<String> achievements;
@@ -70,8 +74,30 @@ public class Unit {
 	}
 	
 	//AI of boss, choosing the relatively good strategy to use.
-	public void choose(Unit boss) {
-		//to choose some skill.
+	public void auto(Unit opponent) {
+		if (this.skills != null && this.skills.length > 0) {
+			
+			//Iterate through lists of skill and choose good ones.
+			while (true) {
+				int skillNum = rng.nextInt(this.skills.length + 1);
+				//Basic attack if skillNum is invalid.
+				if (skillNum == this.skills.length) {
+					break;
+				} else if (this.chi < this.skills[skillNum].cost) {
+					continue;
+				} else if (!goodChoice(opponent, this.skills[skillNum])) {
+					continue;
+				}
+				this.skills[skillNum].cast(this);
+				break;
+			}
+		}
+	}
+	
+	//Is this skill good to use?
+	//A very simple AI, not to replace human mind.
+	private boolean goodChoice(Unit opponent, Skill chosenSkill) {
+		return true;
 	}
 	
 	//Normally distributed attack effect.
