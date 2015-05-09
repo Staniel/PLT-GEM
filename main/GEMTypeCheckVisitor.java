@@ -13,6 +13,7 @@ public class GEMTypeCheckVisitor extends GEMBaseVisitor <Object> {
 	private static final Integer RETURN_MISMATCH = 4;
 	private static final Integer PARAS_MISMATCH = 5;
 	private static final Integer ILLEGAL_NAME = 6;
+	private static final Integer INVALID_UOP = 7;
 	private LinkedList<HashMap<String, VariableSymbol>> symbols = new LinkedList<HashMap<String, VariableSymbol>>();
 	private HashMap<String, VariableSymbol> globalSymbols = new HashMap<String, VariableSymbol>();
 	private LinkedList<VariableSymbol> lastType = new LinkedList<VariableSymbol>();
@@ -21,6 +22,7 @@ public class GEMTypeCheckVisitor extends GEMBaseVisitor <Object> {
 		errorMessage = new HashMap<Integer, String>();
 		errorMessage.put(VAR_DEFINED, "Duplicate definition of %s.\n");
 		errorMessage.put(INVALID_OP, "Invalid operation on %s and %s.\n");
+		errorMessage.put(INVALID_UOP, "Invalid operation on %s.\n");
 	}
 	
 	private void ce(int row, int col, int errno, String msg) {
@@ -310,4 +312,80 @@ public class GEMTypeCheckVisitor extends GEMBaseVisitor <Object> {
 		return res;
 	}
 
+	@Override public VariableSymbol visitUnaryExpr(@NotNull GEMParser.UnaryExprContext ctx){
+		VariableSymbol v = (VariableSymbol) visit(ctx.expression()); 
+		if (v.type.equals("int") || v.type.equals("double") || v.type.equals("error"))
+			return v;
+		ce(ctx.getStart().getLine(), ctx.getStart().getCharPositionInLine(), INVALID_UOP, v.type);
+		v.type = "error";
+		return v;
+	}
+	@Override public VariableSymbol visitUnaryRelExpr(@NotNull GEMParser.UnaryRelExprContext ctx){
+		VariableSymbol v = (VariableSymbol) visit(ctx.expression()); 
+		if (v.type.equals("boolean") || v.type.equals("error") || v.type.equals("int"))
+			return v;
+		ce(ctx.getStart().getLine(), ctx.getStart().getCharPositionInLine(), INVALID_UOP, v.type);
+		v.type = "error";
+		return v;
+	}
+	@Override public VariableSymbol visitBinTopExpr(@NotNull GEMParser.BinTopExprContext ctx) {
+		VariableSymbol vs1 = (VariableSymbol) visit(ctx.expression(0));
+		VariableSymbol vs2 = (VariableSymbol) visit(ctx.expression(1));
+		VariableSymbol v = new VariableSymbol("error"); 
+		if (vs1.type.equals("error") || vs2.type.equals("error"))
+			return v;
+		if (vs1.arrayDimension != 0 || vs2.arrayDimension != 0 )
+			{
+			ce(ctx.getStart().getLine(), ctx.getStart().getCharPositionInLine(), INVALID_OP, vs1, vs2);
+				return v;
+			}
+		if (vs1.type.equals("String") || vs2.type.equals("String"))
+			{
+				ce(ctx.getStart().getLine(), ctx.getStart().getCharPositionInLine(), INVALID_OP, vs1, vs2);
+				return v;
+			}
+		if (vs1.type.equals(vs2.type))
+			{
+			if (vs1.type.equals("int") || vs1.type.equals("double"))	
+				return vs1;
+			ce(ctx.getStart().getLine(), ctx.getStart().getCharPositionInLine(), INVALID_OP, vs1, vs2);
+			return v;
+			}
+		else{
+			if (vs1.type.equals("int") && vs2.type.equals("double") || vs2.type.equals("int") && vs1.type.equals("double"))
+				return new VariableSymbol("double");
+		}
+		ce(ctx.getStart().getLine(), ctx.getStart().getCharPositionInLine(), INVALID_OP, vs1, vs2);
+		return v;
+	}
+	
+	@Override public VariableSymbol visitBinLowExpr(@NotNull GEMParser.BinLowExprContext ctx) {
+		VariableSymbol vs1 = (VariableSymbol) visit(ctx.expression(0));
+		VariableSymbol vs2 = (VariableSymbol) visit(ctx.expression(1));
+		VariableSymbol v = new VariableSymbol("error"); 
+		if (vs1.type.equals("error") || vs2.type.equals("error"))
+			return v;
+		if (vs1.arrayDimension != 0 || vs2.arrayDimension != 0 )
+			{
+				ce(ctx.getStart().getLine(), ctx.getStart().getCharPositionInLine(), INVALID_OP, vs1, vs2);
+				return v;
+			}
+		if (ctx.getChild(1).getText().equals("+") && (vs1.type.equals("String") || vs2.type.equals("String")))
+			{
+				return new VariableSymbol("String");
+			}
+		if (vs1.type.equals(vs2.type))
+			{
+			if (vs1.type.equals("int") || vs1.type.equals("double"))	
+				return vs1;
+			ce(ctx.getStart().getLine(), ctx.getStart().getCharPositionInLine(), INVALID_OP, vs1, vs2);
+			return v;
+			}
+		else{
+			if (vs1.type.equals("int") && vs2.type.equals("double") || vs2.type.equals("int") && vs1.type.equals("double"))
+				return new VariableSymbol("double");
+		}
+		ce(ctx.getStart().getLine(), ctx.getStart().getCharPositionInLine(), INVALID_OP, vs1, vs2);
+		return v;
+	}
 }
