@@ -516,6 +516,32 @@ public class GEMTypeCheckVisitor extends GEMBaseVisitor <Object> {
 		return res;
 	}
 	
+	@Override public Object visitForStatement(@NotNull GEMParser.ForStatementContext ctx) {
+		visit(ctx.forControl());
+		visit(ctx.statement());
+		return null;
+	}
+	
+	@Override public Object visitForControl(@NotNull GEMParser.ForControlContext ctx) {
+		if (ctx.forInit() != null)
+			visit(ctx.forInit());
+		if (ctx.expression() != null)
+			visit(ctx.expression());
+		if (ctx.forUpdate() != null)
+			visit(ctx.forUpdate());
+		return null;
+	}
+	
+	@Override public Object visitForInit(@NotNull GEMParser.ForInitContext ctx) {
+		visit(ctx.expressionList());
+		return null;
+	}
+	
+	@Override public Object visitForUpdate(@NotNull GEMParser.ForUpdateContext ctx) {
+		visit(ctx.expressionList());
+		return null;
+	}
+	
 	@Override public VariableSymbol visitPrintStatement(@NotNull GEMParser.PrintStatementContext ctx) {
 		VariableSymbol vs = (VariableSymbol) visit(ctx.expression());
 		return null;
