@@ -72,7 +72,7 @@ expression :   primary #primaryExpr
     |	'inputNumber' #inputNumberExpr
     |   'inputStr' #inputStrExpr
     |   ('+'|'-') expression #unaryExpr
-    |   ('~'|'!') expression #unaryRelExpr
+    |   ('!') expression #unaryRelExpr
     |   expression ('*'|'/'|'%') expression #binTopExpr
     |   expression ('+'|'-') expression #binLowExpr
     |   expression ('<=' | '>=' | '>' | '<') expression #binRelExpr
@@ -179,7 +179,7 @@ variableInitializer
 
 arrayInitializer
     :   '{' (variableInitializer (',' variableInitializer)* (',')? )? '}' #arrayInitializer1
-    |    'array' type '[' expression ']' #arrayInitializer2 
+    |    'array' type ('[' expression ']')+ #arrayInitializer2 
     ;
 
 statement	:   block	#bs

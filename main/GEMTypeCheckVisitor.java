@@ -5,6 +5,8 @@ import java.util.List;
 
 import org.antlr.v4.runtime.misc.NotNull;
 
+import buildinClass.Skill;
+
 @SuppressWarnings("unchecked")
 
 public class GEMTypeCheckVisitor extends GEMBaseVisitor <Object> {
@@ -17,8 +19,10 @@ public class GEMTypeCheckVisitor extends GEMBaseVisitor <Object> {
 	private static final Integer INVALID_UOP = 7;
 	private static final Integer METHOD_UNDEFINED = 8;
 	private static final Integer RETURN_MISSING = 9;
+	private static final Integer INVALID_INDEX = 10;
 	private static final Integer CONTINUE_ERR = 11;
 	private static final Integer BREAK_ERR = 12;
+
 	private LinkedList<HashMap<String, VariableSymbol>> symbols = new LinkedList<HashMap<String, VariableSymbol>>();
 	private LinkedList<VariableSymbol> lastType = new LinkedList<VariableSymbol>();
 	private int loops;
@@ -32,11 +36,14 @@ public class GEMTypeCheckVisitor extends GEMBaseVisitor <Object> {
 		errorMessage.put(INVALID_OP, "Invalid operation on %s and %s.\n");
 		errorMessage.put(RETURN_MISMATCH, "Return type %s does not match %s.\n");
 		errorMessage.put(INVALID_UOP, "Invalid operation on %s.\n");
+		errorMessage.put(PARAS_MISMATCH, "Mismatch parameters %s\n");
 		errorMessage.put(METHOD_UNDEFINED, "Undefined method on %s.\n");
 		errorMessage.put(RETURN_MISSING, "No return statement for type %s.\n");
 		errorMessage.put(PARAS_MISMATCH, "Parameters mismatch on %s.\n");
 		errorMessage.put(CONTINUE_ERR, "Continue cannot be used outside of a loop.\n");
 		errorMessage.put(BREAK_ERR, "Break cannot be used outside of a loop or a switch.\n");
+		errorMessage.put(INVALID_INDEX, "Array Index type error on %s.\n");
+		errorMessage.put(PARAS_MISMATCH, "Parameters mismatch%s.\n");
 	}
 	
 	private void ce(int row, int col, int errno, String msg) {
@@ -409,16 +416,14 @@ public class GEMTypeCheckVisitor extends GEMBaseVisitor <Object> {
 		if (v.type.equals("int") || v.type.equals("double") || v.type.equals("error"))
 			return v;
 		ce(ctx.getStart().getLine(), ctx.getStart().getCharPositionInLine(), INVALID_UOP, v.type);
-		v.type = "error";
-		return v;
+		return new VariableSymbol("error");
 	}
 	@Override public VariableSymbol visitUnaryRelExpr(@NotNull GEMParser.UnaryRelExprContext ctx){
 		VariableSymbol v = (VariableSymbol) visit(ctx.expression()); 
-		if (v.type.equals("boolean") || v.type.equals("error") || v.type.equals("int"))
+		if (v.type.equals("boolean") || v.type.equals("error"))
 			return v;
 		ce(ctx.getStart().getLine(), ctx.getStart().getCharPositionInLine(), INVALID_UOP, v.type);
-		v.type = "error";
-		return v;
+		return new VariableSymbol("error");
 	}
 	@Override public VariableSymbol visitBinTopExpr(@NotNull GEMParser.BinTopExprContext ctx) {
 		VariableSymbol vs1 = (VariableSymbol) visit(ctx.expression(0));
@@ -428,7 +433,7 @@ public class GEMTypeCheckVisitor extends GEMBaseVisitor <Object> {
 			return v;
 		if (vs1.arrayDimension != 0 || vs2.arrayDimension != 0 )
 			{
-			ce(ctx.getStart().getLine(), ctx.getStart().getCharPositionInLine(), INVALID_OP, vs1, vs2);
+				ce(ctx.getStart().getLine(), ctx.getStart().getCharPositionInLine(), INVALID_OP, vs1, vs2);
 				return v;
 			}
 		if (vs1.type.equals("String") || vs2.type.equals("String"))
@@ -438,17 +443,17 @@ public class GEMTypeCheckVisitor extends GEMBaseVisitor <Object> {
 			}
 		if (vs1.type.equals(vs2.type))
 			{
-			if (vs1.type.equals("int") || vs1.type.equals("double"))	
-				return vs1;
-			ce(ctx.getStart().getLine(), ctx.getStart().getCharPositionInLine(), INVALID_OP, vs1, vs2);
-			return v;
+				if (vs1.type.equals("int") || vs1.type.equals("double"))	
+					return vs1;
+				ce(ctx.getStart().getLine(), ctx.getStart().getCharPositionInLine(), INVALID_OP, vs1, vs2);
+				return v;
 			}
 		else{
 			if (vs1.type.equals("int") && vs2.type.equals("double") || vs2.type.equals("int") && vs1.type.equals("double"))
 				return new VariableSymbol("double");
 		}
-		ce(ctx.getStart().getLine(), ctx.getStart().getCharPositionInLine(), INVALID_OP, vs1, vs2);
-		return v;
+			ce(ctx.getStart().getLine(), ctx.getStart().getCharPositionInLine(), INVALID_OP, vs1, vs2);
+			return v;
 	}
 	
 	@Override public VariableSymbol visitBinLowExpr(@NotNull GEMParser.BinLowExprContext ctx) {
@@ -468,10 +473,10 @@ public class GEMTypeCheckVisitor extends GEMBaseVisitor <Object> {
 			}
 		if (vs1.type.equals(vs2.type))
 			{
-			if (vs1.type.equals("int") || vs1.type.equals("double"))	
-				return vs1;
-			ce(ctx.getStart().getLine(), ctx.getStart().getCharPositionInLine(), INVALID_OP, vs1, vs2);
-			return v;
+				if (vs1.type.equals("int") || vs1.type.equals("double"))	
+					return vs1;
+				ce(ctx.getStart().getLine(), ctx.getStart().getCharPositionInLine(), INVALID_OP, vs1, vs2);
+				return v;
 			}
 		else{
 			if (vs1.type.equals("int") && vs2.type.equals("double") || vs2.type.equals("int") && vs1.type.equals("double"))
@@ -480,6 +485,139 @@ public class GEMTypeCheckVisitor extends GEMBaseVisitor <Object> {
 		ce(ctx.getStart().getLine(), ctx.getStart().getCharPositionInLine(), INVALID_OP, vs1, vs2);
 		return v;
 	}
+
+	@Override public VariableSymbol visitArrayExpr(@NotNull GEMParser.ArrayExprContext ctx) {
+		VariableSymbol v = new VariableSymbol("error"); 
+		VariableSymbol vs1 = (VariableSymbol) visit(ctx.expression(0));
+		VariableSymbol vs2 = (VariableSymbol) visit(ctx.expression(1));
+		if (vs1.type.equals("error") || vs2.type.equals("error"))
+			return v;
+		if (vs1.arrayDimension < 1)
+		{
+			ce(ctx.getStart().getLine(), ctx.getStart().getCharPositionInLine(), INVALID_UOP, vs2);
+			return v;
+		}
+		if (vs2.arrayDimension != 0 || !vs2.type.equals("int"))
+		{
+			ce(ctx.getStart().getLine(), ctx.getStart().getCharPositionInLine(), INVALID_UOP, vs2);
+			return v;
+		}
+		vs1.arrayDimension -= 1;
+		return vs1;
+	}
+	@Override public VariableSymbol visitBattleConstructor(@NotNull GEMParser.BattleConstructorContext ctx) {
+		VariableSymbol v = new VariableSymbol("error");
+		String[] args = {"String", "Unit"};
+		if (ctx.battleArguments() != null) {
+			ArrayList<VariableSymbol> paraList = (ArrayList<VariableSymbol>) visit(ctx.battleArguments());
+			if (paraList.size() != 2)
+			{
+				ce(ctx.getStart().getLine(), ctx.getStart().getCharPositionInLine(), PARAS_MISMATCH, "");
+				return v;
+			}
+			for (int i=0;i<2;i++)
+			{
+				if (paraList.get(i).type.equals("error"))
+					return v;
+				if (!paraList.get(i).type.equals(args[i]) || paraList.get(i).arrayDimension != 0){
+					ce(ctx.getStart().getLine(), ctx.getStart().getCharPositionInLine(), PARAS_MISMATCH, "");
+					return v;
+				}
+			}
+		}
+		return new VariableSymbol("Battle");
+	}
+	@Override public VariableSymbol visitUnitConstructor(@NotNull GEMParser.UnitConstructorContext ctx) {
+		VariableSymbol v = new VariableSymbol("error");
+		String[] args = {"String" , "double" , "double" , "double" , "int" , "Skill" };
+		if (ctx.unitArguments() != null) {
+			ArrayList<VariableSymbol> paraList = (ArrayList<VariableSymbol>) visit(ctx.unitArguments());
+			if (paraList.size() != 6)
+			{
+				ce(ctx.getStart().getLine(), ctx.getStart().getCharPositionInLine(), PARAS_MISMATCH, "");
+				return v;
+			}
+			for (int i=0;i<6;i++)
+			{
+				if (paraList.get(i).type.equals("error"))
+					return v;
+				if (!paraList.get(i).type.equals(args[i])){
+					{
+						if ((i == 6 && !(paraList.get(i).arrayDimension != 1))
+							|| paraList.get(i).arrayDimension != 0 || !paraList.get(i).type.equals(args[i]))
+						{
+							ce(ctx.getStart().getLine(), ctx.getStart().getCharPositionInLine(), PARAS_MISMATCH, "");
+							return v;
+						}
+					}
+				}
+			}
+		}
+		return new VariableSymbol("Unit");
+	}
+	
+	@Override public VariableSymbol visitSkillConstructor(@NotNull GEMParser.SkillConstructorContext ctx) {
+		VariableSymbol v = new VariableSymbol("error");
+		String[] args = {"String" , "double" , "int" , "double" , "double" , "int" };
+		if (ctx.skillArguments() != null) {
+			ArrayList<VariableSymbol> paraList = (ArrayList<VariableSymbol>) visit(ctx.skillArguments());
+			if (paraList.size() != 6)
+			{
+				ce(ctx.getStart().getLine(), ctx.getStart().getCharPositionInLine(), PARAS_MISMATCH, "");
+				return v;
+			}
+			for (int i=0;i<6;i++)
+			{
+				if (paraList.get(i).type.equals("error"))
+					return v;
+				if (!paraList.get(i).type.equals(args[i]) || paraList.get(i).arrayDimension != 0){
+					ce(ctx.getStart().getLine(), ctx.getStart().getCharPositionInLine(), PARAS_MISMATCH, "");
+					return v;
+				}
+			}
+		}
+		return new VariableSymbol("Skill");
+	}
+	@Override public ArrayList<VariableSymbol> visitSkillArguments(@NotNull GEMParser.SkillArgumentsContext ctx){
+		VariableSymbol v = new VariableSymbol("error");
+		ArrayList<VariableSymbol> paraList = new ArrayList<VariableSymbol>();
+		if (ctx.expression() != null)
+		{
+			for (GEMParser.ExpressionContext x: ctx.expression())
+				{
+					VariableSymbol vs = (VariableSymbol) visit(x);
+					paraList.add(vs);
+				}
+		}
+		return paraList;	
+	}
+	@Override public ArrayList<VariableSymbol> visitUnitArguments(@NotNull GEMParser.UnitArgumentsContext ctx) {
+		VariableSymbol v = new VariableSymbol("error");
+		ArrayList<VariableSymbol> paraList = new ArrayList<VariableSymbol>();
+		if (ctx.expression() != null)
+		{
+			for (GEMParser.ExpressionContext x: ctx.expression())
+				{
+					VariableSymbol vs = (VariableSymbol) visit(x);
+					paraList.add(vs);
+				}
+		}
+		return paraList;	
+	}
+	@Override public ArrayList<VariableSymbol> visitBattleArguments(@NotNull GEMParser.BattleArgumentsContext ctx) {
+		VariableSymbol v = new VariableSymbol("error");
+		ArrayList<VariableSymbol> paraList = new ArrayList<VariableSymbol>();
+		if (ctx.expression() != null)
+		{
+			for (GEMParser.ExpressionContext x: ctx.expression())
+				{
+					VariableSymbol vs = (VariableSymbol) visit(x);
+					paraList.add(vs);
+				}
+		}
+		return paraList;	
+	}
+
 	
 	@Override public ArrayList<VariableSymbol> visitExpressionList(@NotNull GEMParser.ExpressionListContext ctx) {
 		ArrayList<VariableSymbol> res = new ArrayList<VariableSymbol>();
@@ -608,6 +746,23 @@ public class GEMTypeCheckVisitor extends GEMBaseVisitor <Object> {
 		return null;
 	}
 
+	@Override public VariableSymbol visitArrayInitializer1(@NotNull GEMParser.ArrayInitializer1Context ctx) {
+		VariableSymbol v = new VariableSymbol("error");
+		return v;
+	}
+	@Override public VariableSymbol visitArrayInitializer2(@NotNull GEMParser.ArrayInitializer2Context ctx) {
+		VariableSymbol v = new VariableSymbol("error");
+		for (GEMParser.ExpressionContext x: ctx.expression()){
+			VariableSymbol t = (VariableSymbol) visit(x);
+			if (t.type.equals("error"))
+				return t;
+			if (!t.type.equals("int")){
+				ce(ctx.getStart().getLine(), ctx.getStart().getCharPositionInLine(), INVALID_INDEX, t);
+				return v;
+			}
+		}
+		return new VariableSymbol(ctx.type().getText(), ctx.expression().size());
+	}
 	@Override public VariableSymbol visitWhileStatement(@NotNull GEMParser.WhileStatementContext ctx){
 		loops++;
 		visit(ctx.parExpression());
@@ -633,5 +788,6 @@ public class GEMTypeCheckVisitor extends GEMBaseVisitor <Object> {
 	@Override public VariableSymbol visitParExpression(@NotNull GEMParser.ParExpressionContext ctx) { 
 		visit(ctx.expression());
 		return null;
+
 	}
 }

@@ -1,0 +1,5 @@
+void main(String[] args) {
+	Skill[] ss = array Skill[1];
+	Unit m = new Unit("a", 1.0, 1.0, 1.0, 1, ss);
+	Battle a = new Battle("a", m);
+}
