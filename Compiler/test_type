@@ -3,9 +3,8 @@ read -p "Welcome to GEM testing! Do you want to test individual file? filename o
 if [ -n "$yn" ]; then
 	subdir="SystemTests/testType/"
 	dir1=$subdir$yn
-	java -jar ./GemC.jar $dir1 > $dir1.java
+	java -jar ./GemC.jar $dir1 > $dir1.java 2> $dir1.out
 	./Artistic/bin/astyle -n -q $dir1.java 
-    ./gemc $dir1 2> $dir1.out
     diff --brief <(sort $dir1.out) <(sort $dir1.test) >/dev/null
 	comp_value=$?
 
@@ -19,9 +18,8 @@ if [ -n "$yn" ]; then
 else
     for entry in SystemTests/testType/*.gem
 	do
-		java -jar ./GemC.jar $entry > $entry.java
-		./Artistic/bin/astyle -n -q $entry.java  
-  		./gemc $entry 2> $entry.out
+		java -jar ./GemC.jar $entry > $entry.java 2> $entry.out
+		./Artistic/bin/astyle -n -q $entry.java   
   		diff --brief <(sort $entry.out) <(sort $entry.test) >/dev/null
 		comp_value=$?
 

@@ -48,7 +48,8 @@ public class GEMExtendedVisitor extends GEMBaseVisitor<Void> {
 	
 	@Override public Void visitParameters(@NotNull GEMParser.ParametersContext ctx) {
 		print("(");
-		visit(ctx.parameterList());
+		if (ctx.parameterList() != null)
+			visit(ctx.parameterList());
 		print(")");
 		return null;
 	}
