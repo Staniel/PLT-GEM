@@ -6,8 +6,8 @@ import org.antlr.v4.runtime.misc.NotNull;
 @SuppressWarnings("unchecked")
 
 public class GEMTypeCheckVisitor extends GEMBaseVisitor <Object> {
-	private static final Integer VAR_NOT_DEFINED = 1;
-	private static final Integer VAR_ALREADY_DEFINED = 2;
+	private static final Integer VAR_UNDEFINED = 1;
+	private static final Integer VAR_DEFINED = 2;
 	private static final Integer INVALID_OP = 3;
 	private static final Integer RETURN_MISMATCH = 4;
 	private static final Integer PARAS_MISMATCH = 5;
@@ -18,7 +18,13 @@ public class GEMTypeCheckVisitor extends GEMBaseVisitor <Object> {
 	private static final HashMap<Integer, String> errorMessage;
 	static {
 		errorMessage = new HashMap<Integer, String>();
+		errorMessage.put(VAR_DEFINED, "Duplicate definition of %s.\n");
 		errorMessage.put(INVALID_OP, "Invalid operation on %s and %s.\n");
+	}
+	
+	private void ce(int row, int col, int errno, String msg) {
+		System.err.print("GEM Error on line " + row + " at position " + col + ": ");
+		System.err.printf(errorMessage.get(errno), msg);
 	}
 	
 	private void ce(int row, int col, int errno, VariableSymbol vs1) {
@@ -111,7 +117,12 @@ public class GEMTypeCheckVisitor extends GEMBaseVisitor <Object> {
 	}
 	
 	@Override public String visitVariableDeclaratorId(@NotNull GEMParser.VariableDeclaratorIdContext ctx) {
-		return ctx.Identifier().getText();
+		String varName = ctx.Identifier().getText();
+		if (seekVar(varName) != null) {
+			ce(ctx.getStart().getLine(), ctx.getStart().getCharPositionInLine(), VAR_DEFINED, varName);
+			return null;
+		}
+		return varName;
 	}
 	
 	@Override public VariableSymbol visitType(@NotNull GEMParser.TypeContext ctx) {
