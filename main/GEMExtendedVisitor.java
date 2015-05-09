@@ -199,14 +199,17 @@ public class GEMExtendedVisitor extends GEMBaseVisitor<Void> {
 		print(")");
 		return null;
 	}
+	
 	@Override public Void visitBreakStatement(@NotNull GEMParser.BreakStatementContext ctx) {
 		print("break;");
 		return null;
 	}
+	
 	@Override public Void visitContinueStatement(@NotNull GEMParser.ContinueStatementContext ctx) {
 		print("continue;");
 		return null;
 	}
+	
 	@Override public Void visitIfStatement(@NotNull GEMParser.IfStatementContext ctx) {
 		print("if");
 		visit(ctx.parExpression());
@@ -218,6 +221,7 @@ public class GEMExtendedVisitor extends GEMBaseVisitor<Void> {
 		}
 		return null;
 	}
+	
 	@Override public Void visitAssignExpr(@NotNull GEMParser.AssignExprContext ctx){
 		
 		visit(ctx.expression(0));

@@ -29,7 +29,7 @@ public class Translate {
 		//walker.walk(new GEMExtendListener(), tree);
 		GEMTypeCheckVisitor typeChecker = new GEMTypeCheckVisitor();
 		typeChecker.visit(tree);
-		
+
 		GEMExtendedVisitor translator = new GEMExtendedVisitor();
 		translator.visit(tree);
 		System.out.println(); // print a \n after translation
