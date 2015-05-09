@@ -538,7 +538,7 @@ public class GEMTypeCheckVisitor extends GEMBaseVisitor <Object> {
 				if (!paraList.get(i).type.equals(args[i])){
 					{
 						if ((i == 6 && !(paraList.get(i).arrayDimension != 1))
-							|| paraList.get(i).arrayDimension != 0)
+							|| paraList.get(i).arrayDimension != 0 || !paraList.get(i).type.equals(args[i]))
 						{
 							ce(ctx.getStart().getLine(), ctx.getStart().getCharPositionInLine(), PARAS_MISMATCH, "");
 							return v;
@@ -746,7 +746,6 @@ public class GEMTypeCheckVisitor extends GEMBaseVisitor <Object> {
 	}
 	@Override public VariableSymbol visitArrayInitializer2(@NotNull GEMParser.ArrayInitializer2Context ctx) {
 		VariableSymbol v = new VariableSymbol("error");
-//		List<GEMParser.ExpressionContext> lst = ctx.expression();
 		for (GEMParser.ExpressionContext x: ctx.expression()){
 			VariableSymbol t = (VariableSymbol) visit(x);
 			if (t.type.equals("error"))
