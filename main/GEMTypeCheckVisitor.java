@@ -22,6 +22,7 @@ public class GEMTypeCheckVisitor extends GEMBaseVisitor <Object> {
 	private static final Integer INVALID_INDEX = 10;
 	private static final Integer CONTINUE_ERR = 11;
 	private static final Integer BREAK_ERR = 12;
+	private static final Integer RUN_ERR = 13;
 
 	private LinkedList<HashMap<String, VariableSymbol>> symbols = new LinkedList<HashMap<String, VariableSymbol>>();
 	private LinkedList<VariableSymbol> lastType = new LinkedList<VariableSymbol>();
@@ -44,6 +45,7 @@ public class GEMTypeCheckVisitor extends GEMBaseVisitor <Object> {
 		errorMessage.put(BREAK_ERR, "Break cannot be used outside of a loop or a switch.\n");
 		errorMessage.put(INVALID_INDEX, "Array Index type error on %s.\n");
 		errorMessage.put(PARAS_MISMATCH, "Parameters mismatch%s.\n");
+		errorMessage.put(RUN_ERR, "Cannot run a non-event type like %s.\n ");
 	}
 	
 	private void ce(int row, int col, int errno, String msg) {
@@ -789,5 +791,13 @@ public class GEMTypeCheckVisitor extends GEMBaseVisitor <Object> {
 		visit(ctx.expression());
 		return null;
 
+	}
+	
+	@Override public VariableSymbol visitRunStatement(@NotNull GEMParser.RunStatementContext ctx) {
+		VariableSymbol vs = (VariableSymbol) visit(ctx.expression());
+		if(!vs.type.equals("Event")){
+			ce(ctx.getStart().getLine(), ctx.getStart().getCharPositionInLine(), RUN_ERR, vs);
+		}
+		return null;
 	}
 }

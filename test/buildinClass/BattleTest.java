@@ -18,11 +18,7 @@ public class BattleTest {
 		Unit m = new Unit("Aho", 5, 3, 50, 5, ss);
 		Unit h = new Unit("Ted", 20, 3, 20, 5, ss);
 		Battle b = new Battle("Battle to death!", m);
-<<<<<<< HEAD
-		Assert.assertEquals(b.trigger(h), true);
-=======
 		Assert.assertEquals(b.trigger(h), true);	
->>>>>>> 9d256157bd0197559e2b1d4a08e6270491fc620f
 	}
 	
 	@Test
