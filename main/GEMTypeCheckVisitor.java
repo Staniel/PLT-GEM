@@ -552,6 +552,39 @@ public class GEMTypeCheckVisitor extends GEMBaseVisitor <Object> {
 		return null;
 	}
 	
+	@Override public Object visitSwitchStatement(@NotNull GEMParser.SwitchStatementContext ctx) { 
+		visit(ctx.parExpression());
+		List<GEMParser.SwitchBlockStatementGroupContext> switchBlockStmtGroupList = ctx.switchBlockStatementGroup();
+		for(GEMParser.SwitchBlockStatementGroupContext tmp : switchBlockStmtGroupList){
+			visit(tmp);
+		}
+		List<GEMParser.SwitchLabelContext> switchLabelList = ctx.switchLabel();
+		for(GEMParser.SwitchLabelContext tmp : switchLabelList){
+			visit(tmp);
+		}
+		return null;
+	}
+	
+	@Override public Object visitSwitchBlockStatementGroup(@NotNull GEMParser.SwitchBlockStatementGroupContext ctx) {
+		List<GEMParser.SwitchLabelContext> switchLabelList = ctx.switchLabel();
+		for(GEMParser.SwitchLabelContext tmp : switchLabelList){
+			visit(tmp);
+		}
+		List<GEMParser.BlockStatementContext> blockStmtList = ctx.blockStatement();
+		for(GEMParser.BlockStatementContext tmp : blockStmtList){
+			visit(tmp);
+		}
+		return null;
+	}
+	
+	@Override public Void visitSwitchLabel(@NotNull GEMParser.SwitchLabelContext ctx) {
+		String text = ctx.getText();
+		if(text.startsWith("case")){
+			visit(ctx.expression());
+		}
+		return null;
+	}
+	
 	@Override public Void visitIfStatement(@NotNull GEMParser.IfStatementContext ctx) {
 		VariableSymbol parExpr = (VariableSymbol) visit(ctx.parExpression());
 		List<GEMParser.StatementContext> stmtList = ctx.statement();
@@ -561,6 +594,5 @@ public class GEMTypeCheckVisitor extends GEMBaseVisitor <Object> {
 		}
 		return null;
 	}
-	
 	
 }

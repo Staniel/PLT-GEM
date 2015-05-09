@@ -332,7 +332,6 @@ public class GEMExtendedVisitor extends GEMBaseVisitor<Void> {
 		}
 		print("}");
 		return null;
-		
 	}
 	
 	@Override public Void visitReturnStatement(@NotNull GEMParser.ReturnStatementContext ctx) {
