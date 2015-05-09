@@ -1,5 +1,5 @@
-int f(){
-	return 1;
+int f(int b){
+	return b;
 }
 
 void main(String[] args){
