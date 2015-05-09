@@ -343,7 +343,6 @@ public class GEMExtendedVisitor extends GEMBaseVisitor<Void> {
 		print(";");
 		return null;
 	}
-	
 
 	@Override public Void visitPrimary(@NotNull GEMParser.PrimaryContext ctx) {
 		if (ctx.expression() != null) {
