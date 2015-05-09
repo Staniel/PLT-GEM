@@ -92,7 +92,7 @@ public class GEMTypeCheckVisitor extends GEMBaseVisitor <Object> {
 	private VariableSymbol seekVar(String id) {
 		int i;
 		if(isEvent){
-			HashMap<String, VariableSymbol> scope = symbols.get(0);
+			HashMap<String, VariableSymbol> scope = symbols.get(symbols.size()-1);
 			if (scope.containsKey(id)) {
 				VariableSymbol res = scope.get(id);
 				return res;
@@ -100,7 +100,7 @@ public class GEMTypeCheckVisitor extends GEMBaseVisitor <Object> {
 			return null;
 		}
 		else{
-			for (i = symbols.size()-1; i >= 0; i--) {
+			for (i = 0; i < symbols.size(); i++) {
 				HashMap<String, VariableSymbol> scope = symbols.get(i);
 				if (scope.containsKey(id)) {
 					VariableSymbol res = scope.get(id);
