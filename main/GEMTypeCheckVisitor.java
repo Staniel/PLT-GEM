@@ -14,6 +14,7 @@ public class GEMTypeCheckVisitor extends GEMBaseVisitor <Object> {
 	private static final Integer PARAS_MISMATCH = 5;
 	private static final Integer ILLEGAL_NAME = 6;
 	private static final Integer INVALID_UOP = 7;
+	private static final Integer METHOD_UNDEFINED = 8;
 	private LinkedList<HashMap<String, VariableSymbol>> symbols = new LinkedList<HashMap<String, VariableSymbol>>();
 	private HashMap<String, VariableSymbol> globalSymbols = new HashMap<String, VariableSymbol>();
 	private LinkedList<VariableSymbol> lastType = new LinkedList<VariableSymbol>();
@@ -23,6 +24,7 @@ public class GEMTypeCheckVisitor extends GEMBaseVisitor <Object> {
 		errorMessage.put(VAR_DEFINED, "Duplicate definition of %s.\n");
 		errorMessage.put(INVALID_OP, "Invalid operation on %s and %s.\n");
 		errorMessage.put(INVALID_UOP, "Invalid operation on %s.\n");
+		errorMessage.put(METHOD_UNDEFINED, "Undefined method on %s");
 	}
 	
 	private void ce(int row, int col, int errno, String msg) {
@@ -387,5 +389,50 @@ public class GEMTypeCheckVisitor extends GEMBaseVisitor <Object> {
 		}
 		ce(ctx.getStart().getLine(), ctx.getStart().getCharPositionInLine(), INVALID_OP, vs1, vs2);
 		return v;
+	}
+	
+	@Override public ArrayList<VariableSymbol> visitExpressionList(@NotNull GEMParser.ExpressionListContext ctx) {
+		ArrayList<VariableSymbol> res = new ArrayList<VariableSymbol>();
+		for (int i = 0; i < ctx.expression().size(); i++) {
+			VariableSymbol tmp = (VariableSymbol) visit(ctx.expression(i));
+			res.add(tmp);
+		}
+		return res;
+	}
+	
+	@Override public VariableSymbol visitFuncExpr(@NotNull GEMParser.FuncExprContext ctx){
+		VariableSymbol res = new VariableSymbol("error");
+		VariableSymbol functionName = (VariableSymbol) visit(ctx.expression());
+		if(functionName.type.equals("error")){
+			return res;
+		}
+		if(!functionName.isFunction){
+			ce(ctx.getStart().getLine(), ctx.getStart().getCharPositionInLine(), METHOD_UNDEFINED, functionName);
+			return res;
+		}
+		if(ctx.expressionList()==null){
+			if(functionName.paras.size()!=0){
+				ce(ctx.getStart().getLine(), ctx.getStart().getCharPositionInLine(), PARAS_MISMATCH, functionName);
+				return res;
+			}
+			else{
+				res = new VariableSymbol(functionName.type, 0);
+				return res;
+			}
+		}
+		ArrayList<VariableSymbol> functionParams = (ArrayList<VariableSymbol>) visit(ctx.expressionList());
+		ArrayList<VariableSymbol> functionDefParams = functionName.paras;
+		if(functionParams.size() != functionDefParams.size()){
+			ce(ctx.getStart().getLine(), ctx.getStart().getCharPositionInLine(), PARAS_MISMATCH, functionName);
+			return res;
+		}
+		for(int i=0;i<functionParams.size();i++){
+			if(functionParams.get(i).type != functionDefParams.get(i).type){
+				ce(ctx.getStart().getLine(), ctx.getStart().getCharPositionInLine(), PARAS_MISMATCH, functionName);
+				return res;
+			}
+		}
+		res = new VariableSymbol(functionName.type, 0);
+		return res;
 	}
 }
