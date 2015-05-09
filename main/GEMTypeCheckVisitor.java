@@ -13,6 +13,7 @@ public class GEMTypeCheckVisitor extends GEMBaseVisitor <Object> {
 	private static final Integer RETURN_MISMATCH = 4;
 	private static final Integer PARAS_MISMATCH = 5;
 	private static final Integer ILLEGAL_NAME = 6;
+	private static final Integer INVALID_UOP = 7;
 	private LinkedList<HashMap<String, VariableSymbol>> symbols = new LinkedList<HashMap<String, VariableSymbol>>();
 	private HashMap<String, VariableSymbol> globalSymbols = new HashMap<String, VariableSymbol>();
 	private LinkedList<VariableSymbol> lastType = new LinkedList<VariableSymbol>();
@@ -21,6 +22,7 @@ public class GEMTypeCheckVisitor extends GEMBaseVisitor <Object> {
 		errorMessage = new HashMap<Integer, String>();
 		errorMessage.put(VAR_DEFINED, "Duplicate definition of %s.\n");
 		errorMessage.put(INVALID_OP, "Invalid operation on %s and %s.\n");
+		errorMessage.put(INVALID_UOP, "Invalid operation on %s.\n");
 	}
 	
 	private void ce(int row, int col, int errno, String msg) {
@@ -253,6 +255,190 @@ public class GEMTypeCheckVisitor extends GEMBaseVisitor <Object> {
 		} else if (ctx.getText().equals("null")) {
 			v = new VariableSymbol("null");
 		}
+		return v;
+	}
+	
+	@Override public VariableSymbol visitBinRelExpr(@NotNull GEMParser.BinRelExprContext ctx) {
+		VariableSymbol leftOperand = (VariableSymbol) visit(ctx.expression(0));
+		VariableSymbol rightOperand = (VariableSymbol) visit(ctx.expression(1));
+		VariableSymbol res = new VariableSymbol("error");
+		if(leftOperand.type.equals("error")||rightOperand.type.equals("error")){
+			res = new VariableSymbol("error");
+			return res;
+		}
+		if(leftOperand.type.equals("String")||leftOperand.type.equals("boolean")||leftOperand.type.equals("null")||rightOperand.type.equals("String")||rightOperand.type.equals("boolean")||rightOperand.type.equals("null")){
+			ce(ctx.getStart().getLine(), ctx.getStart().getCharPositionInLine(), INVALID_OP, leftOperand, rightOperand);
+			res = new VariableSymbol("boolean", 0);
+		}
+		return res;
+	}
+	
+	@Override public VariableSymbol visitBinEqExpr(@NotNull GEMParser.BinEqExprContext ctx){
+		VariableSymbol res = null;
+		VariableSymbol leftOperand = (VariableSymbol) visit(ctx.expression(0));
+		VariableSymbol rightOperand = (VariableSymbol) visit(ctx.expression(1));
+		if(leftOperand.type.equals("error")||rightOperand.type.equals("error")){
+			res = new VariableSymbol("error");
+			return res;
+		}
+		if(leftOperand.arrayDimension>0||rightOperand.arrayDimension>0){
+			ce(ctx.getStart().getLine(), ctx.getStart().getCharPositionInLine(), INVALID_OP, leftOperand, rightOperand);
+			res = new VariableSymbol("error");
+			return res;
+		}
+		if(leftOperand.type.equals(rightOperand.type)||(((leftOperand.type.equals("int")||leftOperand.type.equals("double"))&&((rightOperand.type.equals("int")||rightOperand.type.equals("double")))))){
+			res = new VariableSymbol("boolean", 0);
+			return res;
+		}
+		ce(ctx.getStart().getLine(), ctx.getStart().getCharPositionInLine(), INVALID_OP, leftOperand, rightOperand);
+		return res;
+	}
+	
+	@Override public VariableSymbol visitBinAndExpr(@NotNull GEMParser.BinAndExprContext ctx){
+		VariableSymbol res = null;
+		VariableSymbol leftOperand = (VariableSymbol) visit(ctx.expression(0));
+		VariableSymbol rightOperand = (VariableSymbol) visit(ctx.expression(1));
+		if(leftOperand.type.equals("error")||rightOperand.type.equals("error")){
+			res = new VariableSymbol("error");
+			return res;
+		}
+		if(leftOperand.arrayDimension>0||rightOperand.arrayDimension>0){
+			res = new VariableSymbol("error");
+			ce(ctx.getStart().getLine(), ctx.getStart().getCharPositionInLine(), INVALID_OP, leftOperand, rightOperand);
+			return res;
+		}
+		if(!leftOperand.type.equals("boolean")||!rightOperand.type.equals("boolean")){
+			res = new VariableSymbol("error");
+			ce(ctx.getStart().getLine(), ctx.getStart().getCharPositionInLine(), INVALID_OP, leftOperand, rightOperand);
+			return res;
+		}
+		res = new VariableSymbol("boolean",0);
+		return res;
+	}
+
+	@Override public VariableSymbol visitBinOrExpr(@NotNull GEMParser.BinOrExprContext ctx){
+		VariableSymbol res = null;
+		VariableSymbol leftOperand = (VariableSymbol) visit(ctx.expression(0));
+		VariableSymbol rightOperand = (VariableSymbol) visit(ctx.expression(1));
+		if(leftOperand.type.equals("error")||rightOperand.type.equals("error")){
+			res = new VariableSymbol("error");
+			return res;
+		}
+		if(leftOperand.arrayDimension>0||rightOperand.arrayDimension>0){
+			res = new VariableSymbol("error");
+			ce(ctx.getStart().getLine(), ctx.getStart().getCharPositionInLine(), INVALID_OP, leftOperand, rightOperand);
+			return res;
+		}
+		if(!leftOperand.type.equals("boolean")||!rightOperand.type.equals("boolean")){
+			res = new VariableSymbol("error");
+			ce(ctx.getStart().getLine(), ctx.getStart().getCharPositionInLine(), INVALID_OP, leftOperand, rightOperand);
+			return res;
+		}
+		res = new VariableSymbol("boolean",0);
+		return res;
+	}
+	
+	@Override public VariableSymbol visitAssignExpr(@NotNull GEMParser.AssignExprContext ctx){
+		VariableSymbol res = null;
+		VariableSymbol leftOperand = (VariableSymbol) visit(ctx.expression(0));
+		VariableSymbol rightOperand = (VariableSymbol) visit(ctx.expression(1));
+		if(leftOperand.type.equals("error")||rightOperand.type.equals("error")){
+			res = new VariableSymbol("error");
+			return res;
+		}
+		if((leftOperand.type.equals("int")||leftOperand.type.equals("double"))&&(rightOperand.type.equals("int")||rightOperand.type.equals("double")))
+		{
+			if(leftOperand.type.equals("double")||rightOperand.type.equals("double")){
+				res = new VariableSymbol("double", 0);
+			}
+			else{
+				res = new VariableSymbol("int", 0);
+			}
+			return res;
+		}
+		if(leftOperand.arrayDimension!=rightOperand.arrayDimension||!leftOperand.type.equals(rightOperand.type)){
+			res = new VariableSymbol("error");
+			ce(ctx.getStart().getLine(), ctx.getStart().getCharPositionInLine(), INVALID_OP, leftOperand, rightOperand);
+			return res;
+		}
+		res = new VariableSymbol(leftOperand.type, leftOperand.arrayDimension);
+		return res;
+	}
+
+	@Override public VariableSymbol visitUnaryExpr(@NotNull GEMParser.UnaryExprContext ctx){
+		VariableSymbol v = (VariableSymbol) visit(ctx.expression()); 
+		if (v.type.equals("int") || v.type.equals("double") || v.type.equals("error"))
+			return v;
+		ce(ctx.getStart().getLine(), ctx.getStart().getCharPositionInLine(), INVALID_UOP, v.type);
+		v.type = "error";
+		return v;
+	}
+	@Override public VariableSymbol visitUnaryRelExpr(@NotNull GEMParser.UnaryRelExprContext ctx){
+		VariableSymbol v = (VariableSymbol) visit(ctx.expression()); 
+		if (v.type.equals("boolean") || v.type.equals("error") || v.type.equals("int"))
+			return v;
+		ce(ctx.getStart().getLine(), ctx.getStart().getCharPositionInLine(), INVALID_UOP, v.type);
+		v.type = "error";
+		return v;
+	}
+	@Override public VariableSymbol visitBinTopExpr(@NotNull GEMParser.BinTopExprContext ctx) {
+		VariableSymbol vs1 = (VariableSymbol) visit(ctx.expression(0));
+		VariableSymbol vs2 = (VariableSymbol) visit(ctx.expression(1));
+		VariableSymbol v = new VariableSymbol("error"); 
+		if (vs1.type.equals("error") || vs2.type.equals("error"))
+			return v;
+		if (vs1.arrayDimension != 0 || vs2.arrayDimension != 0 )
+			{
+			ce(ctx.getStart().getLine(), ctx.getStart().getCharPositionInLine(), INVALID_OP, vs1, vs2);
+				return v;
+			}
+		if (vs1.type.equals("String") || vs2.type.equals("String"))
+			{
+				ce(ctx.getStart().getLine(), ctx.getStart().getCharPositionInLine(), INVALID_OP, vs1, vs2);
+				return v;
+			}
+		if (vs1.type.equals(vs2.type))
+			{
+			if (vs1.type.equals("int") || vs1.type.equals("double"))	
+				return vs1;
+			ce(ctx.getStart().getLine(), ctx.getStart().getCharPositionInLine(), INVALID_OP, vs1, vs2);
+			return v;
+			}
+		else{
+			if (vs1.type.equals("int") && vs2.type.equals("double") || vs2.type.equals("int") && vs1.type.equals("double"))
+				return new VariableSymbol("double");
+		}
+		ce(ctx.getStart().getLine(), ctx.getStart().getCharPositionInLine(), INVALID_OP, vs1, vs2);
+		return v;
+	}
+	
+	@Override public VariableSymbol visitBinLowExpr(@NotNull GEMParser.BinLowExprContext ctx) {
+		VariableSymbol vs1 = (VariableSymbol) visit(ctx.expression(0));
+		VariableSymbol vs2 = (VariableSymbol) visit(ctx.expression(1));
+		VariableSymbol v = new VariableSymbol("error"); 
+		if (vs1.type.equals("error") || vs2.type.equals("error"))
+			return v;
+		if (vs1.arrayDimension != 0 || vs2.arrayDimension != 0 )
+			{
+				ce(ctx.getStart().getLine(), ctx.getStart().getCharPositionInLine(), INVALID_OP, vs1, vs2);
+				return v;
+			}
+		if (ctx.getChild(1).getText().equals("+") && (vs1.type.equals("String") || vs2.type.equals("String")))
+			{
+				return new VariableSymbol("String");
+			}
+		if (vs1.type.equals(vs2.type))
+			{
+			if (vs1.type.equals("int") || vs1.type.equals("double"))	
+				return vs1;
+			ce(ctx.getStart().getLine(), ctx.getStart().getCharPositionInLine(), INVALID_OP, vs1, vs2);
+			return v;
+			}
+		else{
+			if (vs1.type.equals("int") && vs2.type.equals("double") || vs2.type.equals("int") && vs1.type.equals("double"))
+				return new VariableSymbol("double");
+		}
+		ce(ctx.getStart().getLine(), ctx.getStart().getCharPositionInLine(), INVALID_OP, vs1, vs2);
 		return v;
 	}
 }

@@ -1,7 +1,8 @@
 package buildinClass;
 
-
 public class Event {
+	
+	//Information of this event.
 	public String display;
 	public Event[] options;
 	public String id;
