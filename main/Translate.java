@@ -21,6 +21,8 @@ public class Translate {
 		CommonTokenStream tokens = new CommonTokenStream(lexer);
 		// create a parser that feeds off the tokens buffer 
 		GEMParser parser = new GEMParser(tokens);
+		parser.removeErrorListeners();
+		parser.addErrorListener(new GEMErrorListener());
 		ParseTree tree = parser.compilationUnit(); // begin parsing at rule
 		//ParseTree tree = parser.variableDeclaration();
 		// Create a generic parse tree walker that can trigger callbacks
@@ -32,6 +34,8 @@ public class Translate {
 
 		GEMExtendedVisitor translator = new GEMExtendedVisitor();
 		translator.visit(tree);
+		
+		
 		System.out.println(); // print a \n after translation
 	}
 
