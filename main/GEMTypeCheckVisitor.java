@@ -91,10 +91,7 @@ public class GEMTypeCheckVisitor extends GEMBaseVisitor <Object> {
 		return null;
 	}
 	
-	@Override public Object visitMethodDeclaration(@NotNull GEMParser.MethodDeclarationContext ctx) {
-		HashMap<String, VariableSymbol> scope = new HashMap<String, VariableSymbol>();
-		symbols.push(scope);
-		
+	@Override public Object visitMethodDeclaration(@NotNull GEMParser.MethodDeclarationContext ctx) {		
 		// type
 		VariableSymbol method = null;
 		if (ctx.type() != null) {
@@ -114,6 +111,8 @@ public class GEMTypeCheckVisitor extends GEMBaseVisitor <Object> {
 		symbols.peek().put(varName, method);
 		
 		// parameters
+		HashMap<String, VariableSymbol> scope = new HashMap<String, VariableSymbol>();
+		symbols.push(scope);
 		ArrayList<VariableSymbol> paras = (ArrayList<VariableSymbol>) visit(ctx.parameters());
 		method.paras = paras;
 		
@@ -555,7 +554,40 @@ public class GEMTypeCheckVisitor extends GEMBaseVisitor <Object> {
 		return null;
 	}
 	
-	@Override public VariableSymbol visitIfStatement(@NotNull GEMParser.IfStatementContext ctx) {
+	@Override public Object visitSwitchStatement(@NotNull GEMParser.SwitchStatementContext ctx) { 
+		visit(ctx.parExpression());
+		List<GEMParser.SwitchBlockStatementGroupContext> switchBlockStmtGroupList = ctx.switchBlockStatementGroup();
+		for(GEMParser.SwitchBlockStatementGroupContext tmp : switchBlockStmtGroupList){
+			visit(tmp);
+		}
+		List<GEMParser.SwitchLabelContext> switchLabelList = ctx.switchLabel();
+		for(GEMParser.SwitchLabelContext tmp : switchLabelList){
+			visit(tmp);
+		}
+		return null;
+	}
+	
+	@Override public Object visitSwitchBlockStatementGroup(@NotNull GEMParser.SwitchBlockStatementGroupContext ctx) {
+		List<GEMParser.SwitchLabelContext> switchLabelList = ctx.switchLabel();
+		for(GEMParser.SwitchLabelContext tmp : switchLabelList){
+			visit(tmp);
+		}
+		List<GEMParser.BlockStatementContext> blockStmtList = ctx.blockStatement();
+		for(GEMParser.BlockStatementContext tmp : blockStmtList){
+			visit(tmp);
+		}
+		return null;
+	}
+	
+	@Override public Object visitSwitchLabel(@NotNull GEMParser.SwitchLabelContext ctx) {
+		String text = ctx.getText();
+		if(text.startsWith("case")){
+			visit(ctx.expression());
+		}
+		return null;
+	}
+	
+	@Override public Object visitIfStatement(@NotNull GEMParser.IfStatementContext ctx) {
 		VariableSymbol parExpr = (VariableSymbol) visit(ctx.parExpression());
 		List<GEMParser.StatementContext> stmtList = ctx.statement();
 		visit(stmtList.get(0));
@@ -564,7 +596,7 @@ public class GEMTypeCheckVisitor extends GEMBaseVisitor <Object> {
 		}
 		return null;
 	}
-	
+
 	@Override public VariableSymbol visitWhileStatement(@NotNull GEMParser.WhileStatementContext ctx){
 		visit(ctx.parExpression());
 		visit(ctx.statement());
@@ -575,8 +607,4 @@ public class GEMTypeCheckVisitor extends GEMBaseVisitor <Object> {
 		visit(ctx.expression());
 		return null;
 	}
-	
-	
-	
-	
 }
