@@ -1,6 +1,7 @@
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.List;
 
 import org.antlr.v4.runtime.misc.NotNull;
 
@@ -140,8 +141,7 @@ public class GEMTypeCheckVisitor extends GEMBaseVisitor <Object> {
 		if (ctx.variableDeclaration() != null) {
 			return visit(ctx.variableDeclaration());
 		} else {
-			return null;
-			//return visit(ctx.statement());
+			return visit(ctx.statement());
 		}
 	}
 	
@@ -480,7 +480,11 @@ public class GEMTypeCheckVisitor extends GEMBaseVisitor <Object> {
 			return res;
 		}
 		for(int i=0;i<functionParams.size();i++){
-			if(functionParams.get(i).type != functionDefParams.get(i).type){
+			if(functionParams.get(i).type != functionDefParams.get(i).type||functionParams.get(i).isFunction){
+				ce(ctx.getStart().getLine(), ctx.getStart().getCharPositionInLine(), PARAS_MISMATCH, functionName);
+				return res;
+			}
+			if(functionParams.get(i).arrayDimension != functionDefParams.get(i).arrayDimension){
 				ce(ctx.getStart().getLine(), ctx.getStart().getCharPositionInLine(), PARAS_MISMATCH, functionName);
 				return res;
 			}
@@ -488,4 +492,21 @@ public class GEMTypeCheckVisitor extends GEMBaseVisitor <Object> {
 		res = new VariableSymbol(functionName.type, 0);
 		return res;
 	}
+	
+	@Override public VariableSymbol visitPrintStatement(@NotNull GEMParser.PrintStatementContext ctx) {
+		VariableSymbol vs = (VariableSymbol) visit(ctx.expression());
+		return null;
+	}
+	
+	@Override public Void visitIfStatement(@NotNull GEMParser.IfStatementContext ctx) {
+		VariableSymbol parExpr = (VariableSymbol) visit(ctx.parExpression());
+		List<GEMParser.StatementContext> stmtList = ctx.statement();
+		visit(stmtList.get(0));
+		if(stmtList.size() > 1){
+			visit(stmtList.get(1));
+		}
+		return null;
+	}
+	
+	
 }
