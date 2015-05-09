@@ -1,0 +1,13 @@
+
+int f(int a, int b){
+	return a;
+}
+
+void main(String[] args){
+	int a = f(1,null);
+	String b = f(1, null);
+	print a;
+}
+
+
+

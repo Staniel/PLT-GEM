@@ -25,11 +25,14 @@ public class GEMTypeCheckVisitor extends GEMBaseVisitor <Object> {
 	private static final Integer RUN_ERR = 13;
 	private static final Integer TRIGGER_ERR = 14;
 	private static final Integer ARRAY_INIT_ERR = 15;
-
+	private static final Integer EVENT_CONSTRUCTOR_ERR = 16;
+	private static final Integer NO_NEXT_STATEMENT = 17;
+	
 	private LinkedList<HashMap<String, VariableSymbol>> symbols = new LinkedList<HashMap<String, VariableSymbol>>();
 	private LinkedList<VariableSymbol> lastType = new LinkedList<VariableSymbol>();
 	private int loops;
 	private int switches;
+	private static boolean isEvent = false;
 	
 	private static final HashMap<Integer, String> errorMessage;
 	static {
@@ -50,6 +53,8 @@ public class GEMTypeCheckVisitor extends GEMBaseVisitor <Object> {
 		errorMessage.put(RUN_ERR, "Cannot run a non-event type like %s.\n ");
 		errorMessage.put(TRIGGER_ERR, "%s cannot trigger a %s.\n");
 		errorMessage.put(ARRAY_INIT_ERR, "%s mismatch declared type %s.\n");
+		errorMessage.put(EVENT_CONSTRUCTOR_ERR, "Wrong parameters for create an event.\n");
+		errorMessage.put(NO_NEXT_STATEMENT, "A next statement missed!\n");
 	}
 	
 	private void ce(int row, int col, int errno, String msg) {
@@ -88,11 +93,21 @@ public class GEMTypeCheckVisitor extends GEMBaseVisitor <Object> {
 	
 	private VariableSymbol seekVar(String id) {
 		int i;
-		for (i = symbols.size()-1; i >= 0; i--) {
-			HashMap<String, VariableSymbol> scope = symbols.get(i);
+		if(isEvent){
+			HashMap<String, VariableSymbol> scope = symbols.get(0);
 			if (scope.containsKey(id)) {
 				VariableSymbol res = scope.get(id);
 				return res;
+			}
+			return null;
+		}
+		else{
+			for (i = symbols.size()-1; i >= 0; i--) {
+				HashMap<String, VariableSymbol> scope = symbols.get(i);
+				if (scope.containsKey(id)) {
+					VariableSymbol res = scope.get(id);
+					return res;
+				}
 			}
 		}
 		return null;
@@ -857,7 +872,7 @@ public class GEMTypeCheckVisitor extends GEMBaseVisitor <Object> {
 		return null;
 	}
 	
-	@Override public Void visitTriggerStatement(@NotNull GEMParser.TriggerStatementContext ctx) {
+	@Override public VariableSymbol visitTriggerStatement(@NotNull GEMParser.TriggerStatementContext ctx) {
 		VariableSymbol hero = (VariableSymbol) visit(ctx.expression(1));
 		VariableSymbol battle = (VariableSymbol) visit(ctx.expression(0));
 		if(hero.arrayDimension!=0 || battle.arrayDimension!=0){
@@ -867,5 +882,62 @@ public class GEMTypeCheckVisitor extends GEMBaseVisitor <Object> {
 			ce(ctx.getStart().getLine(), ctx.getStart().getCharPositionInLine(), TRIGGER_ERR, hero, battle);
 		}
 		return null;
+	}
+	
+	@Override public VariableSymbol visitEventConstructor(@NotNull GEMParser.EventConstructorContext ctx) {
+		visit(ctx.eventArguments());
+		visit(ctx.eventBlock());
+		return new VariableSymbol("Event", 0);
+	}
+	
+	@Override public VariableSymbol visitEventArguments(@NotNull GEMParser.EventArgumentsContext ctx) {
+		visit(ctx.eventExpressionList());
+		return null;
+	}
+	
+	@Override public VariableSymbol visitEventExpressionList(@NotNull GEMParser.EventExpressionListContext ctx) {
+		VariableSymbol argu1 = (VariableSymbol) visit(ctx.expression(0));
+		VariableSymbol argu2 = (VariableSymbol) visit(ctx.expression(1));
+		VariableSymbol argu3 = (VariableSymbol) visit(ctx.expression(2));
+		if(!argu1.type.equals("String")||!argu2.type.equals("String")||!argu3.type.equals("Event")||argu3.arrayDimension==0){
+			ce(ctx.getStart().getLine(), ctx.getStart().getCharPositionInLine(), PARAS_MISMATCH, "");
+		}
+		if (ctx.expressionList() != null) {
+			if(ctx.expressionList() != null){
+				ce(ctx.getStart().getLine(), ctx.getStart().getCharPositionInLine(), PARAS_MISMATCH, "");
+			}
+		}
+		return null;
+	}
+	
+	@Override public VariableSymbol visitEventBlock(@NotNull GEMParser.EventBlockContext ctx) {
+		isEvent = true;
+		HashMap<String, VariableSymbol> scope = new HashMap<String, VariableSymbol>();
+		symbols.push(scope);
+		for (GEMParser.BlockStatementContext bs : ctx.blockStatement()) {
+			visit(bs);
+		}
+		if(ctx.nextStatement()==null){
+			ce(ctx.getStart().getLine(), ctx.getStart().getCharPositionInLine(), NO_NEXT_STATEMENT, "");
+		}
+		else{
+			visit(ctx.nextStatement());
+		}
+		symbols.pop();
+		isEvent = false;
+		return null;
+	}
+	
+	@Override public VariableSymbol visitNextStatement(@NotNull GEMParser.NextStatementContext ctx) { 
+		VariableSymbol vs = (VariableSymbol) visit(ctx.expression());
+		if(vs.type.equals("String")){
+			ce(ctx.getStart().getLine(), ctx.getStart().getCharPositionInLine(), INVALID_OP, vs);
+		}		
+		return null;
+	}
+	
+	@Override public VariableSymbol visitConstructorExpr(@NotNull GEMParser.ConstructorExprContext ctx) {
+		VariableSymbol vs = (VariableSymbol) visit(ctx.constructor());
+		return new VariableSymbol(vs.type);
 	}
 }
