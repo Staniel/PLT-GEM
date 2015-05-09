@@ -91,16 +91,30 @@ public class GEMTypeCheckVisitor extends GEMBaseVisitor <Object> {
 	@Override public Object visitMethodDeclaration(@NotNull GEMParser.MethodDeclarationContext ctx) {
 		HashMap<String, VariableSymbol> scope = new HashMap<String, VariableSymbol>();
 		symbols.push(scope);
-		VariableSymbol varTemplate = null;
+		
+		// type
+		VariableSymbol method = null;
 		if (ctx.type() != null) {
-			varTemplate = (VariableSymbol) visit(ctx.type());
-			varTemplate.isFunction = true;
+			method = (VariableSymbol) visit(ctx.type());
+			method.isFunction = true;
 		} else {
-			varTemplate = new VariableSymbol("void", true, null);
+			method = new VariableSymbol("void", true, null);
 		}
-		lastType.push(varTemplate);
+		lastType.push(method);
+		
+		// Identifier (method name)
+		String varName = ctx.Identifier().getText();
+		if (seekVar(varName) != null) {
+			ce(ctx.getStart().getLine(), ctx.getStart().getCharPositionInLine(), VAR_DEFINED, varName);
+			return null;
+		}
+		globalSymbols.put(varName, method);
+		
+		// parameters
 		ArrayList<VariableSymbol> paras = (ArrayList<VariableSymbol>) visit(ctx.parameters());
-		varTemplate.paras = paras;
+		method.paras = paras;
+		
+		// method body
 		if (ctx.methodBody() != null) {
 			visit(ctx.methodBody());
 		}
@@ -109,26 +123,65 @@ public class GEMTypeCheckVisitor extends GEMBaseVisitor <Object> {
 		return null;
 	}
 	
+	@Override public Object visitMethodBody(@NotNull GEMParser.MethodBodyContext ctx) {
+		return visit(ctx.block());
+	}
+	
+	@Override public Object visitBlock(@NotNull GEMParser.BlockContext ctx) {
+		for (GEMParser.BlockStatementContext bs : ctx.blockStatement()) {
+			visit(bs);
+		}
+		return null;
+	}
+	
+	@Override public Object visitBlockStatement(@NotNull GEMParser.BlockStatementContext ctx) {
+		if (ctx.variableDeclaration() != null) {
+			return visit(ctx.variableDeclaration());
+		} else {
+			return null;
+			//return visit(ctx.statement());
+		}
+	}
+	
 	@Override public ArrayList<VariableSymbol> visitParameters(@NotNull GEMParser.ParametersContext ctx) {
-		return (ArrayList<VariableSymbol>) visit(ctx.parameterList());
+		if (ctx.parameterList() != null) {
+			return (ArrayList<VariableSymbol>) visit(ctx.parameterList());
+		}
+		return new ArrayList<VariableSymbol>();
 	}
 	
 	@Override public ArrayList<VariableSymbol> visitParameterList(@NotNull GEMParser.ParameterListContext ctx) {
 		ArrayList<VariableSymbol> paras = new ArrayList<VariableSymbol>();
 		for (int i = 0; i < ctx.parameter().size(); i++) {
 			VariableSymbol para = (VariableSymbol) visit(ctx.parameter(i));
-			paras.add(para);
+			if (para != null)
+				paras.add(para);
 		}
 		return paras;
 	}
 	
-	@Override public Void visitParameter(@NotNull GEMParser.ParameterContext ctx) {
-		VariableSymbol varTemplate = (VariableSymbol) visit(ctx.type());
-		
+	@Override public VariableSymbol visitParameter(@NotNull GEMParser.ParameterContext ctx) {
+		VariableSymbol parameter = (VariableSymbol) visit(ctx.type());
+		String varName = (String) visit(ctx.variableDeclaratorId());
+		if (varName != null) {
+			if (seekVar(varName) == null) {
+				globalSymbols.put(varName, parameter);
+				return parameter;
+			}
+		}
 		return null;
 	}
 	
-	@Override public VariableSymbol visitOutervariableDeclaration(@NotNull GEMParser.OutervariableDeclarationContext ctx){
+	@Override public Object visitOutervariableDeclaration(@NotNull GEMParser.OutervariableDeclarationContext ctx){
+		VariableSymbol varTemplate = (VariableSymbol) visit(ctx.type());
+		// Put type in the lastType stack
+		lastType.push(varTemplate);
+		visit(ctx.variableDeclarators());
+		lastType.pop();
+		return null;
+	}
+	
+	@Override public Void visitVariableDeclaration(@NotNull GEMParser.VariableDeclarationContext ctx) {
 		VariableSymbol varTemplate = (VariableSymbol) visit(ctx.type());
 		// Put type in the lastType stack
 		lastType.push(varTemplate);
