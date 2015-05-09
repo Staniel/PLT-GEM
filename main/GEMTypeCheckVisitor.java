@@ -148,4 +148,16 @@ public class GEMTypeCheckVisitor extends GEMBaseVisitor <Object> {
 		}
 		return v;
 	}
+	
+	@Override public VariableSymbol visitBinRelExpr(@NotNull GEMParser.BinRelExprContext ctx) {
+		VariableSymbol leftOperand = (VariableSymbol) visit(ctx.expression(0));
+		VariableSymbol rightOperand = (VariableSymbol) visit(ctx.expression(1));
+		VariableSymbol res = new VariableSymbol("error");
+		if(leftOperand.type.equals("String")||leftOperand.type.equals("boolean")||leftOperand.type.equals("null")||rightOperand.type.equals("String")||rightOperand.type.equals("boolean")||rightOperand.type.equals("null")){
+			ce();
+			res = new VariableSymbol("boolean", 0);
+		}
+		return null;
+	}
+
 }
