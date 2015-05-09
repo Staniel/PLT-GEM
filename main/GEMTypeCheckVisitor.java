@@ -38,6 +38,24 @@ public class GEMTypeCheckVisitor extends GEMBaseVisitor <Object> {
 		return false;
 	}
 	
+	private VariableSymbol seekVar(String id) {
+		int i;
+		for (i = symbols.size()-1; i >= 0; i--) {
+			HashMap<String, VariableSymbol> scope = symbols.get(i);
+			if (scope.containsKey(id)) {
+				VariableSymbol res = scope.get(id);
+				return res;
+			}
+		}
+		return seekVarGlobal(id);
+	}
+	
+	private VariableSymbol seekVarGlobal(String id) {
+		if (globalSymbols.containsKey(id)) {
+			return globalSymbols.get(id);
+		}
+		return null;
+	}
 //	private boolean checkParas(ArrayList<VariableSymbol> p1, ArrayList<VariableSymbol> p2) {
 //		boolean flag = true;
 //		if (p1.size() != p2.size()) {
@@ -103,14 +121,16 @@ public class GEMTypeCheckVisitor extends GEMBaseVisitor <Object> {
 	}
 	
 	@Override public VariableSymbol visitPrimary(@NotNull GEMParser.PrimaryContext ctx) {
+		VariableSymbol v = null;
 		if (ctx.expression() != null) {
-			return (VariableSymbol) visit(ctx.expression());
+			v = (VariableSymbol) visit(ctx.expression());
 		} else if (ctx.literal() != null) {
-			return (VariableSymbol) visit(ctx.literal());
+			v = (VariableSymbol) visit(ctx.literal());
 		} else if (ctx.Identifier() != null) {
-			// Identifier check
+			String varName = ctx.Identifier().getText();
+			v = seekVar(varName);
 		}
-		return null;
+		return v;
 	}
 	
 	@Override public VariableSymbol visitLiteral(@NotNull GEMParser.LiteralContext ctx) {
