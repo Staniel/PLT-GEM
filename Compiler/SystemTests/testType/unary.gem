@@ -3,8 +3,8 @@ void main(String[] args) {
 	int b = 2;
 	double d = 2.1;
 	String c = "a";
-	b = -d;
-//	d = c;
+//	b = -d;
+	d = c;
 	a = +b;
 	b = ++b;
 }
