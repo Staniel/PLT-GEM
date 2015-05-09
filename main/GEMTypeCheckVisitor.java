@@ -4,6 +4,8 @@ import java.util.LinkedList;
 
 import org.antlr.v4.runtime.misc.NotNull;
 
+import buildinClass.Skill;
+
 @SuppressWarnings("unchecked")
 
 public class GEMTypeCheckVisitor extends GEMBaseVisitor <Object> {
@@ -23,6 +25,7 @@ public class GEMTypeCheckVisitor extends GEMBaseVisitor <Object> {
 		errorMessage.put(VAR_DEFINED, "Duplicate definition of %s.\n");
 		errorMessage.put(INVALID_OP, "Invalid operation on %s and %s.\n");
 		errorMessage.put(INVALID_UOP, "Invalid operation on %s.\n");
+		errorMessage.put(PARAS_MISMATCH, "Mismatch parameters %s\n");
 	}
 	
 	private void ce(int row, int col, int errno, String msg) {
@@ -461,24 +464,115 @@ public class GEMTypeCheckVisitor extends GEMBaseVisitor <Object> {
 		return vs1;
 	}
 	@Override public VariableSymbol visitBattleConstructor(@NotNull GEMParser.BattleConstructorContext ctx) {
-		VariableSymbol v = (VariableSymbol) visit(ctx.battleArguments());
-		if (v.type.equals("error"))
-			return v;
+		VariableSymbol v = new VariableSymbol("error");
+		String[] args = {"String", "Unit"};
+		if (ctx.battleArguments() != null) {
+			ArrayList<VariableSymbol> paraList = (ArrayList<VariableSymbol>) visit(ctx.battleArguments());
+			if (paraList.size() != 2)
+			{
+				ce(ctx.getStart().getLine(), ctx.getStart().getCharPositionInLine(), PARAS_MISMATCH, "");
+				return v;
+			}
+			for (int i=0;i<2;i++)
+			{
+				if (paraList.get(i).type.equals("error"))
+					return v;
+				if (!paraList.get(i).type.equals(args[i]) || paraList.get(i).arrayDimension != 0){
+					ce(ctx.getStart().getLine(), ctx.getStart().getCharPositionInLine(), PARAS_MISMATCH, "");
+					return v;
+				}
+			}
+		}
 		return new VariableSymbol("Battle");
 	}
 	@Override public VariableSymbol visitUnitConstructor(@NotNull GEMParser.UnitConstructorContext ctx) {
-		VariableSymbol v = (VariableSymbol) visit(ctx.unitArguments());
-		if (v.type.equals("error"))
-			return v;
+		VariableSymbol v = new VariableSymbol("error");
+		String[] args = {"String" , "double" , "double" , "double" , "int" , "Skill" };
+		if (ctx.unitArguments() != null) {
+			ArrayList<VariableSymbol> paraList = (ArrayList<VariableSymbol>) visit(ctx.unitArguments());
+			if (paraList.size() != 6)
+			{
+				ce(ctx.getStart().getLine(), ctx.getStart().getCharPositionInLine(), PARAS_MISMATCH, "");
+				return v;
+			}
+			for (int i=0;i<6;i++)
+			{
+				if (paraList.get(i).type.equals("error"))
+					return v;
+				if (!paraList.get(i).type.equals(args[i])){
+					{
+						if ((i == 6 && !(paraList.get(i).arrayDimension != 1))
+							|| paraList.get(i).arrayDimension != 0)
+						{
+							ce(ctx.getStart().getLine(), ctx.getStart().getCharPositionInLine(), PARAS_MISMATCH, "");
+							return v;
+						}
+					}
+				}
+			}
+		}
 		return new VariableSymbol("Unit");
 	}
+	
 	@Override public VariableSymbol visitSkillConstructor(@NotNull GEMParser.SkillConstructorContext ctx) {
-		VariableSymbol v = (VariableSymbol) visit(ctx.skillArguments());
-		if (v.type.equals("error"))
-			return v;
+		VariableSymbol v = new VariableSymbol("error");
+		String[] args = {"String" , "double" , "int" , "double" , "double" , "int" };
+		if (ctx.skillArguments() != null) {
+			ArrayList<VariableSymbol> paraList = (ArrayList<VariableSymbol>) visit(ctx.skillArguments());
+			if (paraList.size() != 6)
+			{
+				ce(ctx.getStart().getLine(), ctx.getStart().getCharPositionInLine(), PARAS_MISMATCH, "");
+				return v;
+			}
+			for (int i=0;i<6;i++)
+			{
+				if (paraList.get(i).type.equals("error"))
+					return v;
+				if (!paraList.get(i).type.equals(args[i]) || paraList.get(i).arrayDimension != 0){
+					ce(ctx.getStart().getLine(), ctx.getStart().getCharPositionInLine(), PARAS_MISMATCH, "");
+					return v;
+				}
+			}
+		}
 		return new VariableSymbol("Skill");
 	}
-	@Override public VariableSymbol visitUnitArguments(@NotNull GEMParser.UnitArgumentsContext ctx) {
+	@Override public ArrayList<VariableSymbol> visitSkillArguments(@NotNull GEMParser.SkillArgumentsContext ctx){
+		VariableSymbol v = new VariableSymbol("error");
+		ArrayList<VariableSymbol> paraList = new ArrayList<VariableSymbol>();
+		if (ctx.expression() != null)
+		{
+			for (GEMParser.ExpressionContext x: ctx.expression())
+				{
+					VariableSymbol vs = (VariableSymbol) visit(x);
+					paraList.add(vs);
+				}
+		}
+		return paraList;	
 	}
-	
+	@Override public ArrayList<VariableSymbol> visitUnitArguments(@NotNull GEMParser.UnitArgumentsContext ctx) {
+		VariableSymbol v = new VariableSymbol("error");
+		ArrayList<VariableSymbol> paraList = new ArrayList<VariableSymbol>();
+		if (ctx.expression() != null)
+		{
+			for (GEMParser.ExpressionContext x: ctx.expression())
+				{
+					VariableSymbol vs = (VariableSymbol) visit(x);
+					paraList.add(vs);
+				}
+		}
+		return paraList;	
+	}
+	@Override public ArrayList<VariableSymbol> visitBattleArguments(@NotNull GEMParser.BattleArgumentsContext ctx) {
+		VariableSymbol v = new VariableSymbol("error");
+		ArrayList<VariableSymbol> paraList = new ArrayList<VariableSymbol>();
+		if (ctx.expression() != null)
+		{
+			for (GEMParser.ExpressionContext x: ctx.expression())
+				{
+					VariableSymbol vs = (VariableSymbol) visit(x);
+					paraList.add(vs);
+				}
+		}
+		return paraList;	
+	}
 }
