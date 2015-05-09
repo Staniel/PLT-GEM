@@ -14,6 +14,9 @@ Compiler/SystemTests/tests/*.java
 Compiler/SystemTests/test1/*.out
 Compiler/SystemTests/test1/*.java
 Compiler/SystemTests/test1/*.class
+Compiler/SystemTests/testType/*.out
+Compiler/SystemTests/testType/*.class
+Compiler/SystemTests/testType/*.java
 src/
 main/GEM.tokens
 main/GEMBaseListener.java
