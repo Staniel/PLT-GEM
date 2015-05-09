@@ -228,19 +228,26 @@ public class GEMTypeCheckVisitor extends GEMBaseVisitor <Object> {
 			return v;
 		if (vs1.arrayDimension != 0 || vs2.arrayDimension != 0 )
 			{
-			ce(ctx.getStart().getLine(), ctx.getStart().getCharPositionInLine(), INVALID_OP, vs1.type+" array", vs2.type+" array");
+			ce(ctx.getStart().getLine(), ctx.getStart().getCharPositionInLine(), INVALID_OP, vs1, vs2);
+				return v;
+			}
+		if (vs1.type.equals("String") || vs2.type.equals("String"))
+			{
+				ce(ctx.getStart().getLine(), ctx.getStart().getCharPositionInLine(), INVALID_OP, vs1, vs2);
 				return v;
 			}
 		if (vs1.type.equals(vs2.type))
 			{
 			if (vs1.type.equals("int") || vs1.type.equals("double"))	
 				return vs1;
+			ce(ctx.getStart().getLine(), ctx.getStart().getCharPositionInLine(), INVALID_OP, vs1, vs2);
 			return v;
 			}
 		else{
 			if (vs1.type.equals("int") && vs2.type.equals("double") || vs2.type.equals("int") && vs1.type.equals("double"))
 				return new VariableSymbol("double");
 		}
+		ce(ctx.getStart().getLine(), ctx.getStart().getCharPositionInLine(), INVALID_OP, vs1, vs2);
 		return v;
 	}
 	
@@ -251,17 +258,26 @@ public class GEMTypeCheckVisitor extends GEMBaseVisitor <Object> {
 		if (vs1.type.equals("error") || vs2.type.equals("error"))
 			return v;
 		if (vs1.arrayDimension != 0 || vs2.arrayDimension != 0 )
-			return v;
+			{
+				ce(ctx.getStart().getLine(), ctx.getStart().getCharPositionInLine(), INVALID_OP, vs1, vs2);
+				return v;
+			}
+		if (ctx.getChild(1).getText().equals("+") && (vs1.type.equals("String") || vs2.type.equals("String")))
+			{
+				return new VariableSymbol("String");
+			}
 		if (vs1.type.equals(vs2.type))
 			{
 			if (vs1.type.equals("int") || vs1.type.equals("double"))	
 				return vs1;
+			ce(ctx.getStart().getLine(), ctx.getStart().getCharPositionInLine(), INVALID_OP, vs1, vs2);
 			return v;
 			}
 		else{
 			if (vs1.type.equals("int") && vs2.type.equals("double") || vs2.type.equals("int") && vs1.type.equals("double"))
 				return new VariableSymbol("double");
 		}
+		ce(ctx.getStart().getLine(), ctx.getStart().getCharPositionInLine(), INVALID_OP, vs1, vs2);
 		return v;
-	}	
+	}
 }
