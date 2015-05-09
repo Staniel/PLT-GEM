@@ -1,0 +1,5 @@
+GEM Error on line 3 at position 4: Invalid operation on int and String.
+GEM Error on line 6 at position 4: Invalid operation on int and String.
+GEM Error on line 9 at position 1: Invalid operation on int and String.
+GEM Error on line 10 at position 4: Invalid operation on boolean and int.
+GEM Error on line 13 at position 1: Invalid operation on int and boolean.
