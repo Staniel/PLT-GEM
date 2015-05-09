@@ -1,0 +1,10 @@
+int f(){
+	return 1;
+}
+
+void main(String[] args){
+	int a = f(1);
+	print a;
+}
+
+
