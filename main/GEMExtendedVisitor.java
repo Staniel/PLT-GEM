@@ -128,6 +128,7 @@ public class GEMExtendedVisitor extends GEMBaseVisitor<Void> {
 		visit(ctx.statement());
 		return null;
 	}
+	
 	@Override public Void visitForControl(@NotNull GEMParser.ForControlContext ctx) {
 		if (ctx.forInit() != null)
 			visit(ctx.forInit());

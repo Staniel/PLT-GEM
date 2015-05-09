@@ -22,6 +22,7 @@ public class GEMTypeCheckVisitor extends GEMBaseVisitor <Object> {
 	private static final HashMap<Integer, String> errorMessage;
 	static {
 		errorMessage = new HashMap<Integer, String>();
+		errorMessage.put(VAR_UNDEFINED, "%s is not defined.\n");
 		errorMessage.put(VAR_DEFINED, "Duplicate definition of %s.\n");
 		errorMessage.put(INVALID_OP, "Invalid operation on %s and %s.\n");
 		errorMessage.put(RETURN_MISMATCH, "Return type %s does not match %s.\n");
@@ -264,6 +265,10 @@ public class GEMTypeCheckVisitor extends GEMBaseVisitor <Object> {
 		} else if (ctx.Identifier() != null) {
 			String varName = ctx.Identifier().getText();
 			v = seekVar(varName);
+			if (v == null) {
+				ce(ctx.getStart().getLine(), ctx.getStart().getCharPositionInLine(), VAR_UNDEFINED, varName);
+				v = new VariableSymbol("error");
+			}
 		}
 		return v;
 	}
@@ -516,6 +521,32 @@ public class GEMTypeCheckVisitor extends GEMBaseVisitor <Object> {
 		}
 		res = new VariableSymbol(functionName.type, 0);
 		return res;
+	}
+	
+	@Override public Object visitForStatement(@NotNull GEMParser.ForStatementContext ctx) {
+		visit(ctx.forControl());
+		visit(ctx.statement());
+		return null;
+	}
+	
+	@Override public Object visitForControl(@NotNull GEMParser.ForControlContext ctx) {
+		if (ctx.forInit() != null)
+			visit(ctx.forInit());
+		if (ctx.expression() != null)
+			visit(ctx.expression());
+		if (ctx.forUpdate() != null)
+			visit(ctx.forUpdate());
+		return null;
+	}
+	
+	@Override public Object visitForInit(@NotNull GEMParser.ForInitContext ctx) {
+		visit(ctx.expressionList());
+		return null;
+	}
+	
+	@Override public Object visitForUpdate(@NotNull GEMParser.ForUpdateContext ctx) {
+		visit(ctx.expressionList());
+		return null;
 	}
 	
 	@Override public VariableSymbol visitPrintStatement(@NotNull GEMParser.PrintStatementContext ctx) {
