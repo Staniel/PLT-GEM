@@ -135,13 +135,6 @@ skillConstructor: 'Skill' skillArguments
 skillArguments	: '(' expression ',' expression ',' expression ',' expression ',' expression ',' expression ')'
 				;
 
-
-//itemConstructor: 'Item' itemArguments
-//				 ;
-//
-//itemArguments: '(' expression ',' expression ',' expression ',' expression ')';
-
-
 arguments
     :   '(' expressionList? ')'
     ;

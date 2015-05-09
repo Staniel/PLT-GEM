@@ -128,6 +128,7 @@ public class GEMExtendedVisitor extends GEMBaseVisitor<Void> {
 		visit(ctx.statement());
 		return null;
 	}
+	
 	@Override public Void visitForControl(@NotNull GEMParser.ForControlContext ctx) {
 		if (ctx.forInit() != null)
 			visit(ctx.forInit());
@@ -331,7 +332,6 @@ public class GEMExtendedVisitor extends GEMBaseVisitor<Void> {
 		}
 		print("}");
 		return null;
-		
 	}
 	
 	@Override public Void visitReturnStatement(@NotNull GEMParser.ReturnStatementContext ctx) {
@@ -507,7 +507,9 @@ public class GEMExtendedVisitor extends GEMBaseVisitor<Void> {
 	@Override public Void visitFuncExpr(@NotNull GEMParser.FuncExprContext ctx){
 		visit(ctx.expression());
 		print("(");
-		visit(ctx.expressionList());
+		if(ctx.expressionList() != null){
+			visit(ctx.expressionList());
+		}	
 		print(")");
 		return null;
 	}
