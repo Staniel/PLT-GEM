@@ -228,7 +228,7 @@ public class GEMTypeCheckVisitor extends GEMBaseVisitor <Object> {
 			return v;
 		if (vs1.arrayDimension != 0 || vs2.arrayDimension != 0 )
 			{
-			ce(ctx.getStart().getLine(), ctx.getStart().getCharPositionInLine(), INVALID_OP, vs1, vs2);
+				ce(ctx.getStart().getLine(), ctx.getStart().getCharPositionInLine(), INVALID_OP, vs1, vs2);
 				return v;
 			}
 		if (vs1.type.equals("String") || vs2.type.equals("String"))
@@ -238,17 +238,17 @@ public class GEMTypeCheckVisitor extends GEMBaseVisitor <Object> {
 			}
 		if (vs1.type.equals(vs2.type))
 			{
-			if (vs1.type.equals("int") || vs1.type.equals("double"))	
-				return vs1;
-			ce(ctx.getStart().getLine(), ctx.getStart().getCharPositionInLine(), INVALID_OP, vs1, vs2);
-			return v;
+				if (vs1.type.equals("int") || vs1.type.equals("double"))	
+					return vs1;
+				ce(ctx.getStart().getLine(), ctx.getStart().getCharPositionInLine(), INVALID_OP, vs1, vs2);
+				return v;
 			}
 		else{
 			if (vs1.type.equals("int") && vs2.type.equals("double") || vs2.type.equals("int") && vs1.type.equals("double"))
 				return new VariableSymbol("double");
 		}
-		ce(ctx.getStart().getLine(), ctx.getStart().getCharPositionInLine(), INVALID_OP, vs1, vs2);
-		return v;
+			ce(ctx.getStart().getLine(), ctx.getStart().getCharPositionInLine(), INVALID_OP, vs1, vs2);
+			return v;
 	}
 	
 	@Override public VariableSymbol visitBinLowExpr(@NotNull GEMParser.BinLowExprContext ctx) {
@@ -268,10 +268,10 @@ public class GEMTypeCheckVisitor extends GEMBaseVisitor <Object> {
 			}
 		if (vs1.type.equals(vs2.type))
 			{
-			if (vs1.type.equals("int") || vs1.type.equals("double"))	
-				return vs1;
-			ce(ctx.getStart().getLine(), ctx.getStart().getCharPositionInLine(), INVALID_OP, vs1, vs2);
-			return v;
+				if (vs1.type.equals("int") || vs1.type.equals("double"))	
+					return vs1;
+				ce(ctx.getStart().getLine(), ctx.getStart().getCharPositionInLine(), INVALID_OP, vs1, vs2);
+				return v;
 			}
 		else{
 			if (vs1.type.equals("int") && vs2.type.equals("double") || vs2.type.equals("int") && vs1.type.equals("double"))
@@ -279,5 +279,24 @@ public class GEMTypeCheckVisitor extends GEMBaseVisitor <Object> {
 		}
 		ce(ctx.getStart().getLine(), ctx.getStart().getCharPositionInLine(), INVALID_OP, vs1, vs2);
 		return v;
+	}
+	@Override public VariableSymbol visitArrayExpr(@NotNull GEMParser.ArrayExprContext ctx) {
+		VariableSymbol v = new VariableSymbol("error"); 
+		VariableSymbol vs1 = (VariableSymbol) visit(ctx.expression(0));
+		VariableSymbol vs2 = (VariableSymbol) visit(ctx.expression(1));
+		if (vs1.type.equals("error") || vs2.type.equals("error"))
+			return v;
+		if (vs1.arrayDimension < 1)
+		{
+			ce(ctx.getStart().getLine(), ctx.getStart().getCharPositionInLine(), INVALID_UOP, vs2);
+			return v;
+		}
+		if (vs2.arrayDimension != 0 || !vs2.type.equals("int"))
+		{
+			ce(ctx.getStart().getLine(), ctx.getStart().getCharPositionInLine(), INVALID_UOP, vs2);
+			return v;
+		}
+		vs1.arrayDimension -= 1;
+		return vs1;
 	}
 }
