@@ -1,7 +1,8 @@
 package buildinClass;
 
-
 public class Event {
+	
+	//Information of this event.
 	public String display;
 	public Event[] options;
 	public String id;
@@ -11,6 +12,7 @@ public class Event {
 		this.display = d;
 		this.options = o;
 	}
+	
 	public Event(Event e){
 		display = e.display;
 		int l = e.options.length;
@@ -18,6 +20,7 @@ public class Event {
 		for (int i = 0;i < l;i++)
 			options[i] = new Event(e.options[i]);
 	}
+	
 	public void display(){
 		System.out.println(display);
 	}
