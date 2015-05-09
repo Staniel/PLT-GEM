@@ -1,3 +1,9 @@
 void main(String[] args) {
-	int[] a = array int[1.0];
+//	int[] a = array int[11];
+//	String[] b = array String[2];
+//	b[0] = "q";
+//	double[] q = array double[2];
+	double[][] arr = array double[3][2];
+	arr[0] = 1.1;
+
 }

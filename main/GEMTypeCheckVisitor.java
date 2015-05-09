@@ -386,6 +386,11 @@ public class GEMTypeCheckVisitor extends GEMBaseVisitor <Object> {
 			res = new VariableSymbol("error");
 			return res;
 		}
+		if(leftOperand.arrayDimension!=rightOperand.arrayDimension||!leftOperand.type.equals(rightOperand.type)){
+			res = new VariableSymbol("error");
+			ce(ctx.getStart().getLine(), ctx.getStart().getCharPositionInLine(), INVALID_OP, leftOperand, rightOperand);
+			return res;
+		}
 		if((leftOperand.type.equals("int")||leftOperand.type.equals("double"))&&(rightOperand.type.equals("int")||rightOperand.type.equals("double")))
 		{
 			if(leftOperand.type.equals("double")||rightOperand.type.equals("double")){
@@ -394,11 +399,6 @@ public class GEMTypeCheckVisitor extends GEMBaseVisitor <Object> {
 			else{
 				res = new VariableSymbol("int", 0);
 			}
-			return res;
-		}
-		if(leftOperand.arrayDimension!=rightOperand.arrayDimension||!leftOperand.type.equals(rightOperand.type)){
-			res = new VariableSymbol("error");
-			ce(ctx.getStart().getLine(), ctx.getStart().getCharPositionInLine(), INVALID_OP, leftOperand, rightOperand);
 			return res;
 		}
 		res = new VariableSymbol(leftOperand.type, leftOperand.arrayDimension);
@@ -496,8 +496,11 @@ public class GEMTypeCheckVisitor extends GEMBaseVisitor <Object> {
 			ce(ctx.getStart().getLine(), ctx.getStart().getCharPositionInLine(), INVALID_UOP, vs2);
 			return v;
 		}
-		vs1.arrayDimension -= 1;
-		return vs1;
+//		vs1.arrayDimension -= 1;
+		VariableSymbol vs3 = new VariableSymbol(vs1);
+		vs3.arrayDimension -= 1; 
+//		System.err.println(vs3);
+		return vs3;
 	}
 	@Override public VariableSymbol visitBattleConstructor(@NotNull GEMParser.BattleConstructorContext ctx) {
 		VariableSymbol v = new VariableSymbol("error");
@@ -744,6 +747,7 @@ public class GEMTypeCheckVisitor extends GEMBaseVisitor <Object> {
 		VariableSymbol v = new VariableSymbol("error");
 		return v;
 	}
+
 	@Override public VariableSymbol visitArrayInitializer2(@NotNull GEMParser.ArrayInitializer2Context ctx) {
 		VariableSymbol v = new VariableSymbol("error");
 		for (GEMParser.ExpressionContext x: ctx.expression()){
