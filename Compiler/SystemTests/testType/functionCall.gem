@@ -5,7 +5,9 @@ int f(int a, int b){
 
 void main(String[] args){
 	int a = f(1,null);
+	String b = f(1, null);
 	print a;
 }
+
 
 
