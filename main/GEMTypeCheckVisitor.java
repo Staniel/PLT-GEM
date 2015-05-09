@@ -39,7 +39,15 @@ public class GEMTypeCheckVisitor extends GEMBaseVisitor <Object> {
 	
 	private void ce(int row, int col, int errno, VariableSymbol vs1, VariableSymbol vs2) {
 		System.err.print("GEM Error on line " + row + " at position " + col + ": ");
-		System.err.printf(errorMessage.get(errno), vs1.type, vs2.type);
+		StringBuilder arrayBrackets1 = new StringBuilder();
+		for (int i = 0; i < vs1.arrayDimension; i++) {
+			arrayBrackets1.append("[]");
+		}
+		StringBuilder arrayBrackets2 = new StringBuilder();
+		for (int i = 0; i < vs1.arrayDimension; i++) {
+			arrayBrackets2.append("[]");
+		}
+		System.err.printf(errorMessage.get(errno), vs1.type + arrayBrackets1.toString(), vs2.type + arrayBrackets2.toString());
 	}
 	
 	private boolean checkType(VariableSymbol vs1, VariableSymbol vs2) {
