@@ -124,6 +124,7 @@ public class GEMTypeCheckVisitor extends GEMBaseVisitor <Object> {
 			}
 		}
 		lastType.pop();
+		System.err.print(symbols.peek().get("a"));
 		symbols.pop();
 		return null;
 	}
@@ -514,7 +515,6 @@ public class GEMTypeCheckVisitor extends GEMBaseVisitor <Object> {
 				return res;
 			}
 			if(functionParams.get(i).arrayDimension != functionDefParams.get(i).arrayDimension){
-				System.err.print(2);
 				ce(ctx.getStart().getLine(), ctx.getStart().getCharPositionInLine(), PARAS_MISMATCH, functionName);
 				return res;
 			}

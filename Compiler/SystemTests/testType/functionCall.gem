@@ -1,5 +1,7 @@
-int f(int b){
-	return b;
+int b = 3;
+
+int f(int a){
+	return a;
 }
 
 void main(String[] args){
