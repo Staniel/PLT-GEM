@@ -69,7 +69,7 @@ public class GEMTypeCheckVisitor extends GEMBaseVisitor <Object> {
 			arrayBrackets1.append("[]");
 		}
 		StringBuilder arrayBrackets2 = new StringBuilder();
-		for (int i = 0; i < vs1.arrayDimension; i++) {
+		for (int i = 0; i < vs2.arrayDimension; i++) {
 			arrayBrackets2.append("[]");
 		}
 		System.err.printf(errorMessage.get(errno), vs1.type + arrayBrackets1.toString(), vs2.type + arrayBrackets2.toString());
