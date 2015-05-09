@@ -91,10 +91,7 @@ public class GEMTypeCheckVisitor extends GEMBaseVisitor <Object> {
 		return null;
 	}
 	
-	@Override public Object visitMethodDeclaration(@NotNull GEMParser.MethodDeclarationContext ctx) {
-		HashMap<String, VariableSymbol> scope = new HashMap<String, VariableSymbol>();
-		symbols.push(scope);
-		
+	@Override public Object visitMethodDeclaration(@NotNull GEMParser.MethodDeclarationContext ctx) {		
 		// type
 		VariableSymbol method = null;
 		if (ctx.type() != null) {
@@ -114,6 +111,8 @@ public class GEMTypeCheckVisitor extends GEMBaseVisitor <Object> {
 		symbols.peek().put(varName, method);
 		
 		// parameters
+		HashMap<String, VariableSymbol> scope = new HashMap<String, VariableSymbol>();
+		symbols.push(scope);
 		ArrayList<VariableSymbol> paras = (ArrayList<VariableSymbol>) visit(ctx.parameters());
 		method.paras = paras;
 		
