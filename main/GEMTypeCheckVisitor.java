@@ -24,6 +24,7 @@ public class GEMTypeCheckVisitor extends GEMBaseVisitor <Object> {
 	private static final Integer BREAK_ERR = 12;
 	private static final Integer RUN_ERR = 13;
 	private static final Integer TRIGGER_ERR = 14;
+	private static final Integer ARRAY_INIT_ERR = 15;
 
 	private LinkedList<HashMap<String, VariableSymbol>> symbols = new LinkedList<HashMap<String, VariableSymbol>>();
 	private LinkedList<VariableSymbol> lastType = new LinkedList<VariableSymbol>();
@@ -48,6 +49,7 @@ public class GEMTypeCheckVisitor extends GEMBaseVisitor <Object> {
 		errorMessage.put(PARAS_MISMATCH, "Parameters mismatch%s.\n");
 		errorMessage.put(RUN_ERR, "Cannot run a non-event type like %s.\n ");
 		errorMessage.put(TRIGGER_ERR, "%s cannot trigger a %s.\n");
+		errorMessage.put(ARRAY_INIT_ERR, "%s mismatch declared type %s.\n");
 	}
 	
 	private void ce(int row, int col, int errno, String msg) {
@@ -780,7 +782,30 @@ public class GEMTypeCheckVisitor extends GEMBaseVisitor <Object> {
 
 	@Override public VariableSymbol visitArrayInitializer1(@NotNull GEMParser.ArrayInitializer1Context ctx) {
 		VariableSymbol v = new VariableSymbol("error");
-		return v;
+		ArrayList<VariableSymbol> vss = new ArrayList<VariableSymbol>();
+		String type = lastType.peek().type;
+		int dim = lastType.peek().arrayDimension;
+		for (GEMParser.VariableInitializerContext x: ctx.variableInitializer()){
+			vss.add((VariableSymbol)visit(x));
+		}
+		if (vss.size() == 0)
+			return new VariableSymbol(lastType.peek().type, 1);
+		for (VariableSymbol vs: vss){
+			if (vs.type.equals("null"))
+				continue;
+			if (vs.arrayDimension != dim-1)
+			{
+				ce(ctx.getStart().getLine(), ctx.getStart().getCharPositionInLine(), ARRAY_INIT_ERR, vs, lastType.peek());
+				return v;
+			}
+			if (!vs.type.equals(type)){
+				if (vs.type.equals("int") && type.equals("double"))
+					continue;
+				ce(ctx.getStart().getLine(), ctx.getStart().getCharPositionInLine(), ARRAY_INIT_ERR, vs, lastType.peek());
+				return v;
+			}
+		}
+		return new VariableSymbol(type, dim);
 	}
 
 	@Override public VariableSymbol visitArrayInitializer2(@NotNull GEMParser.ArrayInitializer2Context ctx) {
