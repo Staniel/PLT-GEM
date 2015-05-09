@@ -30,7 +30,5 @@ void main(String[] args) {
 		next a;
 	};
 
-	Event e3 = e1;
-
-	run e3;
+	run e1;
 }

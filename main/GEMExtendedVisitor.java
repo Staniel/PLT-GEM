@@ -2,13 +2,7 @@ import java.util.List;
 
 import org.antlr.v4.runtime.misc.NotNull;
 
-//import GEMParser.VariableInitializerContext;
-
 public class GEMExtendedVisitor extends GEMBaseVisitor<Void> {
-	private void ce() {
-		print("Compile Error.\n");
-	}
-	
 	private void print(String str) {
 		System.out.print(str);
 	}
@@ -144,14 +138,17 @@ public class GEMExtendedVisitor extends GEMBaseVisitor<Void> {
 			visit(ctx.forUpdate());
 		return null;
 	}
+	
 	@Override public Void visitForInit(@NotNull GEMParser.ForInitContext ctx) {
 		visit(ctx.expressionList());
 		return null;
 	}
+	
 	@Override public Void visitForUpdate(@NotNull GEMParser.ForUpdateContext ctx) {
 		visit(ctx.expressionList());
 		return null;
 	}
+	
 	@Override public Void visitExpressionList(@NotNull GEMParser.ExpressionListContext ctx) {
 		for (int i = 0; i < ctx.expression().size(); i++) {
 			visit(ctx.expression(i));
@@ -161,6 +158,7 @@ public class GEMExtendedVisitor extends GEMBaseVisitor<Void> {
 		}
 		return null;
 	}
+	
 	@Override public Void visitVariableDeclarator(@NotNull GEMParser.VariableDeclaratorContext ctx) {
 		visit(ctx.variableDeclaratorId());
 		if (ctx.variableInitializer() != null) {

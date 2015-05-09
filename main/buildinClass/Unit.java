@@ -200,7 +200,7 @@ public class Unit {
 	}
 	
 	//Normally distributed attack effect.
-	private double generateRandom() {
+	public double generateRandom() {
 		double d = rng.nextGaussian() / 2 + 1;
 		if (d < 0.5)
 			d = 0.5;

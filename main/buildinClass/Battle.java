@@ -8,7 +8,8 @@ public class Battle {
 	private Scanner sc;
 	private String display;
 	private Unit myBoss;
-	private Unit myHero;
+	
+	public Unit myHero;
 	private int skillNum;
 	private int round;
 	
@@ -85,6 +86,7 @@ public class Battle {
 			
 			//Boss round.
 			//Only attack if no life/chi skill is used.
+
 			myBoss.attack(myHero);
 			if (myHero.life <= 0) {
 				System.out.printf("%s was defeated!\n", myHero.name);
@@ -100,7 +102,7 @@ public class Battle {
 	}
 	
 	//Check duration of skill and reset status if expired.
-	private void roundOver() {
+	public void roundOver() {
 		if (this.myHero.skill != null)
 			this.myHero.skill.cancel(this.myHero);
 		if (this.myBoss.skill != null)
@@ -116,6 +118,4 @@ public class Battle {
 				(round > 1) ? "rounds" : "round");
 		this.myHero.grow(this.myBoss);
 	}
-	
-
 }

@@ -1,11 +1,11 @@
 #!/bin/bash
 read -p "Welcome to GEM testing! Do you want to test individual file? filename or press enter directly. " yn
 if [ -n "$yn" ]; then
-	subdir="SystemTests/tests/"
+	subdir="SystemTests/testType/"
 	dir1=$subdir$yn
-	java -jar ./GemC.jar $dir1 > $dir1.java 
+	java -jar ./GemC.jar $dir1 > $dir1.java
 	./Artistic/bin/astyle -n -q $dir1.java 
-    ./gem $dir1 > $dir1.out
+    ./gemc $dir1 2> $dir1.out
     diff --brief <(sort $dir1.out) <(sort $dir1.test) >/dev/null
 	comp_value=$?
 
@@ -17,11 +17,11 @@ if [ -n "$yn" ]; then
     fi
 
 else
-    for entry in SystemTests/tests/*.gem
+    for entry in SystemTests/testType/*.gem
 	do
-		java -jar ./GemC.jar $entry > $entry.java 
-		./Artistic/bin/astyle -n -q $entry.java 
-  		./gem $entry > $entry.out
+		java -jar ./GemC.jar $entry > $entry.java
+		./Artistic/bin/astyle -n -q $entry.java  
+  		./gemc $entry 2> $entry.out
   		diff --brief <(sort $entry.out) <(sort $entry.test) >/dev/null
 		comp_value=$?
 
