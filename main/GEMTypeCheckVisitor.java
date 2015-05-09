@@ -12,6 +12,7 @@ public class GEMTypeCheckVisitor extends GEMBaseVisitor <Object> {
 	private static final Integer RETURN_MISMATCH = 4;
 	private static final Integer PARAS_MISMATCH = 5;
 	private static final Integer ILLEGAL_NAME = 6;
+	private static final Integer INVALID_UOP = 7;
 	private LinkedList<HashMap<String, VariableSymbol>> symbols = new LinkedList<HashMap<String, VariableSymbol>>();
 	private HashMap<String, VariableSymbol> globalSymbols = new HashMap<String, VariableSymbol>();
 	private LinkedList<VariableSymbol> lastType = new LinkedList<VariableSymbol>();
@@ -19,6 +20,7 @@ public class GEMTypeCheckVisitor extends GEMBaseVisitor <Object> {
 	static {
 		errorMessage = new HashMap<Integer, String>();
 		errorMessage.put(INVALID_OP, "Invalid operation on %s and %s.\n");
+		errorMessage.put(INVALID_UOP, "Invalid operation on %s.\n");
 	}
 	
 	private void ce(int row, int col, int errno, VariableSymbol vs1) {
@@ -146,6 +148,14 @@ public class GEMTypeCheckVisitor extends GEMBaseVisitor <Object> {
 		} else if (ctx.getText().equals("null")) {
 			v = new VariableSymbol("null");
 		}
+		return v;
+	}
+	@Override public VariableSymbol visitUnaryExpr(@NotNull GEMParser.UnaryExprContext ctx){
+		VariableSymbol v = (VariableSymbol) visit(ctx.expression()); 
+		if (v.type.equals("int") || v.type.equals("double"))
+			return v;
+//		ce(ctx.getStart().getLine(), ctx.getStart().getCharPositionInLine(), INVALID_UOP, )
+		
 		return v;
 	}
 }
