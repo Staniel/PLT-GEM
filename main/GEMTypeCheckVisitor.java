@@ -137,8 +137,10 @@ public class GEMTypeCheckVisitor extends GEMBaseVisitor <Object> {
 		symbols.push(scope);
 		for (GEMParser.BlockStatementContext bs : ctx.blockStatement()) {
 			VariableSymbol returnType = (VariableSymbol) visit(bs);
-			if (returnType != null)
+			if (returnType != null) {
+				symbols.pop();
 				return returnType;
+			}
 		}
 		symbols.pop();
 		return null;
