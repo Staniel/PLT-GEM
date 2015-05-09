@@ -177,14 +177,17 @@ public class GEMTypeCheckVisitor extends GEMBaseVisitor <Object> {
 		v.type = "error";
 		return v;
 	}
-	@Override public VariableSymbol visitBinHighExpr(@NotNull GEMParser.BinLowExprContext ctx) {
+	@Override public VariableSymbol visitBinTopExpr(@NotNull GEMParser.BinTopExprContext ctx) {
 		VariableSymbol vs1 = (VariableSymbol) visit(ctx.expression(0));
 		VariableSymbol vs2 = (VariableSymbol) visit(ctx.expression(1));
 		VariableSymbol v = new VariableSymbol("error"); 
 		if (vs1.type.equals("error") || vs2.type.equals("error"))
 			return v;
 		if (vs1.arrayDimension != 0 || vs2.arrayDimension != 0 )
-			return v;
+			{
+			ce(ctx.getStart().getLine(), ctx.getStart().getCharPositionInLine(), INVALID_OP, vs1.type+" array", vs2.type+" array");
+				return v;
+			}
 		if (vs1.type.equals(vs2.type))
 			{
 			if (vs1.type.equals("int") || vs1.type.equals("double"))	
