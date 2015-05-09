@@ -28,6 +28,7 @@ public class GEMTypeCheckVisitor extends GEMBaseVisitor <Object> {
 		errorMessage.put(INVALID_UOP, "Invalid operation on %s.\n");
 		errorMessage.put(METHOD_UNDEFINED, "Undefined method on %s.\n");
 		errorMessage.put(RETURN_MISSING, "No return statement for type %s.\n");
+		errorMessage.put(PARAS_MISMATCH, "Parameters mismatch on %s.\n");
 	}
 	
 	private void ce(int row, int col, int errno, String msg) {
@@ -502,6 +503,7 @@ public class GEMTypeCheckVisitor extends GEMBaseVisitor <Object> {
 			ce(ctx.getStart().getLine(), ctx.getStart().getCharPositionInLine(), PARAS_MISMATCH, functionName);
 			return res;
 		}
+		System.err.print(functionParams.size());
 		for(int i=0;i<functionParams.size();i++){
 			if(functionParams.get(i).type != functionDefParams.get(i).type||functionParams.get(i).isFunction){
 				ce(ctx.getStart().getLine(), ctx.getStart().getCharPositionInLine(), PARAS_MISMATCH, functionName);
@@ -521,7 +523,7 @@ public class GEMTypeCheckVisitor extends GEMBaseVisitor <Object> {
 		return null;
 	}
 	
-	@Override public Void visitIfStatement(@NotNull GEMParser.IfStatementContext ctx) {
+	@Override public VariableSymbol visitIfStatement(@NotNull GEMParser.IfStatementContext ctx) {
 		VariableSymbol parExpr = (VariableSymbol) visit(ctx.parExpression());
 		List<GEMParser.StatementContext> stmtList = ctx.statement();
 		visit(stmtList.get(0));
@@ -530,6 +532,19 @@ public class GEMTypeCheckVisitor extends GEMBaseVisitor <Object> {
 		}
 		return null;
 	}
+	
+	@Override public VariableSymbol visitWhileStatement(@NotNull GEMParser.WhileStatementContext ctx){
+		visit(ctx.parExpression());
+		visit(ctx.statement());
+		return null;
+	}
+	
+	@Override public VariableSymbol visitParExpression(@NotNull GEMParser.ParExpressionContext ctx) { 
+		visit(ctx.expression());
+		return null;
+	}
+	
+	
 	
 	
 }
