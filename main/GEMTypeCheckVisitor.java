@@ -124,7 +124,6 @@ public class GEMTypeCheckVisitor extends GEMBaseVisitor <Object> {
 			}
 		}
 		lastType.pop();
-		System.err.print(symbols.peek().get("a"));
 		symbols.pop();
 		return null;
 	}
