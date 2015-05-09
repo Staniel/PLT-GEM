@@ -2,7 +2,10 @@ Event e1;
 Event[] e2 = array Event[1];
 int a = 1;
 void main(String[] args){
+	
 	e1 = new Event("Good", "Bad", e2){
+	    int c = 1;
+	    int b = 2;
 		next a;
 	};
 }

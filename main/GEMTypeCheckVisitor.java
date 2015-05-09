@@ -1,7 +1,9 @@
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 
 import org.antlr.v4.runtime.misc.NotNull;
 
@@ -24,15 +26,17 @@ public class GEMTypeCheckVisitor extends GEMBaseVisitor <Object> {
 	private static final Integer BREAK_ERR = 12;
 	private static final Integer RUN_ERR = 13;
 	private static final Integer TRIGGER_ERR = 14;
-	private static final Integer EVENT_CONSTRUCTOR_ERR = 15;
-	private static final Integer NO_NEXT_STATEMENT = 16;
+	private static final Integer ARRAY_INIT_ERR = 15;
+	private static final Integer EVENT_CONSTRUCTOR_ERR = 16;
+	private static final Integer NO_NEXT_STATEMENT = 17;
 	
 	private LinkedList<HashMap<String, VariableSymbol>> symbols = new LinkedList<HashMap<String, VariableSymbol>>();
 	private LinkedList<VariableSymbol> lastType = new LinkedList<VariableSymbol>();
 	private int loops;
 	private int switches;
 	private static boolean isEvent = false;
-	
+	private static String keywords = "Event Battle Unit Skill next if String array int float function return inputNumber inputStr while for trigger else run continue break boolean void double print true false switch case default null" ;
+	private static Set<String> keywordsSet = new HashSet<String>();
 	private static final HashMap<Integer, String> errorMessage;
 	static {
 		errorMessage = new HashMap<Integer, String>();
@@ -51,8 +55,13 @@ public class GEMTypeCheckVisitor extends GEMBaseVisitor <Object> {
 		errorMessage.put(PARAS_MISMATCH, "Parameters mismatch%s.\n");
 		errorMessage.put(RUN_ERR, "Cannot run a non-event type like %s.\n ");
 		errorMessage.put(TRIGGER_ERR, "%s cannot trigger a %s.\n");
+		errorMessage.put(ARRAY_INIT_ERR, "%s mismatch declared type %s.\n");
 		errorMessage.put(EVENT_CONSTRUCTOR_ERR, "Wrong parameters for create an event.\n");
 		errorMessage.put(NO_NEXT_STATEMENT, "A next statement missed!\n");
+		errorMessage.put(ILLEGAL_NAME, "%s is reserved as keyword!\n");
+		String [] keys = keywords.split(" ");
+		for (String x: keys)
+			keywordsSet.add(x);
 	}
 	
 	private void ce(int row, int col, int errno, String msg) {
@@ -137,6 +146,11 @@ public class GEMTypeCheckVisitor extends GEMBaseVisitor <Object> {
 		
 		// Identifier (method name)
 		String varName = ctx.Identifier().getText();
+		if (keywordsSet.contains(varName))
+		{
+			ce(ctx.getStart().getLine(), ctx.getStart().getCharPositionInLine(), ILLEGAL_NAME, varName);
+			return null;
+		}
 		if (seekVar(varName) != null) {
 			ce(ctx.getStart().getLine(), ctx.getStart().getCharPositionInLine(), VAR_DEFINED, varName);
 			return null;
@@ -277,6 +291,11 @@ public class GEMTypeCheckVisitor extends GEMBaseVisitor <Object> {
 	
 	@Override public String visitVariableDeclaratorId(@NotNull GEMParser.VariableDeclaratorIdContext ctx) {
 		String varName = ctx.Identifier().getText();
+		if (keywordsSet.contains(varName))
+		{
+			ce(ctx.getStart().getLine(), ctx.getStart().getCharPositionInLine(), ILLEGAL_NAME, varName);
+			return null;
+		}
 		if (seekVar(varName) != null) {
 			ce(ctx.getStart().getLine(), ctx.getStart().getCharPositionInLine(), VAR_DEFINED, varName);
 			return null;
@@ -795,7 +814,30 @@ public class GEMTypeCheckVisitor extends GEMBaseVisitor <Object> {
 
 	@Override public VariableSymbol visitArrayInitializer1(@NotNull GEMParser.ArrayInitializer1Context ctx) {
 		VariableSymbol v = new VariableSymbol("error");
-		return v;
+		ArrayList<VariableSymbol> vss = new ArrayList<VariableSymbol>();
+		String type = lastType.peek().type;
+		int dim = lastType.peek().arrayDimension;
+		for (GEMParser.VariableInitializerContext x: ctx.variableInitializer()){
+			vss.add((VariableSymbol)visit(x));
+		}
+		if (vss.size() == 0)
+			return new VariableSymbol(lastType.peek().type, 1);
+		for (VariableSymbol vs: vss){
+			if (vs.type.equals("null"))
+				continue;
+			if (vs.arrayDimension != dim-1)
+			{
+				ce(ctx.getStart().getLine(), ctx.getStart().getCharPositionInLine(), ARRAY_INIT_ERR, vs, lastType.peek());
+				return v;
+			}
+			if (!vs.type.equals(type)){
+				if (vs.type.equals("int") && type.equals("double"))
+					continue;
+				ce(ctx.getStart().getLine(), ctx.getStart().getCharPositionInLine(), ARRAY_INIT_ERR, vs, lastType.peek());
+				return v;
+			}
+		}
+		return new VariableSymbol(type, dim);
 	}
 
 	@Override public VariableSymbol visitArrayInitializer2(@NotNull GEMParser.ArrayInitializer2Context ctx) {

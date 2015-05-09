@@ -1,0 +1,28 @@
+String test(String c, Event b) {
+	return c;
+}
+
+void main(String[] args) {
+	int a = 1;
+	int b = 1;
+	int c = 1;
+	int d = 1;
+	String s = "test event";
+	String s1 = "test event1";
+	String s2 = "test event2";
+	String s3 = "test event3";
+	String id = "1";
+	String id1 = "2";
+	String id2 = "3";
+	String id3 = "4";
+ 	Event[] eleEvent = array Event[1];
+	Event event1 = new Event(id, s, eleEvent){a, a, next a};
+	Event event2 = new Event(id1, s1, eleEvent){b, b, next b};
+	Event event3 = new Event(id2, s2, eleEvent){c, c, next c};
+	Event[] eventlist = array Event[3];
+	eventlist[0] = event1;
+	eventlist[1] = event2;
+	eventlist[2] = event3;
+	Event event = new Event(id3, s, eventlist){d, d, next d};
+	String testEvent = event;
+}

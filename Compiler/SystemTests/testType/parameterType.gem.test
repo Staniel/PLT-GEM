@@ -1,0 +1,4 @@
+GEM Error on line 2 at position 1: Return type int does not match String.
+GEM Error on line 10 at position 9: Parameters mismatchint.
+GEM Error on line 11 at position 9: Parameters mismatchint.
+GEM Error on line 12 at position 9: Parameters mismatchint.
