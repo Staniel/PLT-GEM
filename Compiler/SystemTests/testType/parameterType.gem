@@ -1,0 +1,13 @@
+int testParameter(String a, String b) {
+	return a + b;
+}
+
+
+void main (String[] args) {
+	int c = 0;
+	int d = 1;
+	String f = "test";
+	int e = testParameter(c, d);
+	int h = testParameter(f);
+	int i = testParameter(c, f);
+}
