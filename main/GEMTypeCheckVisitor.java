@@ -20,6 +20,9 @@ public class GEMTypeCheckVisitor extends GEMBaseVisitor <Object> {
 	private static final Integer METHOD_UNDEFINED = 8;
 	private static final Integer RETURN_MISSING = 9;
 	private static final Integer INVALID_INDEX = 10;
+	private static final Integer CONTINUE_ERR = 11;
+	private static final Integer BREAK_ERR = 12;
+
 	private LinkedList<HashMap<String, VariableSymbol>> symbols = new LinkedList<HashMap<String, VariableSymbol>>();
 	private LinkedList<VariableSymbol> lastType = new LinkedList<VariableSymbol>();
 	private int loops;
@@ -36,6 +39,9 @@ public class GEMTypeCheckVisitor extends GEMBaseVisitor <Object> {
 		errorMessage.put(PARAS_MISMATCH, "Mismatch parameters %s\n");
 		errorMessage.put(METHOD_UNDEFINED, "Undefined method on %s.\n");
 		errorMessage.put(RETURN_MISSING, "No return statement for type %s.\n");
+		errorMessage.put(PARAS_MISMATCH, "Parameters mismatch on %s.\n");
+		errorMessage.put(CONTINUE_ERR, "Continue cannot be used outside of a loop.\n");
+		errorMessage.put(BREAK_ERR, "Break cannot be used outside of a loop or a switch.\n");
 		errorMessage.put(INVALID_INDEX, "Array Index type error on %s.\n");
 		errorMessage.put(PARAS_MISMATCH, "Parameters mismatch%s.\n");
 	}
@@ -766,6 +772,20 @@ public class GEMTypeCheckVisitor extends GEMBaseVisitor <Object> {
 		visit(ctx.parExpression());
 		visit(ctx.statement());
 		loops--;
+		return null;
+	}
+	
+	@Override public Object visitContinueStatement(@NotNull GEMParser.ContinueStatementContext ctx) {
+		if (loops <= 0) {
+			ce(ctx.getStart().getLine(), ctx.getStart().getCharPositionInLine(), CONTINUE_ERR, "");
+		}
+		return null;
+	}
+	
+	@Override public Void visitBreakStatement(@NotNull GEMParser.BreakStatementContext ctx) {
+		if (loops <= 0 && switches <= 0) {
+			ce(ctx.getStart().getLine(), ctx.getStart().getCharPositionInLine(), BREAK_ERR, "");
+		}
 		return null;
 	}
 	
