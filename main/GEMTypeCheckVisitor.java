@@ -282,5 +282,32 @@ public class GEMTypeCheckVisitor extends GEMBaseVisitor <Object> {
 		res = new VariableSymbol("boolean",0);
 		return res;
 	}
+	
+	@Override public VariableSymbol visitAssignExpr(@NotNull GEMParser.AssignExprContext ctx){
+		VariableSymbol res = null;
+		VariableSymbol leftOperand = (VariableSymbol) visit(ctx.expression(0));
+		VariableSymbol rightOperand = (VariableSymbol) visit(ctx.expression(1));
+		if(leftOperand.type.equals("error")||rightOperand.type.equals("error")){
+			res = new VariableSymbol("error");
+			return res;
+		}
+		if((leftOperand.type.equals("int")||leftOperand.type.equals("double"))&&(rightOperand.type.equals("int")||rightOperand.type.equals("double")))
+		{
+			if(leftOperand.type.equals("double")||rightOperand.type.equals("double")){
+				res = new VariableSymbol("double", 0);
+			}
+			else{
+				res = new VariableSymbol("int", 0);
+			}
+			return res;
+		}
+		if(leftOperand.arrayDimension!=rightOperand.arrayDimension||!leftOperand.type.equals(rightOperand.type)){
+			res = new VariableSymbol("error");
+			ce(ctx.getStart().getLine(), ctx.getStart().getCharPositionInLine(), INVALID_OP, leftOperand, rightOperand);
+			return res;
+		}
+		res = new VariableSymbol(leftOperand.type, leftOperand.arrayDimension);
+		return res;
+	}
 
 }
