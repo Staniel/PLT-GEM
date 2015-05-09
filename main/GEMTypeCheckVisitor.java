@@ -660,6 +660,7 @@ public class GEMTypeCheckVisitor extends GEMBaseVisitor <Object> {
 			return res;
 		}
 		for(int i=0;i<functionParams.size();i++){
+			if(functionParams.get(i).type.equals("null")) continue;
 			if(!functionParams.get(i).type.equals(functionDefParams.get(i).type)||functionParams.get(i).isFunction){
 				ce(ctx.getStart().getLine(), ctx.getStart().getCharPositionInLine(), PARAS_MISMATCH, functionName);
 				return res;

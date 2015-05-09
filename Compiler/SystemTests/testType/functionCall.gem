@@ -4,7 +4,7 @@ int f(int a, int b){
 }
 
 void main(String[] args){
-	int a = f(1,true);
+	int a = f(1,null);
 	print a;
 }
 
