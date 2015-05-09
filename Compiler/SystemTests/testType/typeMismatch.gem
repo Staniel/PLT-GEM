@@ -1,0 +1,7 @@
+int typeMismatch(String s) {
+	return s;
+}
+
+void main (String[] args) {
+	int a = typeMismatch(s);
+}
