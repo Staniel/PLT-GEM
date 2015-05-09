@@ -1,3 +1,4 @@
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
 
@@ -29,12 +30,24 @@ public class GEMTypeCheckVisitor extends GEMBaseVisitor <Object> {
 	
 	private void ce(int row, int col, int errno, VariableSymbol vs1) {
 		System.err.print("GEM Error on line " + row + " at position " + col + ": ");
-		System.err.printf(errorMessage.get(errno), vs1.type);
+		StringBuilder arrayBrackets = new StringBuilder();
+		for (int i = 0; i < vs1.arrayDimension; i++) {
+			arrayBrackets.append("[]");
+		}
+		System.err.printf(errorMessage.get(errno), vs1.type + arrayBrackets.toString());
 	}
 	
 	private void ce(int row, int col, int errno, VariableSymbol vs1, VariableSymbol vs2) {
 		System.err.print("GEM Error on line " + row + " at position " + col + ": ");
-		System.err.printf(errorMessage.get(errno), vs1.type, vs2.type);
+		StringBuilder arrayBrackets1 = new StringBuilder();
+		for (int i = 0; i < vs1.arrayDimension; i++) {
+			arrayBrackets1.append("[]");
+		}
+		StringBuilder arrayBrackets2 = new StringBuilder();
+		for (int i = 0; i < vs1.arrayDimension; i++) {
+			arrayBrackets2.append("[]");
+		}
+		System.err.printf(errorMessage.get(errno), vs1.type + arrayBrackets1.toString(), vs2.type + arrayBrackets2.toString());
 	}
 	
 	private boolean checkType(VariableSymbol vs1, VariableSymbol vs2) {
@@ -62,16 +75,6 @@ public class GEMTypeCheckVisitor extends GEMBaseVisitor <Object> {
 		}
 		return null;
 	}
-//	private boolean checkParas(ArrayList<VariableSymbol> p1, ArrayList<VariableSymbol> p2) {
-//		boolean flag = true;
-//		if (p1.size() != p2.size()) {
-//			flag = false;
-//		}
-//		for (int i = 0; i < p1.size(); i++) {
-//			flag = checkType(p1.get(i), p2.get(i));
-//		}
-//		return flag;
-//	}
 	
 	@Override public VariableSymbol visitCompilationUnit(@NotNull GEMParser.CompilationUnitContext ctx) {
 		for (GEMParser.OutervariableDeclarationContext vd: ctx.outervariableDeclaration()) {
@@ -80,6 +83,46 @@ public class GEMTypeCheckVisitor extends GEMBaseVisitor <Object> {
 		for (GEMParser.MethodDeclarationContext md : ctx.methodDeclaration()) {
 			visit(md);
 		}
+		return null;
+	}
+	
+	@Override public Object visitMethodDeclaration(@NotNull GEMParser.MethodDeclarationContext ctx) {
+		HashMap<String, VariableSymbol> scope = new HashMap<String, VariableSymbol>();
+		symbols.push(scope);
+		VariableSymbol varTemplate = null;
+		if (ctx.type() != null) {
+			varTemplate = (VariableSymbol) visit(ctx.type());
+			varTemplate.isFunction = true;
+		} else {
+			varTemplate = new VariableSymbol("void", true, null);
+		}
+		lastType.push(varTemplate);
+		ArrayList<VariableSymbol> paras = (ArrayList<VariableSymbol>) visit(ctx.parameters());
+		varTemplate.paras = paras;
+		if (ctx.methodBody() != null) {
+			visit(ctx.methodBody());
+		}
+		lastType.pop();
+		symbols.pop();
+		return null;
+	}
+	
+	@Override public ArrayList<VariableSymbol> visitParameters(@NotNull GEMParser.ParametersContext ctx) {
+		return (ArrayList<VariableSymbol>) visit(ctx.parameterList());
+	}
+	
+	@Override public ArrayList<VariableSymbol> visitParameterList(@NotNull GEMParser.ParameterListContext ctx) {
+		ArrayList<VariableSymbol> paras = new ArrayList<VariableSymbol>();
+		for (int i = 0; i < ctx.parameter().size(); i++) {
+			VariableSymbol para = (VariableSymbol) visit(ctx.parameter(i));
+			paras.add(para);
+		}
+		return paras;
+	}
+	
+	@Override public Void visitParameter(@NotNull GEMParser.ParameterContext ctx) {
+		VariableSymbol varTemplate = (VariableSymbol) visit(ctx.type());
+		
 		return null;
 	}
 	
