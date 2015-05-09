@@ -514,12 +514,10 @@ public class GEMTypeCheckVisitor extends GEMBaseVisitor <Object> {
 		}
 		for(int i=0;i<functionParams.size();i++){
 			if(!functionParams.get(i).type.equals(functionDefParams.get(i).type)||functionParams.get(i).isFunction){
-				System.err.print(functionParams.get(i).type);
 				ce(ctx.getStart().getLine(), ctx.getStart().getCharPositionInLine(), PARAS_MISMATCH, functionName);
 				return res;
 			}
 			if(functionParams.get(i).arrayDimension != functionDefParams.get(i).arrayDimension){
-				System.err.print(2);
 				ce(ctx.getStart().getLine(), ctx.getStart().getCharPositionInLine(), PARAS_MISMATCH, functionName);
 				return res;
 			}
