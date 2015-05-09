@@ -526,7 +526,13 @@ public class GEMTypeCheckVisitor extends GEMBaseVisitor <Object> {
 			{
 				if (paraList.get(i).type.equals("error"))
 					return v;
-				if (!paraList.get(i).type.equals(args[i]) || paraList.get(i).arrayDimension != 0){
+				if (paraList.get(i).arrayDimension != 0){
+					ce(ctx.getStart().getLine(), ctx.getStart().getCharPositionInLine(), PARAS_MISMATCH, "");
+					return v;
+				}
+				if (!paraList.get(i).type.equals(args[i])){
+					if (paraList.get(i).type.equals("null"))
+						continue;
 					ce(ctx.getStart().getLine(), ctx.getStart().getCharPositionInLine(), PARAS_MISMATCH, "");
 					return v;
 				}
@@ -541,22 +547,31 @@ public class GEMTypeCheckVisitor extends GEMBaseVisitor <Object> {
 			ArrayList<VariableSymbol> paraList = (ArrayList<VariableSymbol>) visit(ctx.unitArguments());
 			if (paraList.size() != 6)
 			{
-				ce(ctx.getStart().getLine(), ctx.getStart().getCharPositionInLine(), PARAS_MISMATCH, "");
+				ce(ctx.getStart().getLine(), ctx.getStart().getCharPositionInLine(), PARAS_MISMATCH, ": num not equal ");
 				return v;
 			}
 			for (int i=0;i<6;i++)
 			{
 				if (paraList.get(i).type.equals("error"))
 					return v;
-				if (!paraList.get(i).type.equals(args[i])){
+				if (i == 5 && paraList.get(i).arrayDimension != 1)
 					{
-						if ((i == 6 && !(paraList.get(i).arrayDimension != 1))
-							|| paraList.get(i).arrayDimension != 0 || !paraList.get(i).type.equals(args[i]))
-						{
-							ce(ctx.getStart().getLine(), ctx.getStart().getCharPositionInLine(), PARAS_MISMATCH, "");
-							return v;
-						}
+						ce(ctx.getStart().getLine(), ctx.getStart().getCharPositionInLine(), PARAS_MISMATCH, "dimension error at 6th");
+						return v;
 					}
+				if (i != 5 && paraList.get(i).arrayDimension != 0)
+				{
+					ce(ctx.getStart().getLine(), ctx.getStart().getCharPositionInLine(), PARAS_MISMATCH, "dimension error at "+i+" th");
+					return v;
+				}
+				if (!paraList.get(i).type.equals(args[i])){
+					if (paraList.get(i).type.equals("null"))
+						continue;
+					if ((paraList.get(i).type.equals("int") || paraList.get(i).type.equals("double"))
+						&& (args[i].equals("int") || args[i].equals("double")))
+						continue;
+					ce(ctx.getStart().getLine(), ctx.getStart().getCharPositionInLine(), PARAS_MISMATCH, ""+i);
+					return v;
 				}
 			}
 		}
@@ -577,7 +592,16 @@ public class GEMTypeCheckVisitor extends GEMBaseVisitor <Object> {
 			{
 				if (paraList.get(i).type.equals("error"))
 					return v;
-				if (!paraList.get(i).type.equals(args[i]) || paraList.get(i).arrayDimension != 0){
+				if (paraList.get(i).arrayDimension != 0){
+					ce(ctx.getStart().getLine(), ctx.getStart().getCharPositionInLine(), PARAS_MISMATCH, "");
+					return v;
+				}
+				if (!paraList.get(i).type.equals(args[i])){
+					if (paraList.get(i).type.equals("null"))
+						continue;
+					if ((paraList.get(i).type.equals("int") || paraList.get(i).type.equals("double"))
+						&& (args[i].equals("int") || args[i].equals("double")))
+						continue;
 					ce(ctx.getStart().getLine(), ctx.getStart().getCharPositionInLine(), PARAS_MISMATCH, "");
 					return v;
 				}
