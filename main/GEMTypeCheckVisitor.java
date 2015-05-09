@@ -407,4 +407,25 @@ public class GEMTypeCheckVisitor extends GEMBaseVisitor <Object> {
 		vs1.arrayDimension -= 1;
 		return vs1;
 	}
+	@Override public VariableSymbol visitBattleConstructor(@NotNull GEMParser.BattleConstructorContext ctx) {
+		VariableSymbol v = (VariableSymbol) visit(ctx.battleArguments());
+		if (v.type.equals("error"))
+			return v;
+		return new VariableSymbol("Battle");
+	}
+	@Override public VariableSymbol visitUnitConstructor(@NotNull GEMParser.UnitConstructorContext ctx) {
+		VariableSymbol v = (VariableSymbol) visit(ctx.unitArguments());
+		if (v.type.equals("error"))
+			return v;
+		return new VariableSymbol("Unit");
+	}
+	@Override public VariableSymbol visitSkillConstructor(@NotNull GEMParser.SkillConstructorContext ctx) {
+		VariableSymbol v = (VariableSymbol) visit(ctx.skillArguments());
+		if (v.type.equals("error"))
+			return v;
+		return new VariableSymbol("Skill");
+	}
+	@Override public VariableSymbol visitUnitArguments(@NotNull GEMParser.UnitArgumentsContext ctx) {
+	}
+	
 }
