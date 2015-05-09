@@ -113,7 +113,7 @@ public class Battle {
 	
 	//You win the battle, you get good stuff and become stronger.
 	//May get stuff from monsters by adding logic here.
-	private void reward() {
+	void reward() {
 		System.out.printf("%s defeated %s after %d %s !\n", myHero.name, myBoss.name, round, 
 				(round > 1) ? "rounds" : "round");
 		this.myHero.grow(this.myBoss);
