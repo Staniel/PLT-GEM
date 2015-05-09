@@ -23,6 +23,7 @@ public class GEMTypeCheckVisitor extends GEMBaseVisitor <Object> {
 	private static final Integer CONTINUE_ERR = 11;
 	private static final Integer BREAK_ERR = 12;
 	private static final Integer RUN_ERR = 13;
+	private static final Integer TRIGGER_ERR = 14;
 
 	private LinkedList<HashMap<String, VariableSymbol>> symbols = new LinkedList<HashMap<String, VariableSymbol>>();
 	private LinkedList<VariableSymbol> lastType = new LinkedList<VariableSymbol>();
@@ -46,6 +47,7 @@ public class GEMTypeCheckVisitor extends GEMBaseVisitor <Object> {
 		errorMessage.put(INVALID_INDEX, "Array Index type error on %s.\n");
 		errorMessage.put(PARAS_MISMATCH, "Parameters mismatch%s.\n");
 		errorMessage.put(RUN_ERR, "Cannot run a non-event type like %s.\n ");
+		errorMessage.put(TRIGGER_ERR, "%s cannot trigger a %s.\n");
 	}
 	
 	private void ce(int row, int col, int errno, String msg) {
@@ -800,8 +802,20 @@ public class GEMTypeCheckVisitor extends GEMBaseVisitor <Object> {
 	
 	@Override public VariableSymbol visitRunStatement(@NotNull GEMParser.RunStatementContext ctx) {
 		VariableSymbol vs = (VariableSymbol) visit(ctx.expression());
-		if(!vs.type.equals("Event")){
+		if(!vs.type.equals("Event")||vs.arrayDimension!=0){
 			ce(ctx.getStart().getLine(), ctx.getStart().getCharPositionInLine(), RUN_ERR, vs);
+		}
+		return null;
+	}
+	
+	@Override public Void visitTriggerStatement(@NotNull GEMParser.TriggerStatementContext ctx) {
+		VariableSymbol hero = (VariableSymbol) visit(ctx.expression(1));
+		VariableSymbol battle = (VariableSymbol) visit(ctx.expression(0));
+		if(hero.arrayDimension!=0 || battle.arrayDimension!=0){
+			ce(ctx.getStart().getLine(), ctx.getStart().getCharPositionInLine(), TRIGGER_ERR, hero, battle);
+		}
+		if(!hero.type.equals("Hero")||!battle.type.equals("Battle")){
+			ce(ctx.getStart().getLine(), ctx.getStart().getCharPositionInLine(), TRIGGER_ERR, hero, battle);
 		}
 		return null;
 	}
