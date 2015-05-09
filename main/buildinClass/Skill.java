@@ -1,15 +1,18 @@
 package buildinClass;
 
 public class Skill {
-		private double lifeMod;
-		private int chiMod;
-		private double attackMod;
-		private double defenseMod;
+	
+		//Effect of this skill.
+		public double lifeMod;
+		public int chiMod;
+		public double attackMod;
+		public double defenseMod;
 		public String name;
 		public int cost;
 		
 		public Skill(String name, double hMod, int chiMod, double aMod, double dMod, int cost) {
 			boolean valid = true;
+			
 			this.name = name;
 			this.lifeMod = hMod;
 			this.chiMod = chiMod;
@@ -17,20 +20,18 @@ public class Skill {
 			this.defenseMod = dMod;
 			this.cost = cost;
 			
+			//Check validity of skill setting.
 			if (attackMod <= -1) {
-				System.err.printf("Invalid attack modifier.");
-				valid = false;
-			}
-			if (defenseMod <= -1) {
-				System.err.printf("Invalid defense modifer.");
+				System.err.printf("Invalid attack modifier.\n");
 				valid = false;
 			}
 			if (cost < 0) {
-				System.err.printf("Invalid cost.");
+				System.err.printf("Invalid cost.\n");
 				valid = false;
 			}
 			if (!valid) {
-				System.exit(0);
+				System.err.println(name + " is not valid.");
+				System.exit(1);
 			}
 		}
 		
@@ -66,18 +67,18 @@ public class Skill {
 			}
 			character.skill = this;
 			character.chi -= this.cost;
-			System.out.print("\n");
+			System.out.println("");
 			return;
 		}
 		
 		//Cancel skill effect.
 		public void cancel(Unit character) {
 			if (attackMod != 0) {
-				character.attack /= (1 + attackMod);
+				character.attack = character.defaultAttack;
 			}
 			
 			if (defenseMod != 0) {
-				character.defense /= (1 + defenseMod);
+				character.defense = character.defaultDefense;
 			}
 			character.skill = null;
 			return;
@@ -88,16 +89,16 @@ public class Skill {
 			String lifeEffect = (this.lifeMod > 0) ? "Restore " + lifeMod + " life for caster. " :"";
 			String chiEffect = (this.chiMod > 0) ? "Restore " + chiMod + " chi for caster. " :"";
 			String attackEffect = "";
-			String defendEffect = "";
+			String defenseEffect = "";
 			if (this.attackMod != 0)
-				attackEffect = (this.attackMod > 0) ? "Increase attack by " + attackMod * 100
-					+ "% for this round. " :"";
+				attackEffect = ((this.attackMod > 0) ? "Increase": "Decrease") + " attack by " + attackMod * 100
+					+ "% for this round. ";
 			if (this.defenseMod != 0)
-				defendEffect = (this.defenseMod > 0) ? "Increase defend by " + defenseMod * 100
-					+ "% for this round. " :"";
+				defenseEffect = ((this.defenseMod > 0) ? "Increase": "Decrease") + " defense by " + defenseMod * 100
+				+ "% for this round. ";
 			
 			String costEffect = (this.cost > 0) ? "Costs " + cost + " chi. " :"";
-			String totalEffect = lifeEffect + chiEffect + attackEffect + defendEffect + costEffect;
+			String totalEffect = lifeEffect + chiEffect + attackEffect + defenseEffect + costEffect;
 			
 			return totalEffect;
 		}

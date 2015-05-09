@@ -4,6 +4,7 @@ import java.util.Scanner;
 
 public class Battle {
 	
+	//Information of this battle.
 	private Scanner sc;
 	private String display;
 	private Unit myBoss;
@@ -20,13 +21,13 @@ public class Battle {
 	
 	//Copy constructor.
 	public Battle(Battle b){
-		display = b.display;
-		myBoss = new Unit(b.myBoss);
+		this.display = b.display;
+		this.myBoss = b.myBoss;
 	}
 	
 	//Return true or false of victory or defeat.
 	public boolean trigger(Unit h){
-		System.out.printf("Encountered %s, ", myBoss.name);
+		System.out.printf("%s encountered %s, ", h.name, myBoss.name);
 		System.out.println(this.display);
 		
 		this.sc = new Scanner(System.in);
@@ -39,10 +40,10 @@ public class Battle {
 
 			//Choose skill from user input.
 			if (myHero.skills != null && myHero.skills.length > 0) {
+				System.out.println("Choose skill, or press enter to auto act:");
+				System.out.println("0 - Attack: A \"normally\" effective attack.");
+				myHero.showSkills();
 				while (true) {
-					System.out.println("Choose skill, or press enter to auto-act:");
-					System.out.println("0 - Attack: A \"normally\" effective attack.");
-					myHero.showSkills();
 					String command = sc.nextLine();
 					if (command.isEmpty()) {
 						myHero.auto(myBoss);
@@ -50,6 +51,8 @@ public class Battle {
 					}
 					try {
 						skillNum = Integer.parseInt(command) - 1;
+						
+						//Chosen normal attack.
 						if (skillNum == -1)
 							break;
 						if (skillNum < -1 || skillNum >= myHero.skills.length) {
@@ -76,7 +79,7 @@ public class Battle {
 			//Only attack if no life/chi skill is used.
 			myHero.attack(myBoss);
 			if (myBoss.life <= 0) {
-				System.out.printf("%s defeated %s!\n", myHero.name, myBoss.name);
+				roundOver();
 				reward();
 				return true;
 			}
@@ -90,9 +93,8 @@ public class Battle {
 				return false;
 			}
 			
-			//Prepare for next round.
+			//round clean up.
 			roundOver();
-			System.out.printf("round over\n");
 		}
 		
 		//How could you get here!?
@@ -105,12 +107,15 @@ public class Battle {
 			this.myHero.skill.cancel(this.myHero);
 		if (this.myBoss.skill != null)
 			this.myBoss.skill.cancel(this.myBoss);
-		this.round = round + 1;
+		this.round++;
+		System.out.printf("round %d over\n\n", this.round);
 	}
 	
-	//You win the battle, you get good stuff.
-	public void reward() {
-		System.out.printf("%s feels stronger after the glorious battle.\n", this.myHero.name);
+	//You win the battle, you get good stuff and become stronger.
+	//May get stuff from monsters by adding logic here.
+	private void reward() {
+		System.out.printf("%s defeated %s after %d %s !\n", myHero.name, myBoss.name, round, 
+				(round > 1) ? "rounds" : "round");
 		this.myHero.grow(this.myBoss);
 	}
 }
