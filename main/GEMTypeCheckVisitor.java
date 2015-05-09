@@ -163,10 +163,59 @@ public class GEMTypeCheckVisitor extends GEMBaseVisitor <Object> {
 	}
 	@Override public VariableSymbol visitUnaryExpr(@NotNull GEMParser.UnaryExprContext ctx){
 		VariableSymbol v = (VariableSymbol) visit(ctx.expression()); 
-		if (v.type.equals("int") || v.type.equals("double"))
+		if (v.type.equals("int") || v.type.equals("double") || v.type.equals("error"))
 			return v;
-//		ce(ctx.getStart().getLine(), ctx.getStart().getCharPositionInLine(), INVALID_UOP, )
-		
+		ce(ctx.getStart().getLine(), ctx.getStart().getCharPositionInLine(), INVALID_UOP, v.type);
+		v.type = "error";
 		return v;
 	}
+	@Override public VariableSymbol visitUnaryRelExpr(@NotNull GEMParser.UnaryRelExprContext ctx){
+		VariableSymbol v = (VariableSymbol) visit(ctx.expression()); 
+		if (v.type.equals("boolean") || v.type.equals("error") || v.type.equals("int"))
+			return v;
+		ce(ctx.getStart().getLine(), ctx.getStart().getCharPositionInLine(), INVALID_UOP, v.type);
+		v.type = "error";
+		return v;
+	}
+	@Override public VariableSymbol visitBinHighExpr(@NotNull GEMParser.BinLowExprContext ctx) {
+		VariableSymbol vs1 = (VariableSymbol) visit(ctx.expression(0));
+		VariableSymbol vs2 = (VariableSymbol) visit(ctx.expression(1));
+		VariableSymbol v = new VariableSymbol("error"); 
+		if (vs1.type.equals("error") || vs2.type.equals("error"))
+			return v;
+		if (vs1.arrayDimension != 0 || vs2.arrayDimension != 0 )
+			return v;
+		if (vs1.type.equals(vs2.type))
+			{
+			if (vs1.type.equals("int") || vs1.type.equals("double"))	
+				return vs1;
+			return v;
+			}
+		else{
+			if (vs1.type.equals("int") && vs2.type.equals("double") || vs2.type.equals("int") && vs1.type.equals("double"))
+				return new VariableSymbol("double");
+		}
+		return v;
+	}
+	
+	@Override public VariableSymbol visitBinLowExpr(@NotNull GEMParser.BinLowExprContext ctx) {
+		VariableSymbol vs1 = (VariableSymbol) visit(ctx.expression(0));
+		VariableSymbol vs2 = (VariableSymbol) visit(ctx.expression(1));
+		VariableSymbol v = new VariableSymbol("error"); 
+		if (vs1.type.equals("error") || vs2.type.equals("error"))
+			return v;
+		if (vs1.arrayDimension != 0 || vs2.arrayDimension != 0 )
+			return v;
+		if (vs1.type.equals(vs2.type))
+			{
+			if (vs1.type.equals("int") || vs1.type.equals("double"))	
+				return vs1;
+			return v;
+			}
+		else{
+			if (vs1.type.equals("int") && vs2.type.equals("double") || vs2.type.equals("int") && vs1.type.equals("double"))
+				return new VariableSymbol("double");
+		}
+		return v;
+	}	
 }
