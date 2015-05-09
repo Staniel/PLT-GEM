@@ -524,7 +524,8 @@ public class GEMExtendedVisitor extends GEMBaseVisitor<Void> {
 			visit(ctx.variableInitializer(i));
 			print(", ");
 		}
-		visit(ctx.variableInitializer(size-1));
+		if (size != 0)
+			visit(ctx.variableInitializer(size-1));
 		print(" }");
 	return null;
 }
