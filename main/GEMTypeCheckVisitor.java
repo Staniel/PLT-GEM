@@ -1,7 +1,9 @@
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 
 import org.antlr.v4.runtime.misc.NotNull;
 
@@ -33,7 +35,8 @@ public class GEMTypeCheckVisitor extends GEMBaseVisitor <Object> {
 	private int loops;
 	private int switches;
 	private static boolean isEvent = false;
-	
+	private static String keywords = "Event Battle Unit Skill next if String array int float function return inputNumber inputStr while for trigger else run continue break boolean void double print true false switch case default null" ;
+	private static Set<String> keywordsSet = new HashSet<String>();
 	private static final HashMap<Integer, String> errorMessage;
 	static {
 		errorMessage = new HashMap<Integer, String>();
@@ -55,6 +58,10 @@ public class GEMTypeCheckVisitor extends GEMBaseVisitor <Object> {
 		errorMessage.put(ARRAY_INIT_ERR, "%s mismatch declared type %s.\n");
 		errorMessage.put(EVENT_CONSTRUCTOR_ERR, "Wrong parameters for create an event.\n");
 		errorMessage.put(NO_NEXT_STATEMENT, "A next statement missed!\n");
+		errorMessage.put(ILLEGAL_NAME, "%s is reserved as keyword!\n");
+		String [] keys = keywords.split(" ");
+		for (String x: keys)
+			keywordsSet.add(x);
 	}
 	
 	private void ce(int row, int col, int errno, String msg) {
@@ -139,6 +146,11 @@ public class GEMTypeCheckVisitor extends GEMBaseVisitor <Object> {
 		
 		// Identifier (method name)
 		String varName = ctx.Identifier().getText();
+		if (keywordsSet.contains(varName))
+		{
+			ce(ctx.getStart().getLine(), ctx.getStart().getCharPositionInLine(), ILLEGAL_NAME, varName);
+			return null;
+		}
 		if (seekVar(varName) != null) {
 			ce(ctx.getStart().getLine(), ctx.getStart().getCharPositionInLine(), VAR_DEFINED, varName);
 			return null;
@@ -279,6 +291,11 @@ public class GEMTypeCheckVisitor extends GEMBaseVisitor <Object> {
 	
 	@Override public String visitVariableDeclaratorId(@NotNull GEMParser.VariableDeclaratorIdContext ctx) {
 		String varName = ctx.Identifier().getText();
+		if (keywordsSet.contains(varName))
+		{
+			ce(ctx.getStart().getLine(), ctx.getStart().getCharPositionInLine(), ILLEGAL_NAME, varName);
+			return null;
+		}
 		if (seekVar(varName) != null) {
 			ce(ctx.getStart().getLine(), ctx.getStart().getCharPositionInLine(), VAR_DEFINED, varName);
 			return null;
