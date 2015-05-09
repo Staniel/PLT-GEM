@@ -22,6 +22,9 @@ public class GEMTypeCheckVisitor extends GEMBaseVisitor <Object> {
 	private static final Integer INVALID_INDEX = 10;
 	private LinkedList<HashMap<String, VariableSymbol>> symbols = new LinkedList<HashMap<String, VariableSymbol>>();
 	private LinkedList<VariableSymbol> lastType = new LinkedList<VariableSymbol>();
+	private int loops;
+	private int switches;
+	
 	private static final HashMap<Integer, String> errorMessage;
 	static {
 		errorMessage = new HashMap<Integer, String>();
@@ -235,7 +238,7 @@ public class GEMTypeCheckVisitor extends GEMBaseVisitor <Object> {
 		String varName = (String) visit(ctx.variableDeclaratorId());
 		if (ctx.variableInitializer() != null) {
 			VariableSymbol init = (VariableSymbol) visit(ctx.variableInitializer());
-			if (!checkType(lastType.peek(), init)) {
+			if (!checkType(lastType.peek(), init) && !init.type.equals("error")) {
 				ce(ctx.getStart().getLine(), ctx.getStart().getCharPositionInLine(), INVALID_OP, lastType.peek(), init);
 			}
 		}
@@ -647,12 +650,10 @@ public class GEMTypeCheckVisitor extends GEMBaseVisitor <Object> {
 		}
 		for(int i=0;i<functionParams.size();i++){
 			if(!functionParams.get(i).type.equals(functionDefParams.get(i).type)||functionParams.get(i).isFunction){
-				System.err.print(functionParams.get(i).type);
 				ce(ctx.getStart().getLine(), ctx.getStart().getCharPositionInLine(), PARAS_MISMATCH, functionName);
 				return res;
 			}
 			if(functionParams.get(i).arrayDimension != functionDefParams.get(i).arrayDimension){
-				System.err.print(2);
 				ce(ctx.getStart().getLine(), ctx.getStart().getCharPositionInLine(), PARAS_MISMATCH, functionName);
 				return res;
 			}
@@ -662,8 +663,10 @@ public class GEMTypeCheckVisitor extends GEMBaseVisitor <Object> {
 	}
 	
 	@Override public Object visitForStatement(@NotNull GEMParser.ForStatementContext ctx) {
+		loops++;
 		visit(ctx.forControl());
 		visit(ctx.statement());
+		loops--;
 		return null;
 	}
 	
@@ -692,7 +695,8 @@ public class GEMTypeCheckVisitor extends GEMBaseVisitor <Object> {
 		return null;
 	}
 	
-	@Override public Object visitSwitchStatement(@NotNull GEMParser.SwitchStatementContext ctx) { 
+	@Override public Object visitSwitchStatement(@NotNull GEMParser.SwitchStatementContext ctx) {
+		switches++;
 		visit(ctx.parExpression());
 		List<GEMParser.SwitchBlockStatementGroupContext> switchBlockStmtGroupList = ctx.switchBlockStatementGroup();
 		for(GEMParser.SwitchBlockStatementGroupContext tmp : switchBlockStmtGroupList){
@@ -702,6 +706,7 @@ public class GEMTypeCheckVisitor extends GEMBaseVisitor <Object> {
 		for(GEMParser.SwitchLabelContext tmp : switchLabelList){
 			visit(tmp);
 		}
+		switches--;
 		return null;
 	}
 	
@@ -754,8 +759,10 @@ public class GEMTypeCheckVisitor extends GEMBaseVisitor <Object> {
 		return new VariableSymbol(ctx.type().getText(), ctx.expression().size());
 	}
 	@Override public VariableSymbol visitWhileStatement(@NotNull GEMParser.WhileStatementContext ctx){
+		loops++;
 		visit(ctx.parExpression());
 		visit(ctx.statement());
+		loops--;
 		return null;
 	}
 	
