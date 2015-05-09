@@ -1,6 +1,7 @@
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.List;
 
 import org.antlr.v4.runtime.misc.NotNull;
 
@@ -16,16 +17,23 @@ public class GEMTypeCheckVisitor extends GEMBaseVisitor <Object> {
 	private static final Integer PARAS_MISMATCH = 5;
 	private static final Integer ILLEGAL_NAME = 6;
 	private static final Integer INVALID_UOP = 7;
+	private static final Integer METHOD_UNDEFINED = 8;
+	private static final Integer RETURN_MISSING = 9;
 	private LinkedList<HashMap<String, VariableSymbol>> symbols = new LinkedList<HashMap<String, VariableSymbol>>();
-	private HashMap<String, VariableSymbol> globalSymbols = new HashMap<String, VariableSymbol>();
 	private LinkedList<VariableSymbol> lastType = new LinkedList<VariableSymbol>();
 	private static final HashMap<Integer, String> errorMessage;
 	static {
 		errorMessage = new HashMap<Integer, String>();
 		errorMessage.put(VAR_DEFINED, "Duplicate definition of %s.\n");
 		errorMessage.put(INVALID_OP, "Invalid operation on %s and %s.\n");
+		errorMessage.put(RETURN_MISMATCH, "Return type %s does not match %s.\n");
 		errorMessage.put(INVALID_UOP, "Invalid operation on %s.\n");
+<<<<<<< HEAD
 		errorMessage.put(PARAS_MISMATCH, "Mismatch parameters %s\n");
+=======
+		errorMessage.put(METHOD_UNDEFINED, "Undefined method on %s.\n");
+		errorMessage.put(RETURN_MISSING, "No return statement for type %s.\n");
+>>>>>>> ef6b6b4d664ab18232df9aee84913072bb565150
 	}
 	
 	private void ce(int row, int col, int errno, String msg) {
@@ -71,23 +79,19 @@ public class GEMTypeCheckVisitor extends GEMBaseVisitor <Object> {
 				return res;
 			}
 		}
-		return seekVarGlobal(id);
-	}
-	
-	private VariableSymbol seekVarGlobal(String id) {
-		if (globalSymbols.containsKey(id)) {
-			return globalSymbols.get(id);
-		}
 		return null;
 	}
 	
 	@Override public VariableSymbol visitCompilationUnit(@NotNull GEMParser.CompilationUnitContext ctx) {
+		HashMap<String, VariableSymbol> scope = new HashMap<String, VariableSymbol>();
+		symbols.push(scope);
 		for (GEMParser.OutervariableDeclarationContext vd: ctx.outervariableDeclaration()) {
 			visit(vd);
 		}
 		for (GEMParser.MethodDeclarationContext md : ctx.methodDeclaration()) {
 			visit(md);
 		}
+		symbols.pop();
 		return null;
 	}
 	
@@ -111,7 +115,7 @@ public class GEMTypeCheckVisitor extends GEMBaseVisitor <Object> {
 			ce(ctx.getStart().getLine(), ctx.getStart().getCharPositionInLine(), VAR_DEFINED, varName);
 			return null;
 		}
-		globalSymbols.put(varName, method);
+		symbols.peek().put(varName, method);
 		
 		// parameters
 		ArrayList<VariableSymbol> paras = (ArrayList<VariableSymbol>) visit(ctx.parameters());
@@ -119,7 +123,10 @@ public class GEMTypeCheckVisitor extends GEMBaseVisitor <Object> {
 		
 		// method body
 		if (ctx.methodBody() != null) {
-			visit(ctx.methodBody());
+			VariableSymbol returnType = (VariableSymbol) visit(ctx.methodBody());
+			if (returnType == null && !method.type.equals("void")) {
+				ce(ctx.getStart().getLine(), ctx.getStart().getCharPositionInLine(), RETURN_MISSING, method);
+			}
 		}
 		lastType.pop();
 		symbols.pop();
@@ -130,20 +137,41 @@ public class GEMTypeCheckVisitor extends GEMBaseVisitor <Object> {
 		return visit(ctx.block());
 	}
 	
-	@Override public Object visitBlock(@NotNull GEMParser.BlockContext ctx) {
+	@Override public VariableSymbol visitBlock(@NotNull GEMParser.BlockContext ctx) {
+		HashMap<String, VariableSymbol> scope = new HashMap<String, VariableSymbol>();
+		symbols.push(scope);
 		for (GEMParser.BlockStatementContext bs : ctx.blockStatement()) {
-			visit(bs);
+			VariableSymbol returnType = (VariableSymbol) visit(bs);
+			if (returnType != null)
+				return returnType;
 		}
+		symbols.pop();
 		return null;
 	}
 	
-	@Override public Object visitBlockStatement(@NotNull GEMParser.BlockStatementContext ctx) {
+	@Override public VariableSymbol visitBlockStatement(@NotNull GEMParser.BlockStatementContext ctx) {
 		if (ctx.variableDeclaration() != null) {
-			return visit(ctx.variableDeclaration());
+			return (VariableSymbol) visit(ctx.variableDeclaration());
 		} else {
-			return null;
-			//return visit(ctx.statement());
+			return (VariableSymbol) visit(ctx.statement());
 		}
+	}
+	
+	@Override public VariableSymbol visitReturnStatement(@NotNull GEMParser.ReturnStatementContext ctx) {
+		VariableSymbol returnType = new VariableSymbol("void");
+		if (ctx.expression() != null) {
+			returnType = (VariableSymbol) visit(ctx.expression());
+			if (!checkType(lastType.peek(), returnType)) {
+				ce(ctx.getStart().getLine(), ctx.getStart().getCharPositionInLine(), RETURN_MISMATCH, 
+						lastType.peek(), returnType);
+			}
+		} else {
+			if (lastType.peek().type != "void") {
+				ce(ctx.getStart().getLine(), ctx.getStart().getCharPositionInLine(), RETURN_MISMATCH, 
+						lastType.peek(), returnType);
+			}
+		}
+		return returnType;
 	}
 	
 	@Override public ArrayList<VariableSymbol> visitParameters(@NotNull GEMParser.ParametersContext ctx) {
@@ -168,7 +196,7 @@ public class GEMTypeCheckVisitor extends GEMBaseVisitor <Object> {
 		String varName = (String) visit(ctx.variableDeclaratorId());
 		if (varName != null) {
 			if (seekVar(varName) == null) {
-				globalSymbols.put(varName, parameter);
+				symbols.peek().put(varName, parameter);
 				return parameter;
 			}
 		}
@@ -209,7 +237,7 @@ public class GEMTypeCheckVisitor extends GEMBaseVisitor <Object> {
 				ce(ctx.getStart().getLine(), ctx.getStart().getCharPositionInLine(), INVALID_OP, lastType.peek(), init);
 			}
 		}
-		globalSymbols.put(varName, new VariableSymbol(lastType.peek()));
+		symbols.peek().put(varName, new VariableSymbol(lastType.peek()));
 		return varName;
 	}
 	
@@ -444,6 +472,7 @@ public class GEMTypeCheckVisitor extends GEMBaseVisitor <Object> {
 		ce(ctx.getStart().getLine(), ctx.getStart().getCharPositionInLine(), INVALID_OP, vs1, vs2);
 		return v;
 	}
+
 	@Override public VariableSymbol visitArrayExpr(@NotNull GEMParser.ArrayExprContext ctx) {
 		VariableSymbol v = new VariableSymbol("error"); 
 		VariableSymbol vs1 = (VariableSymbol) visit(ctx.expression(0));
@@ -574,5 +603,70 @@ public class GEMTypeCheckVisitor extends GEMBaseVisitor <Object> {
 				}
 		}
 		return paraList;	
+	}
+
+	
+	@Override public ArrayList<VariableSymbol> visitExpressionList(@NotNull GEMParser.ExpressionListContext ctx) {
+		ArrayList<VariableSymbol> res = new ArrayList<VariableSymbol>();
+		for (int i = 0; i < ctx.expression().size(); i++) {
+			VariableSymbol tmp = (VariableSymbol) visit(ctx.expression(i));
+			res.add(tmp);
+		}
+		return res;
+	}
+	
+	@Override public VariableSymbol visitFuncExpr(@NotNull GEMParser.FuncExprContext ctx){
+		VariableSymbol res = new VariableSymbol("error");
+		VariableSymbol functionName = (VariableSymbol) visit(ctx.expression());
+		if(functionName.type.equals("error")){
+			return res;
+		}
+		if(!functionName.isFunction){
+			ce(ctx.getStart().getLine(), ctx.getStart().getCharPositionInLine(), METHOD_UNDEFINED, functionName);
+			return res;
+		}
+		if(ctx.expressionList()==null){
+			if(functionName.paras.size()!=0){
+				ce(ctx.getStart().getLine(), ctx.getStart().getCharPositionInLine(), PARAS_MISMATCH, functionName);
+				return res;
+			}
+			else{
+				res = new VariableSymbol(functionName.type, 0);
+				return res;
+			}
+		}
+		ArrayList<VariableSymbol> functionParams = (ArrayList<VariableSymbol>) visit(ctx.expressionList());
+		ArrayList<VariableSymbol> functionDefParams = functionName.paras;
+		if(functionParams.size() != functionDefParams.size()){
+			ce(ctx.getStart().getLine(), ctx.getStart().getCharPositionInLine(), PARAS_MISMATCH, functionName);
+			return res;
+		}
+		for(int i=0;i<functionParams.size();i++){
+			if(functionParams.get(i).type != functionDefParams.get(i).type||functionParams.get(i).isFunction){
+				ce(ctx.getStart().getLine(), ctx.getStart().getCharPositionInLine(), PARAS_MISMATCH, functionName);
+				return res;
+			}
+			if(functionParams.get(i).arrayDimension != functionDefParams.get(i).arrayDimension){
+				ce(ctx.getStart().getLine(), ctx.getStart().getCharPositionInLine(), PARAS_MISMATCH, functionName);
+				return res;
+			}
+		}
+		res = new VariableSymbol(functionName.type, 0);
+		return res;
+	}
+	
+	@Override public VariableSymbol visitPrintStatement(@NotNull GEMParser.PrintStatementContext ctx) {
+		VariableSymbol vs = (VariableSymbol) visit(ctx.expression());
+		return null;
+	}
+	
+	@Override public Void visitIfStatement(@NotNull GEMParser.IfStatementContext ctx) {
+		VariableSymbol parExpr = (VariableSymbol) visit(ctx.parExpression());
+		List<GEMParser.StatementContext> stmtList = ctx.statement();
+		visit(stmtList.get(0));
+		if(stmtList.size() > 1){
+			visit(stmtList.get(1));
+		}
+		return null;
 	}
 }
