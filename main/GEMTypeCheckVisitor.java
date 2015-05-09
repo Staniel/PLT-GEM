@@ -19,6 +19,7 @@ public class GEMTypeCheckVisitor extends GEMBaseVisitor <Object> {
 	private static final Integer INVALID_UOP = 7;
 	private static final Integer METHOD_UNDEFINED = 8;
 	private static final Integer RETURN_MISSING = 9;
+	private static final Integer INVALID_INDEX = 10;
 	private LinkedList<HashMap<String, VariableSymbol>> symbols = new LinkedList<HashMap<String, VariableSymbol>>();
 	private LinkedList<VariableSymbol> lastType = new LinkedList<VariableSymbol>();
 	private static final HashMap<Integer, String> errorMessage;
@@ -28,12 +29,10 @@ public class GEMTypeCheckVisitor extends GEMBaseVisitor <Object> {
 		errorMessage.put(INVALID_OP, "Invalid operation on %s and %s.\n");
 		errorMessage.put(RETURN_MISMATCH, "Return type %s does not match %s.\n");
 		errorMessage.put(INVALID_UOP, "Invalid operation on %s.\n");
-<<<<<<< HEAD
 		errorMessage.put(PARAS_MISMATCH, "Mismatch parameters %s\n");
-=======
 		errorMessage.put(METHOD_UNDEFINED, "Undefined method on %s.\n");
 		errorMessage.put(RETURN_MISSING, "No return statement for type %s.\n");
->>>>>>> ef6b6b4d664ab18232df9aee84913072bb565150
+		errorMessage.put(INVALID_INDEX, "Array Index type error on %s.\n");
 	}
 	
 	private void ce(int row, int col, int errno, String msg) {
@@ -401,16 +400,14 @@ public class GEMTypeCheckVisitor extends GEMBaseVisitor <Object> {
 		if (v.type.equals("int") || v.type.equals("double") || v.type.equals("error"))
 			return v;
 		ce(ctx.getStart().getLine(), ctx.getStart().getCharPositionInLine(), INVALID_UOP, v.type);
-		v.type = "error";
-		return v;
+		return new VariableSymbol("error");
 	}
 	@Override public VariableSymbol visitUnaryRelExpr(@NotNull GEMParser.UnaryRelExprContext ctx){
 		VariableSymbol v = (VariableSymbol) visit(ctx.expression()); 
-		if (v.type.equals("boolean") || v.type.equals("error") || v.type.equals("int"))
+		if (v.type.equals("boolean") || v.type.equals("error"))
 			return v;
 		ce(ctx.getStart().getLine(), ctx.getStart().getCharPositionInLine(), INVALID_UOP, v.type);
-		v.type = "error";
-		return v;
+		return new VariableSymbol("error");
 	}
 	@Override public VariableSymbol visitBinTopExpr(@NotNull GEMParser.BinTopExprContext ctx) {
 		VariableSymbol vs1 = (VariableSymbol) visit(ctx.expression(0));
@@ -668,5 +665,23 @@ public class GEMTypeCheckVisitor extends GEMBaseVisitor <Object> {
 			visit(stmtList.get(1));
 		}
 		return null;
+	}
+	@Override public VariableSymbol visitArrayInitializer1(@NotNull GEMParser.ArrayInitializer1Context ctx) {
+		VariableSymbol v = new VariableSymbol("error");
+		return v;
+	}
+	@Override public VariableSymbol visitArrayInitializer2(@NotNull GEMParser.ArrayInitializer2Context ctx) {
+		VariableSymbol v = new VariableSymbol("error");
+//		List<GEMParser.ExpressionContext> lst = ctx.expression();
+		for (GEMParser.ExpressionContext x: ctx.expression()){
+			VariableSymbol t = (VariableSymbol) visit(x);
+			if (t.type.equals("error"))
+				return t;
+			if (!t.type.equals("int")){
+				ce(ctx.getStart().getLine(), ctx.getStart().getCharPositionInLine(), INVALID_INDEX, t);
+				return v;
+			}
+		}
+		return new VariableSymbol(ctx.type().getText(), ctx.expression().size());
 	}
 }

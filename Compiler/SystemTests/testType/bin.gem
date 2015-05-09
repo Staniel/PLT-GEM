@@ -1,0 +1,8 @@
+void main(String[] args) {
+	int a = 1;
+	int b = 2;
+	String c = "a";
+	c = c + c;
+	c = c * c;
+	c = c * a;
+}

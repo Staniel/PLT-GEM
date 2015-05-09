@@ -1,0 +1,5 @@
+void main(String[] args) {
+	boolean a = true;
+	int b = 1;
+	a = !b;
+}

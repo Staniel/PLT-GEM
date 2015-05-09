@@ -1,0 +1,5 @@
+void main(String[] args) {
+	int[] a = array int[3];
+	a[0] = 1;
+	int[][] b = array int[4][4];
+}

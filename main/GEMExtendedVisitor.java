@@ -520,16 +520,17 @@ public class GEMExtendedVisitor extends GEMBaseVisitor<Void> {
 		}
 		visit(ctx.variableInitializer(size-1));
 		print(" }");
-//		'{' (variableInitializer (',' variableInitializer)* (',')? )? '}'
 	return null;
 }
 	@Override public Void visitArrayInitializer2(@NotNull GEMParser.ArrayInitializer2Context ctx)  {
 			print("new ");
 			visit(ctx.type());
-			print("[ ");
-			visit(ctx.expression());
-			print(" ]");
-//			'{' (variableInitializer (',' variableInitializer)* (',')? )? '}'
+			for (GEMParser.ExpressionContext x:ctx.expression())
+			{
+				print("[ ");
+				visit(x);
+				print(" ]");
+			}
 		return null;
 	}
 
