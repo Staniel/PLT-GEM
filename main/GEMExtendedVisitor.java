@@ -388,7 +388,7 @@ public class GEMExtendedVisitor extends GEMBaseVisitor<Void> {
 		visit(ctx.expression(1));
 		print(".trigger(");
 		visit(ctx.expression(0));
-		print(");\n");
+		print(")");
 		return null;
 	}
 	
