@@ -24,12 +24,10 @@ void main (String[] args) {
 	Event[] options = {ending1, ending2};
 	Event battleEvent = new Event("3", "battle", options) {
 		int a = 0;
-		if ((h trigger b)) {
-		}
-		else {
+		if (!(h trigger b)) {
 			a = 1;
 		}
 		next a;
 	};
-
+	run battleEvent;
 }
