@@ -894,16 +894,19 @@ public class GEMTypeCheckVisitor extends GEMBaseVisitor <Object> {
 		return null;
 	}
 	
-	@Override public VariableSymbol visitTriggerStatement(@NotNull GEMParser.TriggerStatementContext ctx) {
-		VariableSymbol hero = (VariableSymbol) visit(ctx.expression(1));
-		VariableSymbol battle = (VariableSymbol) visit(ctx.expression(0));
+	@Override public VariableSymbol visitTriggerExpr(@NotNull GEMParser.TriggerExprContext ctx) {
+		VariableSymbol hero = (VariableSymbol) visit(ctx.expression(0));
+		VariableSymbol battle = (VariableSymbol) visit(ctx.expression(1));
+		VariableSymbol v = new VariableSymbol("error");
 		if(hero.arrayDimension!=0 || battle.arrayDimension!=0){
 			ce(ctx.getStart().getLine(), ctx.getStart().getCharPositionInLine(), TRIGGER_ERR, hero, battle);
+			return v;
 		}
-		if(!hero.type.equals("Hero")||!battle.type.equals("Battle")){
+		if(!hero.type.equals("Unit")||!battle.type.equals("Battle")){
 			ce(ctx.getStart().getLine(), ctx.getStart().getCharPositionInLine(), TRIGGER_ERR, hero, battle);
+			return v;
 		}
-		return null;
+		return new VariableSymbol("boolean");
 	}
 	
 	@Override public VariableSymbol visitEventConstructor(@NotNull GEMParser.EventConstructorContext ctx) {

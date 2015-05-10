@@ -79,6 +79,7 @@ expression :   primary #primaryExpr
     |   expression ('==' | '!=') expression #binEqExpr
     |   expression '&&' expression #binAndExpr
     |   expression '||' expression #binOrExpr
+    |	expression 'trigger' expression 	#triggerExpr
     |   <assoc=right> expression 
         (   '='
         |   '+='
@@ -191,7 +192,6 @@ statement	:   block	#bs
 			|	'print' expression ';'	#printStatement
 			|   'break' ';'	#breakStatement
 			|   'continue' ';'	#continueStatement
-			|	expression 'trigger' expression ';'	#triggerStatement
 			|	'run' expression ';'	#runStatement
 			|   ';'	#emptyStatement
 			|   statementExpression ';'	#statementExpr
