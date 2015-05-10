@@ -108,7 +108,7 @@ public class GEMTypeCheckVisitor extends GEMBaseVisitor <Object> {
 				return res;
 			}
 			if(scope2.containsKey(id)){
-				VariableSymbol res = scope1.get(id);
+				VariableSymbol res = scope2.get(id);
 				return res;
 			}
 			return null;
