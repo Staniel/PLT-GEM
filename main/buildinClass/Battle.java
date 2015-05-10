@@ -40,6 +40,7 @@ public class Battle {
 
 			//Choose skill from user input.
 			if (myHero.skills != null && myHero.skills.length > 0) {
+				System.out.println("================================================================================");
 				System.out.println("Choose skill, or press enter to auto act:");
 				System.out.println("0 - Attack: A \"normally\" effective attack.");
 				myHero.showSkills();
@@ -75,6 +76,7 @@ public class Battle {
 			//Automatically choose skill for boss, if any.
 			myBoss.auto(myHero);
 			
+			System.out.println("================================================================================");
 			//Hero round.
 			//Only attack if no life/chi skill is used.
 			myHero.attack(myBoss);
@@ -108,7 +110,7 @@ public class Battle {
 		if (this.myBoss.skill != null)
 			this.myBoss.skill.cancel(this.myBoss);
 		this.round++;
-		System.out.printf("round %d over\n\n", this.round);
+		System.out.printf("round %d over\n\n\n\n", this.round);
 	}
 	
 	//You win the battle, you get good stuff and become stronger.
