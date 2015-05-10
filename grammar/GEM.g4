@@ -153,14 +153,6 @@ blockStatement
     |   variableDeclaration
     ;
 
-//localVariableDeclarationStatement
-//    :    localVariableDeclaration ';'
-//    ;
-//
-//localVariableDeclaration
-//    :   type variableDeclarators
-//    ;
-
 variableDeclarators
     :   variableDeclarator (',' variableDeclarator)*
     ;

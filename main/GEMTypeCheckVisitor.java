@@ -896,9 +896,7 @@ public class GEMTypeCheckVisitor extends GEMBaseVisitor <Object> {
 	
 	@Override public VariableSymbol visitTriggerExpr(@NotNull GEMParser.TriggerExprContext ctx) {
 		VariableSymbol hero = (VariableSymbol) visit(ctx.expression(0));
-		System.err.println(hero);
 		VariableSymbol battle = (VariableSymbol) visit(ctx.expression(1));
-		System.err.println(battle);
 		VariableSymbol v = new VariableSymbol("error");
 		if(hero.arrayDimension!=0 || battle.arrayDimension!=0){
 			ce(ctx.getStart().getLine(), ctx.getStart().getCharPositionInLine(), TRIGGER_ERR, hero, battle);
