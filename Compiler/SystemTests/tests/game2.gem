@@ -5,8 +5,8 @@ Skill s4 = new Skill("fight", 0, 0, 3, 0, 1);
 Skill[] ss = {s1, s2, s3, s4};
 Unit h = new Unit("hero", 10, 10, 10, 1, ss);
 Unit m1 = new Unit("small boss", 10, 10, 10, 1, ss);
-Unit m2 = new Unit("medium boss", 10, 10, 15, 2, ss);
-Unit m3 = new Unit("big boss", 15, 10, 20, 2, ss);
+Unit m2 = new Unit("medium boss", 10, 10, 10, 2, ss);
+Unit m3 = new Unit("big boss", 15, 10, 19, 2, ss);
 
 Event event1;
 Event event2;
@@ -30,7 +30,7 @@ void main (String[] args) {
 	Event[] options1 = {ending1, ending2};
 	event1 = new Event("3", "Battle1", options1) {
 		int a = 0;
-		if ((h trigger b3)) {
+		if (!(h trigger b3)) {
 			a = 1;
 		}
 		else {
@@ -39,7 +39,7 @@ void main (String[] args) {
 		next a;
 	};
 
-	Event[] options2 = {ending1, event1};	
+	Event[] options2 = {ending2, event1};	
 	event2 = new Event("4", "Battle2", options2) {
 		int b= 0;
 		if ((h trigger b2)) {
@@ -52,7 +52,7 @@ void main (String[] args) {
 	};
 
 	Event[] options3 = {ending2, event2};
-	event3 = new Event("3", "Battle3", options3) {
+	event3 = new Event("5", "Battle3", options3) {
 		int c = 0;
 		if (( h trigger b1)) {
 			c = 1;
