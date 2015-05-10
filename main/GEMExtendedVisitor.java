@@ -384,7 +384,7 @@ public class GEMExtendedVisitor extends GEMBaseVisitor<Void> {
 		return null;
 	}
 	
-	@Override public Void visitTriggerStatement(@NotNull GEMParser.TriggerStatementContext ctx) {
+	@Override public Void visitTriggerExpr(@NotNull GEMParser.TriggerExprContext ctx) {
 		visit(ctx.expression(1));
 		print(".trigger(");
 		visit(ctx.expression(0));
