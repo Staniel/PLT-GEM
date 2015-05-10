@@ -28,19 +28,19 @@ void main (String[] args) {
 	};
 
 	Event[] options1 = {ending1, ending2};
-	event1 = new Event("1", "Battle1", options1) {
+	event1 = new Event("3", "Battle1", options1) {
 		int a = 0;
 		if ((h trigger b3)) {
-			a = 0;
+			a = 1;
 		}
 		else {
-			a = 1;
+			a = 0;
 		}
 		next a;
 	};
 
 	Event[] options2 = {ending1, event1};	
-	event2 = new Event("2", "Battle2", options2) {
+	event2 = new Event("4", "Battle2", options2) {
 		int b= 0;
 		if ((h trigger b2)) {
 			b = 1;
@@ -55,10 +55,10 @@ void main (String[] args) {
 	event3 = new Event("3", "Battle3", options3) {
 		int c = 0;
 		if (( h trigger b1)) {
-			c = 0;
+			c = 1;
 		}
 		else {
-			c = 1;
+			c = 0;
 		}
 		next c;
 	};
