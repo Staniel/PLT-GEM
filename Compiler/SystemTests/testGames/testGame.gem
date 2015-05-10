@@ -1,0 +1,72 @@
+Event Scene1;
+Event Scene2;
+Event Scene3;
+Event ending;
+ 
+Hero Daniel;
+ 
+void init() {
+ 
+        	Daniel = Hero{
+                    	name = "Daniel";
+        	}
+ 
+        	Scene1 = Event {
+               		title = "Question1";
+                    	display = "What is 1+1? ";
+                    	next[] = {Scene1, Scene2};
+ 
+                    	plot {
+                                	String inp = input("What is the answer?");
+                                	if (int(inp) == 2)
+                                            	next(1);
+                                	else
+                                            	next(0);
+                    	}
+        	}
+            
+        	Scene2 = Event {
+                    	title = "Question2";
+                    	display = "What is 2*3? ";
+                    	next[] = {Scene2, Scene3};
+ 
+                    	plot {
+                                	String inp = input("What is the answer?");
+                                	if (int(inp) == 6)
+                                            	next(1);
+                                	else
+                                            	next(0);                               	
+                    	}
+        	}
+        	Scene3 = Event {
+                    	title = "Question3";
+                    	display = "What is 4/2? ";
+                    	next[] = {Scene3, ending};
+ 
+                    	plot {
+                                	String inp = input("What is the answer?");
+                                	if (int(inp) == 2)
+                                            	next(1);
+                    	        	else
+                                            	next(0);
+                    	}
+        	}
+ 
+        	ending = Event {
+                    	title = "Ending";
+                    	display = "Game over, you are the master of Math!!!";
+                    	next[] = {EndPoint};
+ 
+                    	plot {
+                                	next(0);
+                    	}
+        	}
+ 
+}
+ 
+main() {
+        	init();
+        	Event story = Scene1;
+        	story.run(Daniel);
+}
+
