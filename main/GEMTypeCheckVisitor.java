@@ -101,9 +101,14 @@ public class GEMTypeCheckVisitor extends GEMBaseVisitor <Object> {
 	private VariableSymbol seekVar(String id) {
 		int i;
 		if(isEvent){
-			HashMap<String, VariableSymbol> scope = symbols.get(symbols.size()-1);
-			if (scope.containsKey(id)) {
-				VariableSymbol res = scope.get(id);
+			HashMap<String, VariableSymbol> scope2 = symbols.get(symbols.size()-1);
+			HashMap<String, VariableSymbol> scope1 = symbols.get(0);
+			if (scope1.containsKey(id)) {
+				VariableSymbol res = scope1.get(id);
+				return res;
+			}
+			if(scope2.containsKey(id)){
+				VariableSymbol res = scope1.get(id);
 				return res;
 			}
 			return null;
