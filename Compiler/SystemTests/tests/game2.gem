@@ -1,0 +1,66 @@
+Skill s1 = new Skill("strength", 5, 0, 1, 1, 1);
+Skill s2 = new Skill("cure", 5, 0, 0, 0, 1);
+Skill s3 = new Skill("recovery", 0, 3, 0, 0, 0);
+Skill s4 = new Skill("fight", 0, 0, 3, 0, 1);
+Skill[] ss = {s1, s2, s3, s4};
+Unit h = new Unit("hero", 10, 10, 10, 1, ss);
+Unit m1 = new Unit("small boss", 10, 10, 10, 1, ss);
+Unit m2 = new Unit("medium boss", 10, 10, 15, 2, ss);
+Unit m3 = new Unit("big boss", 15, 10, 20, 2, ss);
+
+Event event1;
+Event event2;
+Event event3;
+
+
+Battle b1 = new Battle("Let's start fighting!", m1);
+Battle b2 = new Battle("This is not the end!", m2);
+Battle b3 = new Battle("Battale to death!", m3);
+
+void main (String[] args) {
+	Event[] eleEvent = {null};
+
+	Event ending1 = new Event("1", "win!", eleEvent) {
+		next 0;
+	};
+	Event ending2 = new Event("2", "lose!", eleEvent) {
+		next 0;
+	};
+
+	Event[] options1 = {ending1, ending2};
+	event1 = new Event("1", "Battle1", options1) {
+		int a = 0;
+		if ((h trigger b3)) {
+			a = 0;
+		}
+		else {
+			a = 1;
+		}
+		next a;
+	};
+
+	Event[] options2 = {ending1, event1};	
+	event2 = new Event("2", "Battle2", options2) {
+		int b= 0;
+		if ((h trigger b2)) {
+			b = 1;
+		}
+		else {
+			b = 0;
+		}
+		next b;
+	};
+
+	Event[] options3 = {ending2, event2};
+	event3 = new Event("3", "Battle3", options3) {
+		int c = 0;
+		if (( h trigger b1)) {
+			c = 0;
+		}
+		else {
+			c = 1;
+		}
+		next c;
+	};
+	run event3;
+}
