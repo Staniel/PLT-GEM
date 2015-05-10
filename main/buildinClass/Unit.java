@@ -89,23 +89,23 @@ public class Unit {
 	public void grow(Unit opponent) {
 		double growMod = 0;
 		//How much stronger should I grow?
-		//If I could grow, grow by at least 1%.
+		//If I could grow, grow by at least 10%.
 		growMod = (opponent.attack/this.attack 
 				+ opponent.defense/this.defense 
 				+ opponent.lifeMax/this.lifeMax - 3)
-				/ 3 + 0.01;
+				+ 0.1;
 		
 		//Beating weaker opponent is not growing my strength.
-		if (growMod > 0.01) {
-			if (this.attack <= opponent.attack) {
+		if (growMod > 0.1) {
+			if (this.attack <= 2 * opponent.attack) {
 				this.defaultAttack *= 1 + growMod;
 				this.attack = this.defaultAttack;
 			}
-			if (this.defense <= opponent.defense) {
+			if (this.defense <= 2 * opponent.defense) {
 				this.defaultDefense *= 1 + growMod;
 				this.defense = this.defaultDefense;
 			}
-			if (this.lifeMax <= opponent.lifeMax) {
+			if (this.lifeMax <= 2 * opponent.lifeMax) {
 				this.lifeMax *= 1 + growMod;
 			}
 		}

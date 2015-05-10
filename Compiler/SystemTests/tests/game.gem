@@ -13,9 +13,7 @@ Unit m = new Unit("Danial", 4, 1, 15, 5, ss2);
 Unit h = new Unit("PLTer", 4, 1, 10, 3, ss1);
 Battle b = new Battle("PLT Battle!", m);
 
-
 void main (String[] args) {
-
 	Event[] eleEvent = {null};
 	Event ending1 = new Event("1", "win!", eleEvent) {
 		next 0;
@@ -24,17 +22,14 @@ void main (String[] args) {
 		next 0;
 	};
 	Event[] options = {ending1, ending2};
-//	boolean x = h trigger b;
-
 	Event battleEvent = new Event("3", "battle", options) {
-	int a = 0;
-		if (h trigger b) {
-			a = 0;
+		int a = 0;
+		if ((h trigger b)) {
 		}
 		else {
 			a = 1;
 		}
 		next a;
 	};
-	run battleEvent;
+
 }
