@@ -31,6 +31,7 @@ public class GEMTypeCheckVisitor extends GEMBaseVisitor <Object> {
 	private static final Integer NO_NEXT_STATEMENT = 17;
 	
 	private LinkedList<HashMap<String, VariableSymbol>> symbols = new LinkedList<HashMap<String, VariableSymbol>>();
+	private LinkedList<HashMap<String, VariableSymbol>> eventSymbols = new LinkedList<HashMap<String, VariableSymbol>>();
 	private LinkedList<VariableSymbol> lastType = new LinkedList<VariableSymbol>();
 	private int loops;
 	private int switches;
@@ -101,14 +102,16 @@ public class GEMTypeCheckVisitor extends GEMBaseVisitor <Object> {
 	private VariableSymbol seekVar(String id) {
 		int i;
 		if(isEvent){
-			HashMap<String, VariableSymbol> scope2 = symbols.get(symbols.size()-1);
-			HashMap<String, VariableSymbol> scope1 = symbols.get(0);
-			if (scope1.containsKey(id)) {
-				VariableSymbol res = scope1.get(id);
-				return res;
+			for (i = 0; i < eventSymbols.size(); i++) {
+				HashMap<String, VariableSymbol> scope = eventSymbols.get(i);
+				if (scope.containsKey(id)) {
+					VariableSymbol res = scope.get(id);
+					return res;
+				}
 			}
-			if(scope2.containsKey(id)){
-				VariableSymbol res = scope2.get(id);
+			HashMap<String, VariableSymbol> globalScope = symbols.get(symbols.size()-1);
+			if (globalScope.containsKey(id)) {
+				VariableSymbol res = globalScope.get(id);
 				return res;
 			}
 			return null;
@@ -186,7 +189,11 @@ public class GEMTypeCheckVisitor extends GEMBaseVisitor <Object> {
 	
 	@Override public VariableSymbol visitBlock(@NotNull GEMParser.BlockContext ctx) {
 		HashMap<String, VariableSymbol> scope = new HashMap<String, VariableSymbol>();
-		symbols.push(scope);
+		if (isEvent) {
+			eventSymbols.push(scope);
+		} else {
+			symbols.push(scope);
+		}
 		for (GEMParser.BlockStatementContext bs : ctx.blockStatement()) {
 			VariableSymbol returnType = (VariableSymbol) visit(bs);
 			if (returnType != null) {
@@ -194,7 +201,11 @@ public class GEMTypeCheckVisitor extends GEMBaseVisitor <Object> {
 				return returnType;
 			}
 		}
-		symbols.pop();
+		if (isEvent) {
+			eventSymbols.pop();
+		} else {
+			symbols.pop();
+		}
 		return null;
 	}
 	
@@ -286,7 +297,11 @@ public class GEMTypeCheckVisitor extends GEMBaseVisitor <Object> {
 				ce(ctx.getStart().getLine(), ctx.getStart().getCharPositionInLine(), INVALID_OP, lastType.peek(), init);
 			}
 		}
-		symbols.peek().put(varName, new VariableSymbol(lastType.peek()));
+		if (isEvent) {
+			eventSymbols.peek().put(varName, new VariableSymbol(lastType.peek()));
+		} else {
+			symbols.peek().put(varName, new VariableSymbol(lastType.peek()));
+		}
 		return varName;
 	}
 	
@@ -938,7 +953,7 @@ public class GEMTypeCheckVisitor extends GEMBaseVisitor <Object> {
 	@Override public VariableSymbol visitEventBlock(@NotNull GEMParser.EventBlockContext ctx) {
 		isEvent = true;
 		HashMap<String, VariableSymbol> scope = new HashMap<String, VariableSymbol>();
-		symbols.push(scope);
+		eventSymbols.push(scope);
 		for (GEMParser.BlockStatementContext bs : ctx.blockStatement()) {
 			visit(bs);
 		}
@@ -948,16 +963,16 @@ public class GEMTypeCheckVisitor extends GEMBaseVisitor <Object> {
 		else{
 			visit(ctx.nextStatement());
 		}
-		symbols.pop();
+		eventSymbols.pop();
 		isEvent = false;
 		return null;
 	}
 	
 	@Override public VariableSymbol visitNextStatement(@NotNull GEMParser.NextStatementContext ctx) { 
 		VariableSymbol vs = (VariableSymbol) visit(ctx.expression());
-		if(vs.type.equals("String")){
+		if(!vs.type.equals("int")){
 			ce(ctx.getStart().getLine(), ctx.getStart().getCharPositionInLine(), INVALID_OP, vs);
-		}		
+		}
 		return null;
 	}
 	

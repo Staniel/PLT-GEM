@@ -441,6 +441,7 @@ public class GEMExtendedVisitor extends GEMBaseVisitor<Void> {
 		print("System.out.println(");
 		visit(ctx.eventArguments().eventExpressionList().expression(1));
 		print(");\n");
+		
 		visit(ctx.eventBlock());
 		print ("if (");
 		visit(ctx.eventArguments().eventExpressionList().expression(2));
@@ -458,7 +459,6 @@ public class GEMExtendedVisitor extends GEMBaseVisitor<Void> {
 	}
 	
 	@Override public Void visitEventBlock(@NotNull GEMParser.EventBlockContext ctx) {
-		// Add display function
 		for (GEMParser.BlockStatementContext bs : ctx.blockStatement()) {
 			visit(bs);
 		}
