@@ -1,0 +1,17 @@
+Skill[] skills = {};
+Unit hero = new Unit("hero", 10, 10, 10, 1, skills);
+Unit monster = new Unit("big boss", 15, 10, 19, 2, skills);
+Event event;
+Battle b = new Battle("How dare you come!", monster);
+
+void main (String[] args) {
+	Event[] end_event = {null};
+	event = new Event("3", "fight!!!", end_event) {
+		if (hero trigger b)
+			print "you win";
+		else 
+			print "you lose!!!";
+		next 0;
+	};
+	run event;
+}

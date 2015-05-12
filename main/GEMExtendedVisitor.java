@@ -245,7 +245,7 @@ public class GEMExtendedVisitor extends GEMBaseVisitor<Void> {
     List<GEMParser.StatementContext> stmtList = ctx.statement();
     visit(stmtList.get(0));
     if (stmtList.size() > 1) {
-      print("else");
+      print("else\n");
       visit(stmtList.get(1));
     }
     return null;
