@@ -44,7 +44,7 @@ public class Unit {
     this.attack = attack;
     this.defaultAttack = attack;
     this.defense = defense;
-    this.defaultDefense = life;
+    this.defaultDefense = defense;
     this.life = life;
     this.lifeMax = life;
     this.chi = chi;
