@@ -1,5 +1,9 @@
 # PLT-GEM Language For RPG Game Design
 
+Presentation PPT:
+
+www.cs.columbia.edu/~aho/cs4115/Lectures/15-05-12_GEM.pdf
+
 GEM is a static typed and game oriented language. Our language is aiming to minimize the fuss of understanding how elements interact with each other in the low level, and to maximize the fun of injecting ideas into actual game, all of which is accompanied by a programmatic style of game designing instead of brainstorming on napkins or following strictly predefined framework.
 
 Users can design a compelling story for game players to experience, which contains several phases, and then program in our language to make it a real game. At each stage, users can define the type of event such as a battle. Different choices in each stage can lead to different subsequent storyline.
